@@ -6,6 +6,7 @@ ktor:
     deployment:
         port: "$PORT:8080"
 db:
+    type: "$DB_TYPE:postgres"
     mongo:
         user: "$DB_MONGO_USER"
         password: "$DB_MONGO_PASSWORD"

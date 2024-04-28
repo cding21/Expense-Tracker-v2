@@ -11,9 +11,9 @@ import io.ktor.server.routing.*
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         json()
-        jackson {
-                enable(SerializationFeature.INDENT_OUTPUT)
-            }
+//        jackson {
+//                enable(SerializationFeature.INDENT_OUTPUT)
+//            }
     }
     routing {
         get("/json/kotlinx-serialization") {

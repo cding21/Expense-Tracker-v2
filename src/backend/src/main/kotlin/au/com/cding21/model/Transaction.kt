@@ -1,4 +1,4 @@
-package au.com.cding21.account
+package au.com.cding21.model
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bson.Document
-import org.bson.types.ObjectId
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Serializable
 data class Transaction(
+    val userId: String,
     @Serializable(with = LocalDateSerializer::class)
     val date: LocalDate,
     val amount: Double,
@@ -35,7 +35,7 @@ data class Transaction(
 
 @Serializer(forClass = LocalDate::class)
 object LocalDateSerializer : KSerializer<LocalDate> {
-    private val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+    private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     override fun serialize(encoder: Encoder, value: LocalDate) {
         encoder.encodeString(value.format(formatter))
