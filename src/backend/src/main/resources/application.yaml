@@ -20,6 +20,11 @@ db:
         url: "$DB_POSTGRES_URL"
         database:
             name: "$DB_POSTGRES_DATABASE"
+jwt:
+    issuer: "$JWT_ISSUER"
+    domain: "$JWT_DOMAIN"
+    audience: "users"
+    realm: "Expense Tracker v2"
 
 
 
