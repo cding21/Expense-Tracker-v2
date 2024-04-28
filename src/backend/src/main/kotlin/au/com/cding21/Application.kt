@@ -2,6 +2,8 @@ package au.com.cding21
 
 import au.com.cding21.plugins.*
 import au.com.cding21.routes.configureRouting
+import au.com.cding21.security.token.TokenConfig
+import au.com.cding21.util.connectToMongoDB
 import io.ktor.server.application.*
 
 
@@ -12,10 +14,17 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val db = connectToMongoDB()
 
-    configureSecurity()
+    val tokenConfig = TokenConfig(
+        issuer = environment.config.property("jwt.issuer").getString(),
+        audience = environment.config.property("jwt.audience").getString(),
+        // Expires in 24 hours
+        expiresIn = 1000L * 60L * 60L * 24L,
+        secret = System.getenv("JWT_SECRET")
+    )
+
+    configureSecurity(tokenConfig)
     configureSerialization()
-    configureDatabases()
     configureHTTP()
-    configureRouting(db)
+    configureRouting(db, tokenConfig)
 
 }
