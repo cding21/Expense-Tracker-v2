@@ -1,4 +1,4 @@
-package au.com.cding21.model
+package au.com.cding21.data
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
