@@ -1,7 +1,7 @@
 package au.com.cding21
 
 import au.com.cding21.plugins.*
-import au.com.cding21.services.TransactionService
+import au.com.cding21.routes.configureRouting
 import io.ktor.server.application.*
 
 
@@ -11,7 +11,6 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     val db = connectToMongoDB()
-
 
     configureSecurity()
     configureSerialization()
