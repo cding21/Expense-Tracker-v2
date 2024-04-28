@@ -1,6 +1,7 @@
 package au.com.cding21.services
 
 import au.com.cding21.model.Transaction
+import au.com.cding21.plugins.Car
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
@@ -34,17 +35,17 @@ class TransactionService (
     }
 
     suspend fun getTransactionById(id: String): Transaction? = withContext(Dispatchers.IO) {
-        transactions.findOneById(Filters.eq("_id", ObjectId(id)))?.let { doc ->
-            Transaction.fromDocument(doc)
-        }
+        transactions.findOneById(ObjectId(id))?.let(Transaction::fromDocument)
     }
 
-    suspend fun updateTransaction(id: String, transaction: Transaction): Document? = withContext(Dispatchers.IO) {
+    suspend fun updateTransaction(id: String, transaction: Transaction): Transaction? = withContext(Dispatchers.IO) {
         transactions.findOneAndReplace(Filters.eq("_id", ObjectId(id)), transaction.toDocument())
+            ?.let { Transaction.fromDocument(it) }
     }
 
-    suspend fun deleteTransaction(id: String): Document? = withContext(Dispatchers.IO) {
+    suspend fun deleteTransaction(id: String): Transaction? = withContext(Dispatchers.IO) {
         transactions.findOneAndDelete(Filters.eq("_id", ObjectId(id)))
+            ?.let { Transaction.fromDocument(it) }
     }
 }
 

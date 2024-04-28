@@ -34,14 +34,14 @@ fun Route.transactionRoutes(
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
         val transaction = call.receive<Transaction>()
         transactionService.updateTransaction(id, transaction)?.let {
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, it)
         } ?: call.respond(HttpStatusCode.NotFound)
     }
     // Delete transaction
     delete("/transactions/{id}") {
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
         transactionService.deleteTransaction(id)?.let {
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, it)
         } ?: call.respond(HttpStatusCode.NotFound)
     }
 }
