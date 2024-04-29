@@ -14,30 +14,30 @@ the project. The `.env` file should be added to the `.gitignore` file to prevent
 
 The `.env` file should contain the following variables:
 
-```
+``` properties
 # Example .env file to include in the root of the project
 
 # Ktor Application
-DEVELOPMENT_MODE=
+DEVELOPMENT_MODE=false
 
 # Database
-DB_TYPE=
+DB_TYPE=mongo
 
 # MongoDB
-DB_MONGO_USER=
-DB_MONGO_PW=
-DB_MONGO_HOST=
-DB_MONGO_MAX_POOL_SIZE=
-DB_MONGO_DATABASE=
+DB_MONGO_USER=test
+DB_MONGO_PW=test
+DB_MONGO_HOST=mongodb://localhost:27017
+DB_MONGO_MAX_POOL_SIZE=32
+DB_MONGO_DATABASE=test
 
 # PostgreSQL
-DB_POSTGRES_USER=
-DB_POSTGRES_PW=
-DB_POSTGRES_URL=
-DB_POSTGRES_DATABASE=
+DB_POSTGRES_USER=test
+DB_POSTGRES_PW=test
+DB_POSTGRES_URL=http://localhost:5432
+DB_POSTGRES_DATABASE=test
 
 # JWT
-JWT_ISSUER=
-JWT_DOMAIN=
-JWT_SECRET=
+JWT_ISSUER=expense-tracker
+JWT_DOMAIN=cding21.com.au
+JWT_SECRET=topsecret
 ```
