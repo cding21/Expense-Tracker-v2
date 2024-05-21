@@ -13,6 +13,7 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -53,6 +54,7 @@ fun Route.authRoutes(
         }
         call.respond(HttpStatusCode.OK)
     }
+
     post("/login") {
         val req = call.receive<AuthRequest>()
 
@@ -72,6 +74,10 @@ fun Route.authRoutes(
             TokenClaim(
                 name = "userId",
                 value = user.id.toString()
+            ),
+            TokenClaim(
+                name = "ip",
+                value = call.request.origin.remoteHost,
             )
         )
         call.respond(HttpStatusCode.OK, AuthResponse(token))
@@ -82,4 +88,7 @@ fun validateAuthRequest(user: AuthRequest): Boolean {
     return user.username.isNotEmpty()
             && user.password.isNotEmpty()
             && user.password.length >= 8
+            && user.password.matches(Regex(".*[a-z].*"))
+            && user.password.matches(Regex(".*[0-9].*"))
+            && user.password.matches(Regex(".*[!@#\$%^&*()].*"))
 }
