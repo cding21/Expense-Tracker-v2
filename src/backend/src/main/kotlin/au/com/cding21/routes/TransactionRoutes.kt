@@ -3,13 +3,10 @@ package au.com.cding21.routes
 import au.com.cding21.data.Transaction
 import au.com.cding21.data.requests.TransactionRequest
 import au.com.cding21.services.impl.MongoTransactionServiceImpl
-import com.mongodb.client.MongoClients
-import com.mongodb.client.MongoDatabase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.config.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

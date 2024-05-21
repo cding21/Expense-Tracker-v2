@@ -23,7 +23,7 @@ fun Application.module() {
         secret = System.getenv("JWT_SECRET")
     )
 
-    configureSecurity(tokenConfig)
+    configureSecurity(tokenConfig, db)
     configureSerialization()
     configureHTTP()
     configureRouting(db, tokenConfig)

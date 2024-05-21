@@ -44,7 +44,7 @@ fun Application.configureRouting(
                 tokenConfig
             )
 
-            authenticate {
+            authenticate("auth-jwt") {
                 // Feature Routes
                 transactionRoutes(transactionService)
 

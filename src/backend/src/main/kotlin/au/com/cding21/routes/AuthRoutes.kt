@@ -23,7 +23,7 @@ fun Route.authRoutes(
     tokenService: TokenService,
     tokenConfig: TokenConfig
 ) {
-    authenticate {
+    authenticate("auth-jwt") {
         get("/authenticate") {
             call.respond(HttpStatusCode.OK)
         }
