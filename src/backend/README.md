@@ -40,4 +40,5 @@ DB_POSTGRES_DATABASE=test
 JWT_ISSUER=expense-tracker
 JWT_DOMAIN=cding21.com.au
 JWT_SECRET=topsecret
+JWT_EXPIRATION=1000
 ```
