@@ -65,7 +65,18 @@ fun Route.transactionRoutes(
 
         val userId = principal!!.payload.getClaim("userId").asString()
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
-        val transaction = call.receive<Transaction>()
+        val transactionReq = call.receive<TransactionRequest>()
+        val transaction = Transaction(
+            userId,
+            transactionReq.date,
+            transactionReq.amount,
+            transactionReq.description,
+            transactionReq.category,
+            transactionReq.fromAccount,
+            transactionReq.fromNote,
+            transactionReq.toAccount,
+            transactionReq.toNote
+        )
 
         transactionService.updateTransaction(id, transaction)?.also {
             it.userId.let { transactionUserId ->
@@ -86,7 +97,7 @@ fun Route.transactionRoutes(
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
 
         transactionService.deleteTransaction(id)?.also {
-            it?.userId.let { transactionUserId ->
+            it.userId.let { transactionUserId ->
                 if (transactionUserId != userId) {
                     call.respond(HttpStatusCode.Forbidden)
                     return@delete
