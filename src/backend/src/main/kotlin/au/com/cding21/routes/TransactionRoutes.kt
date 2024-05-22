@@ -34,25 +34,65 @@ fun Route.transactionRoutes(
         val id = transactionService.createTransaction(transaction)
         call.respond(HttpStatusCode.Created, id)
     }
+    // Read all transactions for a user
+    get("/transactions") {
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal!!.payload.getClaim("userId").asString()
+        val transactions = transactionService.getTransactionByUserId(userId)
+        call.respond(transactions)
+    }
     // Read transaction
     get("/transactions/{id}") {
+        val principal = call.principal<JWTPrincipal>()
+
+        val userId = principal!!.payload.getClaim("userId").asString()
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
-        transactionService.getTransactionById(id)?.let { transaction ->
+
+        transactionService.getTransactionById(id).also {
+            it?.userId.let { transactionUserId ->
+                if (transactionUserId != userId) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@get
+                }
+            }
+        }?.let { transaction ->
             call.respond(transaction)
         } ?: call.respond(HttpStatusCode.NotFound)
     }
     // Update transaction
     put("/transactions/{id}") {
+        val principal = call.principal<JWTPrincipal>()
+
+        val userId = principal!!.payload.getClaim("userId").asString()
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
         val transaction = call.receive<Transaction>()
-        transactionService.updateTransaction(id, transaction)?.let {
+
+        transactionService.updateTransaction(id, transaction)?.also {
+            it.userId.let { transactionUserId ->
+                if (transactionUserId != userId) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@put
+                }
+            }
+        }?.let {
             call.respond(HttpStatusCode.OK, it)
         } ?: call.respond(HttpStatusCode.NotFound)
     }
     // Delete transaction
     delete("/transactions/{id}") {
+        val principal = call.principal<JWTPrincipal>()
+
+        val userId = principal!!.payload.getClaim("userId").asString()
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
-        transactionService.deleteTransaction(id)?.let {
+
+        transactionService.deleteTransaction(id)?.also {
+            it?.userId.let { transactionUserId ->
+                if (transactionUserId != userId) {
+                    call.respond(HttpStatusCode.Forbidden)
+                    return@delete
+                }
+            }
+        }?.let {
             call.respond(HttpStatusCode.OK, it)
         } ?: call.respond(HttpStatusCode.NotFound)
     }
