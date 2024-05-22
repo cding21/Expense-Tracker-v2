@@ -4,7 +4,7 @@ import au.com.cding21.data.User
 import au.com.cding21.services.UserService
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
-import org.bson.Document
+import org.bson.types.ObjectId
 import org.litote.kmongo.*
 
 class MongoUserServiceImpl(
@@ -15,6 +15,10 @@ class MongoUserServiceImpl(
     init {
         db.createCollection("users")
         users = db.getCollection<User>("users")
+    }
+
+    override suspend fun getUserById(userId: String): User? {
+        return users.findOne { User::id eq ObjectId(userId) }
     }
 
     override suspend fun getUserByUsername(username: String): User? {

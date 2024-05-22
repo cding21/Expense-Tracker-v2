@@ -13,8 +13,8 @@ class JwtTokenService: TokenService {
         claims.forEach {
             token = token.withClaim(it.name, it.value)
         }
-        // Sign with user's hashed password (salted) as the secret, using this approach ensure
+        // Sign with token secret and the user's hashed password (salted) as the secret, using this approach ensure
         // upon password change, all existing tokens are invalidated.
-        return token.sign(Algorithm.HMAC256(hash))
+        return token.sign(Algorithm.HMAC256(config.secret + hash))
     }
 }

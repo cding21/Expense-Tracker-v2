@@ -25,6 +25,9 @@ jwt:
     domain: "$JWT_DOMAIN"
     audience: "users"
     realm: "Expense Tracker v2"
+    secret: "$JWT_SECRET"
+    expiresIn: "$JWT_EXPIRATION:3600000"
+
 
 
 
