@@ -59,7 +59,8 @@ fun Application.configureRouting(
                     val requestIp = call.request.origin.remoteHost
                     if (!tokenIp.equals(requestIp)) {
                         // Log this event and do nothing
-                        logger.atWarn().log("User $userId is trying to access from a different IP... (route)")
+                        logger.atWarn().log("User $userId is trying to access from a different IP. "
+                        + "{Request IP: $requestIp, Token IP: $tokenIp}")
                     }
                 }
 

@@ -10,6 +10,8 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.reflect.*
+import java.awt.TrayIcon.MessageType
 
 
 fun Route.transactionRoutes(
@@ -51,7 +53,7 @@ fun Route.transactionRoutes(
         transactionService.getTransactionById(id).also {
             it?.userId.let { transactionUserId ->
                 if (transactionUserId != userId) {
-                    call.respond(HttpStatusCode.Forbidden)
+                    call.respond(HttpStatusCode.Forbidden, "Unrelated user transaction")
                     return@get
                 }
             }
@@ -81,7 +83,7 @@ fun Route.transactionRoutes(
         transactionService.updateTransaction(id, transaction)?.also {
             it.userId.let { transactionUserId ->
                 if (transactionUserId != userId) {
-                    call.respond(HttpStatusCode.Forbidden)
+                    call.respond(HttpStatusCode.Forbidden, "Unrelated user transaction")
                     return@put
                 }
             }
@@ -99,7 +101,7 @@ fun Route.transactionRoutes(
         transactionService.deleteTransaction(id)?.also {
             it.userId.let { transactionUserId ->
                 if (transactionUserId != userId) {
-                    call.respond(HttpStatusCode.Forbidden)
+                    call.respond(HttpStatusCode.Forbidden, "Unrelated user transaction")
                     return@delete
                 }
             }
