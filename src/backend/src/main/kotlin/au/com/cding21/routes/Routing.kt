@@ -38,7 +38,7 @@ fun Application.configureRouting(
     routing {
         route(System.getenv("API_VERSION") ?: "/api/v0"){
             // Health check
-            get("/health") {
+            get("") {
                 call.respondText("Hello World!")
             }
             // Authentication
@@ -70,8 +70,6 @@ fun Application.configureRouting(
                 // Swagger UI
                 swaggerUI(path = "openapi")
             }
-
-
         }
     }
 }
