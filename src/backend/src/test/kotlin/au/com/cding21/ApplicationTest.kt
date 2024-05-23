@@ -37,7 +37,7 @@ class ApplicationTest {
                 }
             }
         }
-        client.get(System.getProperty("API_VERSION")).apply {
+        client.get(System.getProperty("API_VERSION") ?: "/api/v0").apply {
             assertEquals(HttpStatusCode.OK, status)
             assertEquals("Hello World!", bodyAsText())
         }
