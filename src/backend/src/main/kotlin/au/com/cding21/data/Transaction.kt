@@ -1,11 +1,8 @@
 package au.com.cding21.data
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializer
+import kotlinx.serialization.*
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bson.Document
 import java.time.LocalDate
@@ -33,6 +30,7 @@ data class Transaction(
 }
 
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = LocalDate::class)
 object LocalDateSerializer : KSerializer<LocalDate> {
     private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")

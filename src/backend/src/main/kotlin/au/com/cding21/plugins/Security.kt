@@ -27,7 +27,7 @@ fun Application.configureSecurity(
                 val token = JWT.decode(blob.value.toString())
 
                 val userId = token.claims["userId"].toString().replace("\"", "")
-                var userHashedPassword: String? = null
+                var userHashedPassword: String?
                 runBlocking {
                     val user = userService.getUserById(userId)
                     userHashedPassword = user?.password

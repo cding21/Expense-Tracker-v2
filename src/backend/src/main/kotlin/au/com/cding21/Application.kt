@@ -4,7 +4,6 @@ import au.com.cding21.plugins.*
 import au.com.cding21.routes.configureRouting
 import au.com.cding21.security.token.TokenConfig
 import au.com.cding21.util.connectToMongoDB
-import au.com.cding21.util.connectToPostgres
 import io.ktor.server.application.*
 
 
