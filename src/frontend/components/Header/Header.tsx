@@ -1,8 +1,27 @@
 'use client';
 
-import { Menu, Group, Center, Burger, Container, Text, Button } from '@mantine/core';
+import {
+  Menu,
+  Group,
+  Center,
+  Burger,
+  Container,
+  Text,
+  Button,
+  Drawer,
+  Accordion,
+  Stack,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronDown } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconEdit,
+  IconEraser,
+  IconFileInfo,
+  IconHelpHexagon,
+  IconPlus,
+  IconZoom,
+} from '@tabler/icons-react';
 import classes from './Header.module.css';
 
 const links = [
@@ -10,24 +29,42 @@ const links = [
     link: '#1',
     label: 'Transactions',
     links: [
-      { link: '/Create', label: 'Create' },
-      { link: '/Lookup', label: 'Lookup' },
-      { link: '/Update', label: 'Update' },
-      { link: '/Delete', label: 'Delete' },
+      { link: '/Create', label: 'Create', icon: <IconPlus size="1.1rem" /> },
+      { link: '/Lookup', label: 'Lookup', icon: <IconZoom size="1.1rem" /> },
+      { link: '/Update', label: 'Update', icon: <IconEdit size="1.1rem" /> },
+      { link: '/Delete', label: 'Delete', icon: <IconEraser size="1.1rem" /> },
     ],
   },
   {
     link: '#2',
     label: 'Support',
     links: [
-      { link: '/faq', label: 'FAQ' },
-      { link: '/documentations', label: 'Docs' },
+      { link: '/faq', label: 'FAQ', icon: <IconHelpHexagon size="1.1rem" /> },
+      { link: '/documentations', label: 'Docs', icon: <IconFileInfo size="1.1rem" /> },
     ],
   },
 ];
 
 export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
+
+  const mobileItems = links.map((item) => (
+    <Accordion.Item key={item.link} value={item.link}>
+      <Accordion.Control>{item.label}</Accordion.Control>
+      <Accordion.Panel>
+        {item.links.map((subItem) => {
+          const { icon } = subItem;
+          return (
+            <Stack py="xs">
+              <Button fullWidth rightSection={icon} justify="space-between" variant="default">
+                {subItem.label}
+              </Button>
+            </Stack>
+          );
+        })}
+      </Accordion.Panel>
+    </Accordion.Item>
+  ));
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -68,6 +105,12 @@ export function Header() {
 
   return (
     <header className={classes.header}>
+      <Drawer opened={opened} onClose={toggle}>
+        <Accordion variant="separated" radius="md">
+          {mobileItems}
+        </Accordion>
+      </Drawer>
+
       <Container size="md">
         <div className={classes.inner}>
           <Text>Expense Tracker</Text>
