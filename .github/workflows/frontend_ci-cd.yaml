@@ -1,9 +1,14 @@
 name: npm test
 
 on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/frontend/**'
   pull_request:
-    branches:
-      - '**'
+    branches: [ "main" ]
+    paths:
+      - 'src/frontend/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
