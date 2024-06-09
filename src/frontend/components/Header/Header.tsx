@@ -13,34 +13,20 @@ import {
   Stack,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  IconChevronDown,
-  IconEdit,
-  IconEraser,
-  IconFileInfo,
-  IconHelpHexagon,
-  IconPlus,
-  IconZoom,
-} from '@tabler/icons-react';
+import { IconChevronDown, IconFileInfo, IconHelpHexagon } from '@tabler/icons-react';
 import classes from './Header.module.css';
 
 const links = [
   {
-    link: '#1',
+    link: '/transactions',
     label: 'Transactions',
-    links: [
-      { link: '/Create', label: 'Create', icon: <IconPlus size="1.1rem" /> },
-      { link: '/Lookup', label: 'Lookup', icon: <IconZoom size="1.1rem" /> },
-      { link: '/Update', label: 'Update', icon: <IconEdit size="1.1rem" /> },
-      { link: '/Delete', label: 'Delete', icon: <IconEraser size="1.1rem" /> },
-    ],
   },
   {
-    link: '#2',
+    link: '/support',
     label: 'Support',
     links: [
       { link: '/faq', label: 'FAQ', icon: <IconHelpHexagon size="1.1rem" /> },
-      { link: '/documentations', label: 'Docs', icon: <IconFileInfo size="1.1rem" /> },
+      { link: '/documentation', label: 'Docs', icon: <IconFileInfo size="1.1rem" /> },
     ],
   },
 ];
@@ -50,13 +36,21 @@ export function Header() {
 
   const mobileItems = links.map((item) => (
     <Accordion.Item key={item.link} value={item.link}>
-      <Accordion.Control>{item.label}</Accordion.Control>
-      <Accordion.Panel>
-        {item.links.map((subItem) => {
+      <Accordion.Control key={item.link}>{item.label}</Accordion.Control>
+      <Accordion.Panel key={item.link}>
+        {item.links?.map((subItem) => {
           const { icon } = subItem;
           return (
             <Stack py="xs">
-              <Button fullWidth rightSection={icon} justify="space-between" variant="default">
+              <Button
+                fullWidth
+                rightSection={icon}
+                justify="space-between"
+                variant="default"
+                onClick={() => {
+                  window.location.href = subItem.link;
+                }}
+              >
                 {subItem.label}
               </Button>
             </Stack>
@@ -78,7 +72,9 @@ export function Header() {
             <a
               href={link.link}
               className={classes.link}
-              onClick={(event) => event.preventDefault()}
+              onClick={() => {
+                window.location.href = link.link;
+              }}
             >
               <Center>
                 <span className={classes.linkLabel}>{link.label}</span>
@@ -96,7 +92,9 @@ export function Header() {
         key={link.label}
         href={link.link}
         className={classes.link}
-        onClick={(event) => event.preventDefault()}
+        onClick={() => {
+          window.location.href = link.link;
+        }}
       >
         {link.label}
       </a>
@@ -106,7 +104,7 @@ export function Header() {
   return (
     <header className={classes.header}>
       <Drawer opened={opened} onClose={toggle}>
-        <Accordion variant="separated" radius="md">
+        <Accordion variant="separated" radius="md" chevronPosition="left">
           {mobileItems}
         </Accordion>
       </Drawer>

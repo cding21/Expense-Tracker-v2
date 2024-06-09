@@ -6,7 +6,7 @@ import { TransactionList } from '@/components/TransactionList/TransactionList';
 export default function GetTransaction() {
   return (
     <Container>
-      <Title>Get Transaction</Title>
+      <Title>Transactions</Title>
       <Transaction transaction={mockTransaction} />
       <TransactionList />
     </Container>

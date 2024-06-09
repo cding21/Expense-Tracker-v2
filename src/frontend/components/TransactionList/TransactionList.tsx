@@ -7,8 +7,8 @@ export function TransactionList() {
 
   return (
     <Stack my="xl">
-      {data.map((transaction) => (
-        <TransactionListItem key={transaction.userId} transaction={transaction} />
+      {data.map((transaction, index) => (
+        <TransactionListItem key={index} transaction={transaction} />
       ))}
     </Stack>
   );
