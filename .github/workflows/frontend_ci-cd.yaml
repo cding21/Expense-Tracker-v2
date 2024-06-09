@@ -1,0 +1,35 @@
+name: npm test
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/frontend/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'src/frontend/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  test_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: 'src/frontend/.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+      - name: Install dependencies
+        working-directory: src/frontend/
+        run: yarn
+      - name: Run build
+        working-directory: src/frontend/
+        run: npm run build
+      - name: Run tests
+        working-directory: src/frontend/
+        run: npm test
