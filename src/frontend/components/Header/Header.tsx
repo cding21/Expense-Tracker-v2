@@ -114,7 +114,13 @@ export function Header() {
           <Text>Expense Tracker</Text>
           <Group gap={5} visibleFrom="sm">
             {items}
-            <Button>Sign in</Button>
+            <Button
+              onClick={() => {
+                window.location.href = '/sign-in';
+              }}
+            >
+              Sign in
+            </Button>
           </Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
         </div>
