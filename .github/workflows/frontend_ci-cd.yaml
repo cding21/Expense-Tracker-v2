@@ -25,8 +25,11 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: '**/yarn.lock'
       - name: Install dependencies
+        working-directory: src/frontend/
         run: yarn
       - name: Run build
+        working-directory: src/frontend/
         run: npm run build
       - name: Run tests
+        working-directory: src/frontend/
         run: npm test
