@@ -18,10 +18,7 @@ export function Welcome() {
       <Text c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
         This starter Next.js project is a minimal setup for Charlie&apos;s Ultimate Expense Tracker
         v2.{' '}
-        <Anchor
-          href="https://github.com/cding21/Expense-Tracker-v2"
-          size="lg"
-        >
+        <Anchor href="https://github.com/cding21/Expense-Tracker-v2" size="lg">
           Click here
         </Anchor>{' '}
         to get see the project source code.
