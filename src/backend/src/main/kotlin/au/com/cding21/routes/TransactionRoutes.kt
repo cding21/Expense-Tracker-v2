@@ -4,6 +4,7 @@ import au.com.cding21.data.Transaction
 import au.com.cding21.data.requests.TransactionRequest
 import au.com.cding21.services.impl.MongoTransactionServiceImpl
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -108,5 +109,18 @@ fun Route.transactionRoutes(
         }?.let {
             call.respond(HttpStatusCode.OK, it)
         } ?: call.respond(HttpStatusCode.NotFound)
+    }
+    // Upload transaction csv
+    post("/transactions/upload") {
+        call.request.headers.forEach { key, value ->
+            println("$key: $value")
+        }
+        val principal = call.principal<JWTPrincipal>()
+        val userId = principal!!.payload.getClaim("userId").asString()
+        val multipart = call.receiveMultipart()
+        val parts = multipart.readAllParts()
+        val filePart = parts.filterIsInstance<PartData.FileItem>().first()
+        val transactions = transactionService.uploadTransactions(filePart.streamProvider().bufferedReader(), userId)
+        call.respond(transactions)
     }
 }

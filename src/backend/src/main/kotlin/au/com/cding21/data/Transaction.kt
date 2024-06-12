@@ -26,6 +26,22 @@ data class Transaction(
     companion object {
         private val json = Json { ignoreUnknownKeys = true }
         fun fromDocument(document: Document): Transaction = json.decodeFromString(document.toJson())
+        // Convert from csv line to Transaction
+        fun fromCsvLine(line: String, userId: String): Transaction {
+            val cleanedLine = line.replace("\"", "").replace("\\s+".toRegex(), " ")
+            val values = cleanedLine.split(",\\s*".toRegex()).toTypedArray()
+            return Transaction(
+                userId,
+                LocalDate.parse(values[0], DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                values[1].toDouble(),
+                values[2],
+                values[3],
+                values[4],
+                values[5],
+                values[6],
+                values[7]
+            )
+        }
     }
 }
 

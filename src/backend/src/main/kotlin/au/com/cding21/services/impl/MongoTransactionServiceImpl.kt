@@ -10,10 +10,12 @@ import kotlinx.coroutines.withContext
 import org.bson.Document
 import org.bson.types.ObjectId
 import org.litote.kmongo.*
+import java.io.BufferedReader
+import java.util.stream.Collectors
 
 
 class MongoTransactionServiceImpl (
-    private val db: MongoDatabase
+    db: MongoDatabase
 ): TransactionService {
     private var transactions: MongoCollection<Document>
 
@@ -46,6 +48,16 @@ class MongoTransactionServiceImpl (
     override suspend fun deleteTransaction(id: String): Transaction? = withContext(Dispatchers.IO) {
         transactions.findOneAndDelete(Filters.eq("_id", ObjectId(id)))
             ?.let { Transaction.fromDocument(it) }
+    }
+
+    override suspend fun uploadTransactions(csv: BufferedReader, userId: String): List<Transaction> {
+        return csv.lines()
+            .filter { it.isNotBlank() }
+            .map {
+            val t = Transaction.fromCsvLine(it, userId)
+//            transactions.insertOne(t.toDocument())
+            t
+        }.collect(Collectors.toList())
     }
 }
 
