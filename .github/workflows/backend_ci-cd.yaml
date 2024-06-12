@@ -30,6 +30,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+      
+      - name: Test with Maven
+        working-directory: src/backend/
+        run: mvn -B test --file pom.xml
 
       - name: Build with Maven
         working-directory: src/backend/
