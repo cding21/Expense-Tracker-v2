@@ -17,13 +17,11 @@ RUN mvn package
 # Start a new stage to minimize the final image size
 FROM openjdk:11-jre-slim
 
-
-
 # Set the working directory
 WORKDIR /app
 
 # Copy the jar file from the build stage
-COPY --from=build /app/target/*.jar ./app.jar
+COPY --from=build /app/target/*-jar-with-dependencies.jar ./app.jar
 
 # Expose port 8080
 EXPOSE 8080
