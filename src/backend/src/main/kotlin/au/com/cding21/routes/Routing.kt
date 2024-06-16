@@ -39,7 +39,7 @@ fun Application.configureRouting(
         route(System.getenv("API_VERSION") ?: "/api/v0"){
             // Health check
             get("/health") {
-                call.respondText("Hello World!")
+                call.respond(HttpStatusCode.OK)
             }
             // Authentication
             authRoutes(
