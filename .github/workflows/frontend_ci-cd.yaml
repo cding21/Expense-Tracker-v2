@@ -22,11 +22,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: 'src/frontend/.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
       - name: Install dependencies
         working-directory: src/frontend/
-        run: yarn
+        run: npm install
       - name: Run tests
         working-directory: src/frontend/
         run: npm test
