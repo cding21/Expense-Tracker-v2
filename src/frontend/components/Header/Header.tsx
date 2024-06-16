@@ -35,32 +35,6 @@ const links = [
 export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
 
-  const mobileItems = links.map((item) => (
-    <Accordion.Item key={item.link} value={item.link}>
-      <Accordion.Control key={item.link}>{item.label}</Accordion.Control>
-      <Accordion.Panel key={item.link}>
-        {item.links?.map((subItem) => {
-          const { icon } = subItem;
-          return (
-            <Stack py="xs">
-              <Button
-                fullWidth
-                rightSection={icon}
-                justify="space-between"
-                variant="default"
-                onClick={() => {
-                  window.location.href = subItem.link;
-                }}
-              >
-                {subItem.label}
-              </Button>
-            </Stack>
-          );
-        })}
-      </Accordion.Panel>
-    </Accordion.Item>
-  ));
-
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
       <Menu.Item
@@ -111,12 +85,6 @@ export function Header() {
 
   return (
     <header className={classes.header}>
-      <Drawer opened={opened} onClose={toggle}>
-        <Accordion variant="separated" radius="md" chevronPosition="left">
-          {mobileItems}
-        </Accordion>
-      </Drawer>
-
       <Container size="md">
         <div className={classes.inner}>
           <Text
@@ -124,7 +92,7 @@ export function Header() {
               window.location.href = '/';
             }}
           >
-            Expense Tracker
+            Budget Buddy
           </Text>
           <Group gap={5} visibleFrom="sm">
             {items}
