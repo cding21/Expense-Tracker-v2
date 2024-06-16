@@ -1,0 +1,14 @@
+# Ignore log files
+*.log
+
+# Ignore temporary files
+# *.tmp
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore environment-specific files
+.env
+.env.local
+.env.*.local
