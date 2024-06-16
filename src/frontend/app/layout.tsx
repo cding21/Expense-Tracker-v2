@@ -3,9 +3,10 @@ import React from 'react';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 import { theme } from '../theme';
 import { Header } from '@/components/Header/Header';
+import { Footer } from '@/components/Footer/Footer';
 
 export const metadata = {
-  title: 'BudgetBuddy',
+  title: 'Budget Buddy',
   description: 'Your best buddy for budgeting and expense management!',
 };
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: any }) {
         <MantineProvider theme={theme}>
           <Header />
           {children}
+          <Footer />
         </MantineProvider>
       </body>
     </html>
