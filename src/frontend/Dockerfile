@@ -9,9 +9,7 @@ WORKDIR /app
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* ./
 RUN \
-# TODO: Investigate why the yarn.lock file still needs adjusting???
-# yarn install --frozen-lockfile
-  yarn install
+  npm install --production
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -25,7 +23,7 @@ COPY . .
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN \
-  yarn run build
+  npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner

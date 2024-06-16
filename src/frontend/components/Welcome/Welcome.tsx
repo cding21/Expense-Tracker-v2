@@ -1,4 +1,4 @@
-import { Title, Text, Anchor } from '@mantine/core';
+import { Title, Anchor, Text } from '@mantine/core';
 import classes from './Welcome.module.css';
 
 export function Welcome() {
@@ -12,7 +12,7 @@ export function Welcome() {
           component="span"
           gradient={{ from: 'lightblue', to: 'blue' }}
         >
-          Expense Tracker
+          Budget Buddy
         </Text>
       </Title>
       <Text c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
