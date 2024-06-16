@@ -17,10 +17,11 @@ import { IconChevronDown, IconFileInfo, IconHelpHexagon } from '@tabler/icons-re
 import classes from './Header.module.css';
 
 const links = [
-  {
-    link: '/transactions',
-    label: 'Transactions',
-  },
+  // TODO: Uncomment the following lines to add the Transactions link to the header
+  // {
+  //   link: '/transactions',
+  //   label: 'Transactions',
+  // },
   {
     link: '/support',
     label: 'Support',
