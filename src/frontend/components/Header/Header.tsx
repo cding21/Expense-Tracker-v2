@@ -63,7 +63,14 @@ export function Header() {
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link}>{item.label}</Menu.Item>
+      <Menu.Item
+        key={item.link}
+        onClick={() => {
+          window.location.href = item.link;
+        }}
+      >
+        {item.label}
+      </Menu.Item>
     ));
 
     if (menuItems) {
@@ -112,7 +119,13 @@ export function Header() {
 
       <Container size="md">
         <div className={classes.inner}>
-          <Text>Expense Tracker</Text>
+          <Text
+            onClick={() => {
+              window.location.href = '/';
+            }}
+          >
+            Expense Tracker
+          </Text>
           <Group gap={5} visibleFrom="sm">
             {items}
             <Button
