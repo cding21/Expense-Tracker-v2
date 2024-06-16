@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  Menu,
-  Group,
-  Center,
-  Burger,
-  Container,
-  Text,
-  Button,
-  Drawer,
-  Accordion,
-  Stack,
-} from '@mantine/core';
+import { Menu, Group, Center, Burger, Container, Text, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconFileInfo, IconHelpHexagon } from '@tabler/icons-react';
 import classes from './Header.module.css';
