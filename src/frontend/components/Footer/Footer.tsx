@@ -12,9 +12,9 @@ const links = [
 ];
 
 async function probeBackend() {
-  // Provide a default URL if BACKEND_URL is undefined
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
   try {
+    // Provide a default URL if BACKEND_URL is undefined
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
     const res = await fetch(`${backendUrl}/health`);
     return res;
   } catch (e) {
@@ -52,7 +52,6 @@ export function Footer() {
   return (
     <div className={classes.footer}>
       <Container className={classes.inner}>
-        {/* <MantineLogo size={28} /> */}
         <Text c="dimmed" size="sm">
           Current server status: &nbsp;
           <span key="status" style={{ color: serverStatus ? 'green' : 'red' }}>
