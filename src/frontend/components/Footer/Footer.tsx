@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Group, Anchor, Loader } from '@mantine/core';
+import { Container, Group, Anchor, Loader, Text } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import classes from './Footer.module.css';
 
@@ -12,9 +12,9 @@ const links = [
 ];
 
 async function probeBackend() {
-  // Provide a default URL if BACKEND_URL is undefined
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
   try {
+    // Provide a default URL if BACKEND_URL is undefined
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
     const res = await fetch(`${backendUrl}/health`);
     return res;
   } catch (e) {
@@ -52,13 +52,12 @@ export function Footer() {
   return (
     <div className={classes.footer}>
       <Container className={classes.inner}>
-        {/* <MantineLogo size={28} /> */}
-        <Anchor<'a'> c="dimmed" size="sm">
-          Current server status:
+        <Text c="dimmed" size="sm">
+          Current server status: &nbsp;
           <span key="status" style={{ color: serverStatus ? 'green' : 'red' }}>
-            {loading ? <Loader size={15} /> : ' ⬤ '}
+            {loading ? <Loader size={15} /> : '⬤'}
           </span>
-        </Anchor>
+        </Text>
         <Group className={classes.links}>{items}</Group>
       </Container>
     </div>
