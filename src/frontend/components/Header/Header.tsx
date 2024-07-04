@@ -6,11 +6,6 @@ import { IconChevronDown, IconFileInfo, IconHelpHexagon } from '@tabler/icons-re
 import classes from './Header.module.css';
 
 const links = [
-  // TODO: Uncomment the following lines to add the Transactions link to the header
-  // {
-  //   link: '/transactions',
-  //   label: 'Transactions',
-  // },
   {
     link: '/support',
     label: 'Support',
@@ -23,6 +18,7 @@ const links = [
 
 export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
+  const dashboardURL = process.env.NEXT_PUBLIC_DASHBOARD_URL;
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -87,10 +83,10 @@ export function Header() {
             {items}
             <Button
               onClick={() => {
-                window.location.href = '/sign-in';
+                window.location.href = dashboardURL ?? '/dashboard';
               }}
             >
-              Sign in
+             Dashboard
             </Button>
           </Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
