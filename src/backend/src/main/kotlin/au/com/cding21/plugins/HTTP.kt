@@ -9,6 +9,7 @@ import io.ktor.server.request.*
 import org.slf4j.event.Level
 
 fun Application.configureHTTP() {
+    val allowedOrigins = environment.config.property("ktor.cors.allowedOrigins").getString()
     install(DefaultHeaders) {
         header("X-Engine", "Ktor") // will send this header with each response
     }
@@ -21,7 +22,7 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.AccessControlAllowOrigin)
         allowCredentials = true
-        allowHost("0.0.0.0:3000")
+        allowHost(allowedOrigins)
     }
     install(CallLogging) {
         level = Level.INFO
