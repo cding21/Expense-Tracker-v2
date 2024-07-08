@@ -13,6 +13,7 @@ import {
     Button,
   } from '@mantine/core';
 import classes from './SignIn.module.css';
+import { UserLogin } from "@/models/user.model";
 
 export function SignIn() {
   const [formData, setFormData] = useState({
@@ -21,24 +22,22 @@ export function SignIn() {
   });
   const [error, setError] = useState(false);
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    setError(false);
-
+  const handleSubmit = async (e: UserLogin) => {
     // Make an API request to authenticate the user
     const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
     try {
       const response = await fetch(`${backendUrl}/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData),
       });
       // Check if the login was successful
       if (response.ok) {
         // Redirect the user to the dashboard or home page
-        window.location.href = '/dashboard';
+        localStorage.setItem('token', response.headers.get('Authorization')!!);
+        window.location.href = '/';
       } else {
         // Display an error message to the user
         const errorData = await response.json();
@@ -68,7 +67,7 @@ export function SignIn() {
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Do not have an account yet?{' '}
         <Anchor size="sm" component="button" onClick={() => {
-                window.location.href = '/sign-up';
+                window.location.href = "/sign-up";
               }}>
           Create account
         </Anchor>
@@ -79,12 +78,12 @@ export function SignIn() {
         <PasswordInput name="password" label="Password" placeholder="Your password" required mt="md" onChange={handleChange} error={error}/>
         <Group justify="space-between" mt="lg">
           <Checkbox label="Remember me" />
-          <Anchor component="button" size="sm">
+          <Anchor component="button" size="sm" onClick={() => window.location.href="/forgot-password"}>
             Forgot password?
           </Anchor>
         </Group>
         {error && <Text c="red" mt="md" ta="center">Invalid username/password</Text>}
-        <Button fullWidth mt="xl" onClick={handleSubmit}>
+        <Button fullWidth mt="xl" onClick={() => handleSubmit}>
           Sign in
         </Button>
       </Paper>
