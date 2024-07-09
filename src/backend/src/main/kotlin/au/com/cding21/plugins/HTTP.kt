@@ -27,7 +27,7 @@ fun Application.configureHTTP() {
     install(CallLogging) {
         level = Level.INFO
         filter { call ->
-            call.request.path().startsWith("/api/v1")
+            call.request.path().startsWith(System.getenv("API_VERSION")?:"/api/v0")
         }
         format { call ->
             val status = call.response.status()

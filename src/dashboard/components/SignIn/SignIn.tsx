@@ -13,7 +13,7 @@ import {
     Button,
   } from '@mantine/core';
 import classes from './SignIn.module.css';
-import { UserLogin } from "@/models/user.model";
+import { login } from "@/auth";
 
 export function SignIn() {
   const [formData, setFormData] = useState({
@@ -22,32 +22,17 @@ export function SignIn() {
   });
   const [error, setError] = useState(false);
 
-  const handleSubmit = async (e: UserLogin) => {
-    // Make an API request to authenticate the user
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
+  const handleSubmit = async () => {
     try {
-      const response = await fetch(`${backendUrl}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData),
-      });
-      // Check if the login was successful
-      if (response.ok) {
-        // Redirect the user to the dashboard or home page
-        localStorage.setItem('token', response.headers.get('Authorization')!!);
-        window.location.href = '/';
-      } else {
+      const resp = await login(formData);
+      setError(false);
+      window.location.href = "/";
+    } catch(e: any){
+      if(e instanceof Error) {
         // Display an error message to the user
-        const errorData = await response.json();
-        console.error('Login failed:', errorData.message);
+        console.log("Login failed");
         setError(true);
       }
-    } catch {
-      // Display an error message to the user
-      console.error('Login failed');
-      setError(true);
     }
   };
 
@@ -83,7 +68,7 @@ export function SignIn() {
           </Anchor>
         </Group>
         {error && <Text c="red" mt="md" ta="center">Invalid username/password</Text>}
-        <Button fullWidth mt="xl" onClick={() => handleSubmit}>
+        <Button fullWidth mt="xl" onClick={() => handleSubmit()}>
           Sign in
         </Button>
       </Paper>
