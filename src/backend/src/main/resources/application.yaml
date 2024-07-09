@@ -6,7 +6,8 @@ ktor:
     deployment:
         port: "$PORT:8080"
     cors:
-        allowedOrigins: "$CORS_ALLOWED_ORIGINS:localhost:3001"
+        staticWebsite: "$CORS_STATIC_WEBSITE:localhost:3000"
+        dashboard: "$CORS_DASHBOARD:localhost:3001"
 db:
     type: "$DB_TYPE:postgres"
     mongo:
