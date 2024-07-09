@@ -77,6 +77,7 @@ export function Header() {
             <Button 
               component="a"
               href={dashboardURL}
+              target="_blank"
             >
               Dashboard
             </Button>
