@@ -97,7 +97,7 @@ export function SignIn() {
             Invalid username/password
           </Text>
         )}
-        <Button fullWidth mt="xl" onClick={() => handleSubmit()}>
+        <Button name="Sign in" fullWidth mt="xl" onClick={() => handleSubmit()}>
           Sign in
         </Button>
       </Paper>
