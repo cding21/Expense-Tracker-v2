@@ -1,14 +1,14 @@
-name: Frontend CI/CD
+name: Dashboard CI/CD
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'src/frontend/**'
+      - 'src/dashboard/**'
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'src/frontend/**'
+      - 'src/dashboard/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
@@ -21,16 +21,16 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version-file: 'src/frontend/.nvmrc'
+          node-version-file: 'src/dashboard/.nvmrc'
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
       - name: Install dependencies
-        working-directory: src/frontend/
+        working-directory: src/dashboard/
         run: npm install
       - name: Run tests
-        working-directory: src/frontend/
+        working-directory: src/dashboard/
         run: npm test
       - name: Run build
-        working-directory: src/frontend/
+        working-directory: src/dashboard/
         run: npm run build
 

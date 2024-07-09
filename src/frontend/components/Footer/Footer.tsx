@@ -25,13 +25,13 @@ async function probeBackend() {
 export function Footer() {
   const [serverStatus, setServerStatus] = useState(false);
   const [loading, setLoading] = useState(true);
+  const result = async () => {
+    const res = await probeBackend();
+    setLoading(false);
+    setServerStatus(res.ok);
+  };
 
   useEffect(() => {
-    const result = async () => {
-      const res = await probeBackend();
-      setLoading(false);
-      setServerStatus(res.ok);
-    };
     setInterval(result, 10000);
   }, []);
 
