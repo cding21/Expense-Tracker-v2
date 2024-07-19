@@ -1,12 +1,11 @@
 package au.com.cding21
 
-import au.com.cding21.plugins.configureHTTP
-import au.com.cding21.plugins.configureSecurity
-import au.com.cding21.plugins.configureSerialization
+import au.com.cding21.plugins.*
 import au.com.cding21.routes.configureRouting
 import au.com.cding21.security.token.TokenConfig
 import au.com.cding21.util.connectToMongoDB
 import io.ktor.server.application.*
+
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
