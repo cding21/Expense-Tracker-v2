@@ -1,6 +1,6 @@
 package au.com.cding21.third_party.banks.allocators
 
-import au.com.cding21.third_party.banks.withLock
+import au.com.cding21.third_party.banks.util.withLock
 import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
@@ -29,7 +29,7 @@ class QueueAllocatorImpl(poolSize: Int, instanceSize: Int): SynchronousAllocator
 
     init {
         for (i in 0 until poolSize) {
-            val browser: Browser = playwright.chromium().launch(BrowserType.LaunchOptions().setHeadless(true))
+            val browser: Browser = playwright.chromium().launch(BrowserType.LaunchOptions().setHeadless(false).setArgs(listOf("--incognito")))
             for (j in 0 until instanceSize) {
                 val context = browser.newContext()
                 instancePool.add(Instance(browser, context, InstanceState.FREE))

@@ -1,6 +1,6 @@
 package au.com.cding21.third_party.banks.types
 
-import au.com.cding21.third_party.banks.throwIfNullKey
+import au.com.cding21.third_party.banks.util.throwIfNullKey
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject

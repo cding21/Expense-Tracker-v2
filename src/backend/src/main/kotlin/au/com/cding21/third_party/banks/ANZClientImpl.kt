@@ -3,35 +3,29 @@ package au.com.cding21.third_party.banks
 import au.com.cding21.third_party.banks.allocators.SynchronousAllocator
 import au.com.cding21.third_party.banks.types.Account
 import au.com.cding21.third_party.banks.types.Transaction
+import au.com.cding21.third_party.banks.util.*
 import com.microsoft.playwright.BrowserContext
-import com.microsoft.playwright.Locator
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.TimeoutError
-import com.microsoft.playwright.options.LoadState
 import io.ktor.server.plugins.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.*
-import org.litote.kmongo.json
 import java.rmi.ServerException
-import java.util.concurrent.LinkedBlockingQueue
 import java.util.regex.Pattern
 import javax.security.auth.login.CredentialNotFoundException
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
+/**
+ * Stateless ANZ API Client to access ANZ account data.
+ * Note: ANZ has rate limited their authentication API, leading to account suspension if accessed frequently. Access to the ANZ client
+ * should be rate limited on a per-user basis, at the (HTTP) requests level.
+ */
 class ANZClientImpl(
     private val allocator: SynchronousAllocator,
     private val username: String,
     private val password: String
 ) : BankClient {
-    /**
-     * Stateless ANZ API Client to access ANZ account data.
-     * Note: ANZ has rate limited their authentication API, leading to account suspension if accessed frequently. Access to the ANZ client
-     * should be rate limited on a per-user basis, at the (HTTP) requests level.
-     */
-
     private val DEFAULT_SELECTOR_WAIT_OPTIONS = Page.WaitForSelectorOptions().setTimeout(5000.0)
     private val DEFAULT_WAIT_TIME = 5000L
 
@@ -65,7 +59,7 @@ class ANZClientImpl(
         }
 
         try {
-            page.waitForURL(Pattern.compile("https://.+/broadcast-message"), Page.WaitForURLOptions().setTimeout(2000.0))
+            page.waitForUrlAsync(Pattern.compile("https://.+/broadcast-message"), Page.WaitForURLOptions().setTimeout(2000.0))
             page.getByText("Continue to Internet Banking").click()
         } catch (_: TimeoutError) { /* NO-OP */ }
 
@@ -125,7 +119,7 @@ class ANZClientImpl(
                         }
                     } catch (_: TimeoutError) { /* No-Op */ }
                 }
-                return results
+                return@withLoggedInSession results
             }
             throw ServerException("Unknown ANZ Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
         }
@@ -138,7 +132,7 @@ class ANZClientImpl(
             val response = page.waitForResponseAsync("https://authib.anz.com/ib/bff/accounts/v1/transactions")
             val results = parseTransactionsFromJsonString(response.text())
             val idSet: MutableSet<String> = HashSet(results.map { it.id })
-            return flow {
+            return@withLoggedInSession flow {
                 var lastUpdatedTime: Long = 0
                 while (true) {
                     if (System.currentTimeMillis() - lastUpdatedTime < DEFAULT_WAIT_TIME) {

@@ -1,8 +1,9 @@
-package au.com.cding21.third_party.banks
+package au.com.cding21.third_party.banks.util
 
 import com.microsoft.playwright.ElementHandle
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.Page.WaitForResponseOptions
+import com.microsoft.playwright.Page.WaitForURLOptions
 import com.microsoft.playwright.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,9 +11,10 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import java.security.MessageDigest
 import java.util.concurrent.locks.Lock
+import java.util.regex.Pattern
 
 /**
- * List of shared utility functions
+ * List of extensions functions on existing types
  */
 fun String?.throwIfNull() = this ?: throw KotlinNullPointerException("Null string")
 // Converts string to MD5 Hash for ID purposes (insecure)
@@ -51,6 +53,10 @@ suspend fun Page.waitForResponseAsync(url: String): Response = withContext(Dispa
 
 suspend fun Page.waitForResponseAsync(url: String, options: WaitForResponseOptions): Response = withContext(Dispatchers.IO) {
     return@withContext this@waitForResponseAsync.waitForResponse(url, options) {}
+}
+
+suspend fun Page.waitForUrlAsync(pattern: Pattern, options: WaitForURLOptions) = withContext(Dispatchers.IO) {
+    return@withContext this@waitForUrlAsync.waitForURL(pattern)
 }
 
 fun Lock.withLock(callback: () -> Unit) {

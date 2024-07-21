@@ -1,7 +1,7 @@
 package au.com.cding21.third_party.banks.types
 
-import au.com.cding21.third_party.banks.md5Hash
-import au.com.cding21.third_party.banks.throwIfNullKey
+import au.com.cding21.third_party.banks.util.md5Hash
+import au.com.cding21.third_party.banks.util.throwIfNullKey
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.json.*
 
