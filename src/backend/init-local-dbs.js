@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 
 const main = async () => {
     const args = process.argv.slice(2);
@@ -27,6 +27,12 @@ const spawnSync = (command) => {
 }
 
 const initMongoDB = async (isInitial) => {
+    const res = execSync("docker container ls");
+    if (res.includes("mongodb")) {
+        console.log('MongoDB is already running')
+        return;
+    }
+
     if (isInitial) {
         await spawnSync("docker pull mongodb/mongodb-community-server:latest")
     }
