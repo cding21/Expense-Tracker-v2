@@ -24,6 +24,15 @@ jobs:
           node-version-file: 'src/dashboard/.nvmrc'
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Generate types
+        working-directory: src/backend/
+        run: mvn typescript-generator:generate@generate-dashboard
       - name: Install dependencies
         working-directory: src/dashboard/
         run: npm install
