@@ -14,6 +14,7 @@ class TransactionTest {
             "testUser",
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
+            "AUD", // Default currency code to "AUD
             "description",
             "category",
             "fromAccount",
@@ -26,6 +27,7 @@ class TransactionTest {
                 "userId" to "testUser",
                 "date" to "01/01/2022",
                 "amount" to -100.0,
+                "currencyCode" to "AUD",
                 "description" to "description",
                 "category" to "category",
                 "fromAccount" to "fromAccount",
@@ -47,6 +49,7 @@ class TransactionTest {
                 "userId" to "testUser",
                 "date" to "01/01/2022",
                 "amount" to -100.0,
+                "currencyCode" to "AUD",
                 "description" to "description",
                 "category" to "category",
                 "fromAccount" to "fromAccount",
@@ -59,6 +62,7 @@ class TransactionTest {
             "testUser",
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
+            "AUD", // Default currency code to "AUD
             "description",
             "category",
             "fromAccount",
@@ -80,6 +84,7 @@ class TransactionTest {
             userId,
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
+            "AUD", // Default currency code to "AUD
             "description",
             "category",
             "fromAccount",

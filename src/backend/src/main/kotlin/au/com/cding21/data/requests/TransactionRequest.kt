@@ -9,6 +9,7 @@ data class TransactionRequest(
     @Serializable(with = LocalDateSerializer::class)
     val date: LocalDate,
     val amount: Double,
+    val currencyCode: String,
     val description: String,
     val category: String,
     val fromAccount: String,
