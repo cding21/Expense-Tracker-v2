@@ -3,8 +3,11 @@ package au.com.cding21
 import au.com.cding21.plugins.*
 import au.com.cding21.routes.configureRouting
 import au.com.cding21.security.token.TokenConfig
+import au.com.cding21.third_party.banks.INGClientImpl
+import au.com.cding21.third_party.banks.allocators.QueueAllocatorImpl
 import au.com.cding21.util.connectToMongoDB
 import io.ktor.server.application.*
+import kotlinx.coroutines.runBlocking
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)

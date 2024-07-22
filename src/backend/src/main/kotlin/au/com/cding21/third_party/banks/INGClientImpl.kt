@@ -11,9 +11,10 @@ import com.microsoft.playwright.options.LoadState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.json.*
+import org.h2.tools.Server
+import java.rmi.ServerException
 import java.util.*
 import javax.security.auth.login.CredentialException
 
@@ -41,8 +42,9 @@ class INGClientImpl(
     }
 
     private val DEFAULT_SELECTOR_WAIT_OPTIONS = Page.WaitForSelectorOptions().setTimeout(5000.0)
+    private val DEFAULT_WAIT_TIME = 5000L
 
-    private suspend inline fun <T> withLoggedInSession(task: (context: BrowserContext, page: Page) -> T): T {
+    private suspend inline fun <T> withLoggedInSession(permanent: Boolean = false, task: (context: BrowserContext, page: Page) -> T): T {
         val context = allocator.acquire()
         val page = context.newPage()
         page.navigateAsync("https://www.ing.com.au/securebanking/")
@@ -77,19 +79,113 @@ class INGClientImpl(
         }
 
         val result = task(context, page)
-        allocator.release(context)
+        if (!permanent) {
+            allocator.release(context)
+        }
         return result
     }
 
+    private fun parseAccountsFromJsonString(jsonString: String): List<Account> {
+        val rootObj = Json.decodeFromString<JsonObject>(jsonString)
+        val categories = rootObj.throwIfNullKey("Response").jsonObject.throwIfNullKey("Categories").jsonArray
+        return categories.map { Account.fromINGJson(it.jsonObject.throwIfNullKey("Accounts").jsonArray[0].jsonObject) }
+    }
+
+    private fun parseTransactionsFromJsonString(jsonString: String): List<Transaction> {
+        val rootObj = Json.decodeFromString<JsonObject>(jsonString)
+        val transactions = rootObj.throwIfNullKey("Response").jsonObject.throwIfNullKey("Transactions").jsonArray
+        return transactions.map { Transaction.fromINGJson(it.jsonObject) }
+    }
+
+    private suspend fun navigateToAccount(id: String, page: Page) {
+        val response = page.waitForResponseAsync("https://www.ing.com.au/api/Dashboard/Service/DashboardService.svc/json/Dashboard/loaddashboard")
+        if (!response.isSuccess()) {
+            throw ServerException("Unknown ING Accounts API error. Status: ${response.status()}, Data: ${response.body()}")
+        }
+
+        val tableEntries = page.querySelectorAll("[class=\"module-wrap style-scope ing-all-accounts-summary\"]")
+        val account = tableEntries.filter {
+            val bsb = it.querySelector("[class=\"uia-account-bsb style-scope ing-all-accounts-summary\"]").innerHTML()
+            val accountNum = it.querySelector("[class=\"uia-account-number style-scope ing-all-accounts-summary\"]").innerHTML()
+            return@filter "$bsb $accountNum" == id
+        }
+        account[0].click()
+    }
+
     override suspend fun getAccounts(): List<Account> {
-        return emptyList()
+        return withLoggedInSession { _, page ->
+            val response = page.waitForResponseAsync("https://www.ing.com.au/api/Dashboard/Service/DashboardService.svc/json/Dashboard/loaddashboard")
+            if (response.isSuccess()) {
+                return@withLoggedInSession parseAccountsFromJsonString(response.text())
+            }
+            throw ServerException("Unknown ING Accounts API error. Status: ${response.status()}, Data: ${response.body()}")
+        }
     }
 
     override suspend fun getTransactions(accountId: String, limit: Int): List<Transaction> {
-        return emptyList()
+        return withLoggedInSession { _, page ->
+            navigateToAccount(accountId, page)
+            val response = page.waitForResponseAsync("https://www.ing.com.au/api/AccountDetails/Service/AccountDetailsService.svc/json/accountdetails/AccountDetails")
+            if (response.isSuccess()) {
+                val transactions = parseTransactionsFromJsonString(response.text()).toMutableList()
+                while (limit > transactions.size) {
+                    try {
+                        page.waitForSelectorAsync("#transactionsList > div.row.no-margin-left.no-margin-right.style-scope.ing-account-transaction-list > div > div > button", Page.WaitForSelectorOptions().setTimeout(3000.0)).click()
+                    } catch (e: TimeoutError) {
+                        break
+                    }
+
+                    try {
+                        val response_ = page.waitForResponseAsync("https://www.ing.com.au/api/TransactionHistory/Service/TransactionHistoryService.svc/json/TransactionHistory/TransactionHistory", Page.WaitForResponseOptions().setTimeout(5000.0))
+                        if (response_.isSuccess()) {
+                            transactions.addAll(parseTransactionsFromJsonString(response_.text()))
+                        } else {
+                            throw ServerException("Unknown ANZ Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
+                        }
+                    } catch (_: TimeoutError) { /* No-Op */ }
+                }
+                if (transactions.size > limit) {
+                    return@withLoggedInSession transactions.dropLast(transactions.size - limit)
+                }
+                return@withLoggedInSession transactions
+            }
+            throw ServerException("Unknown ING Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
+        }
     }
 
     override suspend fun getRealTimeTransactions(accountId: String): Flow<Transaction> {
-        return emptyFlow()
+        return withLoggedInSession(true) { context, page ->
+            navigateToAccount(accountId, page)
+
+            val response = page.waitForResponseAsync("https://www.ing.com.au/api/AccountDetails/Service/AccountDetailsService.svc/json/accountdetails/AccountDetails")
+            if (!response.isSuccess()) {
+                throw ServerException("Unknown ING Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
+            }
+
+            val results = parseTransactionsFromJsonString(response.text())
+            val idSet: MutableSet<String> = HashSet(results.map { it.id })
+            return@withLoggedInSession flow {
+                var lastUpdatedTime: Long = 0
+                while (true) {
+                    if (System.currentTimeMillis() - lastUpdatedTime < DEFAULT_WAIT_TIME) {
+                        delay(DEFAULT_WAIT_TIME - (System.currentTimeMillis() - lastUpdatedTime))
+                    }
+                    lastUpdatedTime = System.currentTimeMillis()
+
+                    page.waitForSelector("#mainMenuList > li:nth-child(3) > div", Page.WaitForSelectorOptions().setTimeout(3000.0)).click()
+                    navigateToAccount(accountId, page)
+
+                    val newResponse = page.waitForResponseAsync("https://www.ing.com.au/api/AccountDetails/Service/AccountDetailsService.svc/json/accountdetails/AccountDetails")
+                    if (!newResponse.isSuccess()) {
+                        allocator.release(context)
+                        throw ServerException("Unknown ING Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
+                    }
+
+                    val newResults = parseTransactionsFromJsonString(newResponse.text()).filter { !idSet.contains(it.id) }
+                    newResults.forEach { emit(it) }
+                    idSet.addAll(newResults.map { it.id })
+                }
+            }
+        }
     }
 }

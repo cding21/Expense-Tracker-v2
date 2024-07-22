@@ -1,10 +1,7 @@
 package au.com.cding21.third_party.banks.types
 
 import au.com.cding21.third_party.banks.util.throwIfNullKey
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.*
 
 data class Account(
     val id: String,
@@ -27,6 +24,16 @@ data class Account(
                 balancesArray.filter { it.jsonObject.throwIfNullKey("type").jsonPrimitive.content == "Current Balance" }[0].jsonObject.throwIfNullKey("amountDetails").jsonObject.throwIfNullKey("amount").jsonPrimitive.content.toDouble(),
                 balancesArray.filter { it.jsonObject.throwIfNullKey("type").jsonPrimitive.content == "Available Balance" }[0].jsonObject.throwIfNullKey("amountDetails").jsonObject.throwIfNullKey("amount").jsonPrimitive.content.toDouble(),
                 )
+        }
+
+        fun fromINGJson(jsonObject: JsonObject): Account {
+            return Account(
+                "${jsonObject.throwIfNullKey("BSB").jsonPrimitive.content} ${jsonObject.throwIfNullKey("AccountNumber").jsonPrimitive.content}",
+                jsonObject.throwIfNullKey("AccountName").jsonPrimitive.content,
+                CurrencyCode.AUD,
+                jsonObject.throwIfNullKey("CurrentBalance").jsonPrimitive.double,
+                jsonObject.throwIfNullKey("AvailableBalance").jsonPrimitive.double,
+            )
         }
     }
 }

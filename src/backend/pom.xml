@@ -199,7 +199,6 @@
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

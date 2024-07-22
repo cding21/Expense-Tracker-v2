@@ -32,7 +32,7 @@ class ANZClientImpl(
     /**
      * Internal login function. Release instance upon task completion.
      */
-    private suspend inline fun <T> withLoggedInSession(task: (context: BrowserContext, page: Page) -> T): T {
+    private suspend inline fun <T> withLoggedInSession(permanent: Boolean = false, task: (context: BrowserContext, page: Page) -> T): T {
         val context = allocator.acquire()
         val page = context.newPage()
         page.navigateAsync("https://login.anz.com/internetbanking")
@@ -64,7 +64,9 @@ class ANZClientImpl(
         } catch (_: TimeoutError) { /* NO-OP */ }
 
         val result = task(context, page)
-        allocator.release(context)
+        if (!permanent) {
+            allocator.release(context)
+        }
         return result
     }
 
@@ -119,6 +121,9 @@ class ANZClientImpl(
                         }
                     } catch (_: TimeoutError) { /* No-Op */ }
                 }
+                if (results.size > limit) {
+                    return@withLoggedInSession results.dropLast(results.size - limit)
+                }
                 return@withLoggedInSession results
             }
             throw ServerException("Unknown ANZ Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
@@ -126,10 +131,14 @@ class ANZClientImpl(
     }
 
     override suspend fun getRealTimeTransactions(accountId: String): Flow<Transaction> {
-        return withLoggedInSession { _, page ->
+        return withLoggedInSession(true) { context, page ->
             navigateToAccount(accountId, page)
 
             val response = page.waitForResponseAsync("https://authib.anz.com/ib/bff/accounts/v1/transactions")
+            if (!response.isSuccess()) {
+                throw ServerException("Unknown ANZ Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
+            }
+
             val results = parseTransactionsFromJsonString(response.text())
             val idSet: MutableSet<String> = HashSet(results.map { it.id })
             return@withLoggedInSession flow {
@@ -144,6 +153,11 @@ class ANZClientImpl(
                     navigateToAccount(accountId, page)
 
                     val newResponse = page.waitForResponseAsync("https://authib.anz.com/ib/bff/accounts/v1/transactions")
+                    if (!newResponse.isSuccess()) {
+                        allocator.release(context)
+                        throw ServerException("Unknown ANZ Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
+                    }
+
                     val newResults = parseTransactionsFromJsonString(newResponse.text()).filter { !idSet.contains(it.id) }
                     newResults.forEach { emit(it) }
                     idSet.addAll(newResults.map { it.id })
