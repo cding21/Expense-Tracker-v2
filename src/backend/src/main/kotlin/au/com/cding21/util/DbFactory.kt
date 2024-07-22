@@ -37,7 +37,7 @@ fun Application.connectToMongoDB(): MongoDatabase {
     val databaseName = environment.config.tryGetString("db.mongo.database.name") ?: "myDatabase"
 
     val credentials = user?.let { userVal -> password?.let { passwordVal -> "$userVal:$passwordVal@" } }.orEmpty()
-    val uri = "mongodb+srv://$credentials$host/?maxPoolSize=$maxPoolSize&w=majority"
+    val uri = if (host == "127.0.0.1") "mongodb://$credentials$host:27017/?maxPoolSize=$maxPoolSize&w=majority" else "mongodb+srv://$credentials$host/?maxPoolSize=$maxPoolSize&w=majority"
 
     val pojoCodecRegistry = fromProviders(
         PojoCodecProvider.builder()
