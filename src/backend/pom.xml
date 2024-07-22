@@ -268,23 +268,40 @@
                 <version>3.2.1263</version>
                 <executions>
                     <execution>
-                        <id>generate</id>
+                        <id>generate-frontend</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <phase>process-classes</phase>
+                        <configuration>
+                            <jsonLibrary>jackson2</jsonLibrary>
+                            <classes>
+                                <class>au.com.cding21.data.User</class>
+                            </classes>
+                            <outputKind>module</outputKind>
+                            <outputFile>../frontend/generated-types/generated.ts</outputFile>
+                            <outputFileType>implementationFile</outputFileType>
+                            <customTypeMappings>org.bson.types.ObjectId:string</customTypeMappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-dashboard</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <jsonLibrary>jackson2</jsonLibrary>
+                            <classes>
+                                <class>au.com.cding21.data.User</class>
+                            </classes>
+                            <outputKind>module</outputKind>
+                            <outputFile>../dashboard/generated-types/generated.ts</outputFile>
+                            <outputFileType>implementationFile</outputFileType>
+                            <customTypeMappings>org.bson.types.ObjectId:string</customTypeMappings>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <jsonLibrary>jackson2</jsonLibrary>
-                    <classes>
-                        <class>au.com.cding21.data.User</class>
-                    </classes>
-                    <outputKind>module</outputKind>
-                    <outputFile>../frontend/generated-types/generated.ts</outputFile>
-                    <outputFileType>implementationFile</outputFileType>
-                    <customTypeMappings>org.bson.types.ObjectId:string</customTypeMappings>
-                </configuration>
             </plugin>
         </plugins>
     </build>
