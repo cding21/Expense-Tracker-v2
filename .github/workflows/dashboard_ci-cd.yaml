@@ -32,7 +32,9 @@ jobs:
           cache: maven
       - name: Generate types
         working-directory: src/backend/
-        run: mvn typescript-generator:generate@generate-dashboard
+        run: |
+          mvn clean install
+          mvn typescript-generator:generate@generate-frontend
       - name: Install dependencies
         working-directory: src/dashboard/
         run: npm install
