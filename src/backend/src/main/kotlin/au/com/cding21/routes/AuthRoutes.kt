@@ -60,12 +60,12 @@ fun Route.authRoutes(
 
         val user = userService.getUserByUsername(req.username)
         if (user == null) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password 1")
+            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
             return@post
         }
         val isValid = hashingService.verify(req.password, SaltedHash(user.password, user.salt))
         if (!isValid) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password 2")
+            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
             return@post
         }
         val token = tokenService.generate(

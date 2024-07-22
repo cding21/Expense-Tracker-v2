@@ -1,16 +1,11 @@
 'use client';
 
-import { Menu, Group, Center, Burger, Container, Text, Button } from '@mantine/core';
+import { Menu, Group, Center, Burger, Container, Button, Anchor } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconFileInfo, IconHelpHexagon } from '@tabler/icons-react';
 import classes from './Header.module.css';
 
 const links = [
-  // TODO: Uncomment the following lines to add the Transactions link to the header
-  // {
-  //   link: '/transactions',
-  //   label: 'Transactions',
-  // },
   {
     link: '/support',
     label: 'Support',
@@ -23,15 +18,11 @@ const links = [
 
 export function Header() {
   const [opened, { toggle }] = useDisclosure(false);
+  const dashboardURL = process.env.NEXT_PUBLIC_DASHBOARD_URL ?? 'http://localhost:3001';
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
-      <Menu.Item
-        key={item.link}
-        onClick={() => {
-          window.location.href = item.link;
-        }}
-      >
+      <Menu.Item key={item.link} component="a" href={item.link}>
         {item.label}
       </Menu.Item>
     ));
@@ -40,13 +31,7 @@ export function Header() {
       return (
         <Menu key={link.label} trigger="hover" transitionProps={{ exitDuration: 0 }} withinPortal>
           <Menu.Target>
-            <a
-              href={link.link}
-              className={classes.link}
-              onClick={() => {
-                window.location.href = link.link;
-              }}
-            >
+            <a href={link.link} className={classes.link}>
               <Center>
                 <span className={classes.linkLabel}>{link.label}</span>
                 <IconChevronDown size="0.9rem" stroke={1.5} />
@@ -59,14 +44,7 @@ export function Header() {
     }
 
     return (
-      <a
-        key={link.label}
-        href={link.link}
-        className={classes.link}
-        onClick={() => {
-          window.location.href = link.link;
-        }}
-      >
+      <a key={link.label} href={link.link} className={classes.link}>
         {link.label}
       </a>
     );
@@ -76,21 +54,13 @@ export function Header() {
     <header className={classes.header}>
       <Container size="md">
         <div className={classes.inner}>
-          <Text
-            onClick={() => {
-              window.location.href = '/';
-            }}
-          >
+          <Anchor component="a" href="/" underline="never">
             Budget Buddy
-          </Text>
+          </Anchor>
           <Group gap={5} visibleFrom="sm">
             {items}
-            <Button
-              onClick={() => {
-                window.location.href = '/sign-in';
-              }}
-            >
-              Sign in
+            <Button component="a" href={dashboardURL} target="_blank">
+              Dashboard
             </Button>
           </Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />

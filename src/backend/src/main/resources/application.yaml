@@ -5,6 +5,9 @@ ktor:
             - au.com.cding21.ApplicationKt.module
     deployment:
         port: "$PORT:8080"
+    cors:
+        staticWebsite: "$CORS_STATIC_WEBSITE:localhost:3000"
+        dashboard: "$CORS_DASHBOARD:localhost:3001"
 db:
     type: "$DB_TYPE:postgres"
     mongo:
