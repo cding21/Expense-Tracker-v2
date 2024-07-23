@@ -34,8 +34,6 @@ jobs:
       - name: Test with Maven
         working-directory: src/backend/
         run: mvn -B test --file pom.xml
-        with:
-          directory: src/backend/
 
       - name: Build with Maven
         working-directory: src/backend/
