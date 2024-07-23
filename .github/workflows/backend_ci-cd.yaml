@@ -32,11 +32,11 @@ jobs:
           cache: maven
       
       - name: Test with Maven
-        # working-directory: src/backend/
+        working-directory: src/backend/
         run: mvn -B test --file pom.xml
 
       - name: Build with Maven
-        # working-directory: src/backend/
+        working-directory: src/backend/
         run: mvn -B package --file pom.xml
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
