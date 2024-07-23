@@ -27,7 +27,7 @@ class MongoTransactionServiceImpl (
     override suspend fun createTransaction(transaction: Transaction): String = withContext(Dispatchers.IO) {
         val doc = transaction.toDocument()
         transactions.insertOne(doc)
-        doc["_id"].toString()
+        doc["id"].toString()
     }
 
     override suspend fun getTransactionByUserId(userId: String): List<Transaction> = withContext(Dispatchers.IO) {
@@ -37,16 +37,16 @@ class MongoTransactionServiceImpl (
     }
 
     override suspend fun getTransactionById(id: String): Transaction? = withContext(Dispatchers.IO) {
-        transactions.findOneById(ObjectId(id))?.let(Transaction::fromDocument)
+        transactions.findOne(Filters.eq("id", id))?.let(Transaction::fromDocument)
     }
 
     override suspend fun updateTransaction(id: String, transaction: Transaction): Transaction? = withContext(Dispatchers.IO) {
-        transactions.findOneAndReplace(Filters.eq("_id", ObjectId(id)), transaction.toDocument())
+        transactions.findOneAndReplace(Filters.eq("id", id), transaction.toDocument())
             ?.let { Transaction.fromDocument(it) }
     }
 
     override suspend fun deleteTransaction(id: String): Transaction? = withContext(Dispatchers.IO) {
-        transactions.findOneAndDelete(Filters.eq("_id", ObjectId(id)))
+        transactions.findOneAndDelete(Filters.eq("id", id))
             ?.let { Transaction.fromDocument(it) }
     }
 
