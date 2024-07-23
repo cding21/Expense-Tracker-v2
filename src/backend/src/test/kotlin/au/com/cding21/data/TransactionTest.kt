@@ -3,8 +3,8 @@ package au.com.cding21.data
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import org.bson.Document
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 
 class TransactionTest {
