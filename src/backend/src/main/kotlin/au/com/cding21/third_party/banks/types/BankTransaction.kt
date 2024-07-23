@@ -7,9 +7,8 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.*
-import java.time.ZonedDateTime
 
-data class Transaction(
+data class BankTransaction(
     val id: String,
     val date: LocalDateTime,
     val payee: String?,
@@ -23,10 +22,10 @@ data class Transaction(
          * Static factory method that parses an ANZ JSON object to Transaction type
          */
 
-        fun fromANZJson(jsonObject: JsonObject): Transaction {
+        fun fromANZJson(jsonObject: JsonObject): BankTransaction {
             val isCredit = jsonObject.throwIfNullKey("transactionAmountType").jsonObject.throwIfNullKey("codeDescription").jsonPrimitive.content == "Credit"
 
-            return Transaction(
+            return BankTransaction(
                 (jsonObject.throwIfNullKey("transactionDate").jsonPrimitive.content + jsonObject.throwIfNullKey("transactionRemarks").jsonPrimitive.content).md5Hash(),
                 LocalDateTime.parse(jsonObject.throwIfNullKey("transactionDate").jsonPrimitive.content),
                 jsonObject["payee"]?.jsonPrimitive?.content,
@@ -37,8 +36,8 @@ data class Transaction(
             )
         }
 
-        fun fromINGJson(jsonObject: JsonObject): Transaction {
-            return Transaction(
+        fun fromINGJson(jsonObject: JsonObject): BankTransaction {
+            return BankTransaction(
                 (jsonObject.throwIfNullKey("TransactionDate").jsonPrimitive.content + jsonObject.throwIfNullKey("ExtendedDescription").jsonPrimitive.content).md5Hash(),
                 Instant.parse(jsonObject.throwIfNullKey("TransactionDate").jsonPrimitive.content).toLocalDateTime(TimeZone.of("UTC+10:00")),
                 null,

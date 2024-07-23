@@ -2,18 +2,15 @@ package au.com.cding21.third_party.banks
 
 import au.com.cding21.third_party.banks.allocators.SynchronousAllocator
 import au.com.cding21.third_party.banks.types.Account
-import au.com.cding21.third_party.banks.types.Transaction
+import au.com.cding21.third_party.banks.types.BankTransaction
 import au.com.cding21.third_party.banks.util.*
 import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.Page
 import com.microsoft.playwright.TimeoutError
-import com.microsoft.playwright.options.LoadState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.*
-import org.h2.tools.Server
 import java.rmi.ServerException
 import java.util.*
 import javax.security.auth.login.CredentialException
@@ -91,10 +88,10 @@ class INGClientImpl(
         return categories.map { Account.fromINGJson(it.jsonObject.throwIfNullKey("Accounts").jsonArray[0].jsonObject) }
     }
 
-    private fun parseTransactionsFromJsonString(jsonString: String): List<Transaction> {
+    private fun parseTransactionsFromJsonString(jsonString: String): List<BankTransaction> {
         val rootObj = Json.decodeFromString<JsonObject>(jsonString)
         val transactions = rootObj.throwIfNullKey("Response").jsonObject.throwIfNullKey("Transactions").jsonArray
-        return transactions.map { Transaction.fromINGJson(it.jsonObject) }
+        return transactions.map { BankTransaction.fromINGJson(it.jsonObject) }
     }
 
     private suspend fun navigateToAccount(id: String, page: Page) {
@@ -122,7 +119,7 @@ class INGClientImpl(
         }
     }
 
-    override suspend fun getTransactions(accountId: String, limit: Int): List<Transaction> {
+    override suspend fun getTransactions(accountId: String, limit: Int): List<BankTransaction> {
         return withLoggedInSession { _, page ->
             navigateToAccount(accountId, page)
             val response = page.waitForResponseAsync("https://www.ing.com.au/api/AccountDetails/Service/AccountDetailsService.svc/json/accountdetails/AccountDetails")
@@ -153,7 +150,7 @@ class INGClientImpl(
         }
     }
 
-    override suspend fun getRealTimeTransactions(accountId: String): Flow<Transaction> {
+    override suspend fun getRealTimeTransactions(accountId: String): Flow<BankTransaction> {
         return withLoggedInSession(true) { context, page ->
             navigateToAccount(accountId, page)
 
