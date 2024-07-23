@@ -7,7 +7,7 @@ import kotlin.test.Test
 import org.bson.Document
 
 
-class TransactionTest {
+class BankTransactionTest {
     @Test
     fun testToDocument() {
         val transaction = Transaction(

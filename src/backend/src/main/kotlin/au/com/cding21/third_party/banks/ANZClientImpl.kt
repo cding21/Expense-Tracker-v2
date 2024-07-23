@@ -2,7 +2,7 @@ package au.com.cding21.third_party.banks
 
 import au.com.cding21.third_party.banks.allocators.SynchronousAllocator
 import au.com.cding21.third_party.banks.types.Account
-import au.com.cding21.third_party.banks.types.Transaction
+import au.com.cding21.third_party.banks.types.BankTransaction
 import au.com.cding21.third_party.banks.util.*
 import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.Page
@@ -76,10 +76,10 @@ class ANZClientImpl(
         return dataArray.map { Account.fromANZJson(it.jsonObject) }
     }
 
-    private fun parseTransactionsFromJsonString(jsonString: String): List<Transaction> {
+    private fun parseTransactionsFromJsonString(jsonString: String): List<BankTransaction> {
         val rootObj = Json.decodeFromString<JsonObject>(jsonString)
         val dataArray = rootObj.throwIfNullKey("data").jsonObject.throwIfNullKey("transactionList").jsonArray
-        return dataArray.map { Transaction.fromANZJson(it.jsonObject) }
+        return dataArray.map { BankTransaction.fromANZJson(it.jsonObject) }
     }
 
     private suspend fun navigateToAccount(accountId: String, page: Page) {
@@ -100,7 +100,7 @@ class ANZClientImpl(
         }
     }
 
-    override suspend fun getTransactions(accountId: String, limit: Int): List<Transaction> {
+    override suspend fun getTransactions(accountId: String, limit: Int): List<BankTransaction> {
         return withLoggedInSession { _, page ->
             navigateToAccount(accountId, page)
             val response = page.waitForResponseAsync("https://authib.anz.com/ib/bff/accounts/v1/transactions")
@@ -130,7 +130,7 @@ class ANZClientImpl(
         }
     }
 
-    override suspend fun getRealTimeTransactions(accountId: String): Flow<Transaction> {
+    override suspend fun getRealTimeTransactions(accountId: String): Flow<BankTransaction> {
         return withLoggedInSession(true) { context, page ->
             navigateToAccount(accountId, page)
 
