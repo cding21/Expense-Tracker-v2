@@ -11,8 +11,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.reflect.*
-import java.awt.TrayIcon.MessageType
+import org.bson.types.ObjectId
 
 
 fun Route.transactionRoutes(
@@ -24,9 +23,11 @@ fun Route.transactionRoutes(
         val userId = principal!!.payload.getClaim("userId").asString()
         val transactionReq = call.receive<TransactionRequest>()
         val transaction = Transaction(
+            ObjectId().toString(), // Generate a new ObjectId
             userId,
             transactionReq.date,
             transactionReq.amount,
+            transactionReq.currencyCode,
             transactionReq.description,
             transactionReq.category,
             transactionReq.fromAccount,
@@ -34,6 +35,7 @@ fun Route.transactionRoutes(
             transactionReq.toAccount,
             transactionReq.toNote
         )
+        println("transaction: $transaction")
         val id = transactionService.createTransaction(transaction)
         call.respond(HttpStatusCode.Created, id)
     }
@@ -70,9 +72,11 @@ fun Route.transactionRoutes(
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
         val transactionReq = call.receive<TransactionRequest>()
         val transaction = Transaction(
+            id,
             userId,
             transactionReq.date,
             transactionReq.amount,
+            transactionReq.currencyCode,
             transactionReq.description,
             transactionReq.category,
             transactionReq.fromAccount,
@@ -92,24 +96,31 @@ fun Route.transactionRoutes(
             call.respond(HttpStatusCode.OK, it)
         } ?: call.respond(HttpStatusCode.NotFound)
     }
+
     // Delete transaction
     delete("/transactions/{id}") {
         val principal = call.principal<JWTPrincipal>()
 
         val userId = principal!!.payload.getClaim("userId").asString()
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
+        println("id: $id")
 
-        transactionService.deleteTransaction(id)?.also {
-            it.userId.let { transactionUserId ->
-                if (transactionUserId != userId) {
-                    call.respond(HttpStatusCode.Forbidden, "Unrelated user transaction")
-                    return@delete
-                }
-            }
-        }?.let {
-            call.respond(HttpStatusCode.OK, it)
-        } ?: call.respond(HttpStatusCode.NotFound)
+        val transactionToDelete = transactionService.getTransactionById(id)
+        if (transactionToDelete == null) {
+            call.respond(HttpStatusCode.NotFound)
+            return@delete
+        }
+        if (transactionToDelete.userId != userId) {
+            call.respond(HttpStatusCode.Forbidden, "Unrelated user transaction")
+            return@delete
+        }
+        else {
+            transactionService.deleteTransaction(id)
+            call.respond(HttpStatusCode.OK)
+        }
+
     }
+
     // Upload transaction csv
     post("/transactions/upload") {
         call.request.headers.forEach { key, value ->
