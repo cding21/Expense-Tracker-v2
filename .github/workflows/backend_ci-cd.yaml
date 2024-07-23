@@ -33,7 +33,7 @@ jobs:
       
       - name: Test with Maven
         working-directory: src/backend/
-        run: mvn -B test --file pom.xml
+        run: mvn clean -B test 
 
       - name: Build with Maven
         working-directory: src/backend/
