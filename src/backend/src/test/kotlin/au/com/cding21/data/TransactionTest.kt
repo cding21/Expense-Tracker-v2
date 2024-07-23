@@ -11,6 +11,7 @@ class TransactionTest {
     @Test
     fun testToDocument() {
         val transaction = Transaction(
+            "1234",
             "testUser",
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
@@ -24,6 +25,7 @@ class TransactionTest {
         )
         val expectedDocument = Document(
             mapOf(
+                "id" to "1234",
                 "userId" to "testUser",
                 "date" to "01/01/2022",
                 "amount" to -100.0,
@@ -46,6 +48,7 @@ class TransactionTest {
     fun testFromDocument() {
         val document = Document(
             mapOf(
+                "id" to "1234",
                 "userId" to "testUser",
                 "date" to "01/01/2022",
                 "amount" to -100.0,
@@ -59,6 +62,7 @@ class TransactionTest {
             )
         )
         val expectedTransaction = Transaction(
+            "1234",
             "testUser",
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
@@ -81,6 +85,7 @@ class TransactionTest {
         val csvLine = "01/01/2022,\"-100.0\",description,category,fromAccount,,toAccount,"
         val userId = "testUser"
         val expectedTransaction = Transaction(
+            "1234",
             userId,
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
@@ -95,6 +100,16 @@ class TransactionTest {
 
         val actualTransaction = Transaction.fromCsvLine(csvLine, userId)
 
-        assertEquals(expectedTransaction, actualTransaction)
+        assertEquals(expectedTransaction.userId, actualTransaction.userId)
+        assertEquals(expectedTransaction.date, actualTransaction.date)
+        // AssertEquals for double is deprecated??????
+        assert(expectedTransaction.amount == actualTransaction.amount)
+        assertEquals(expectedTransaction.currencyCode, actualTransaction.currencyCode)
+        assertEquals(expectedTransaction.description, actualTransaction.description)
+        assertEquals(expectedTransaction.category, actualTransaction.category)
+        assertEquals(expectedTransaction.fromAccount, actualTransaction.fromAccount)
+        assertEquals(expectedTransaction.fromNote, actualTransaction.fromNote)
+        assertEquals(expectedTransaction.toAccount, actualTransaction.toAccount)
+        assertEquals(expectedTransaction.toNote, actualTransaction.toNote)
     }
 }
