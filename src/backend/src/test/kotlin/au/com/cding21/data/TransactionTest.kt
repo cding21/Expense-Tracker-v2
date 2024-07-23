@@ -1,10 +1,10 @@
 package au.com.cding21.data
 
-import org.junit.Assert.assertEquals
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.test.Test
 import org.bson.Document
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 class TransactionTest {

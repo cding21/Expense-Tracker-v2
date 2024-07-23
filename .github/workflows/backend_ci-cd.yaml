@@ -30,14 +30,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      
-      - name: Test with Maven
+
+      - name: Clean Maven packages
         working-directory: src/backend/
-        run: mvn clean -B test 
+        run: mvn -B clean --file pom.xml
 
       - name: Build with Maven
         working-directory: src/backend/
         run: mvn -B package --file pom.xml
+      
+      - name: Test with Maven
+        working-directory: src/backend/
+        run: mvn -B test --file pom.xml
+
+
 
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
