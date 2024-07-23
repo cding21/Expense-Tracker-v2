@@ -11,6 +11,7 @@ class TransactionTest {
     @Test
     fun testToDocument() {
         val transaction = Transaction(
+            "",
             "testUser",
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
@@ -59,6 +60,7 @@ class TransactionTest {
             )
         )
         val expectedTransaction = Transaction(
+            "",
             "testUser",
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
@@ -81,6 +83,7 @@ class TransactionTest {
         val csvLine = "01/01/2022,\"-100.0\",description,category,fromAccount,,toAccount,"
         val userId = "testUser"
         val expectedTransaction = Transaction(
+            "",
             userId,
             LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
             -100.0,
