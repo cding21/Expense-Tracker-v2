@@ -270,6 +270,45 @@
                 </dependencies>
             </plugin>
             <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <version>3.2.1263</version>
+                <executions>
+                    <execution>
+                        <id>generate-frontend</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <jsonLibrary>jackson2</jsonLibrary>
+                            <classes>
+                                <class>au.com.cding21.data.User</class>
+                            </classes>
+                            <outputKind>module</outputKind>
+                            <outputFile>../frontend/generated-types/generated.ts</outputFile>
+                            <outputFileType>implementationFile</outputFileType>
+                            <customTypeMappings>org.bson.types.ObjectId:string</customTypeMappings>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-dashboard</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <jsonLibrary>jackson2</jsonLibrary>
+                            <classes>
+                                <class>au.com.cding21.data.User</class>
+                            </classes>
+                            <outputKind>module</outputKind>
+                            <outputFile>../dashboard/generated-types/generated.ts</outputFile>
+                            <outputFileType>implementationFile</outputFileType>
+                            <customTypeMappings>org.bson.types.ObjectId:string</customTypeMappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.2</version>

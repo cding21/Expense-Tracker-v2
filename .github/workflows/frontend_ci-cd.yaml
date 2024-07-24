@@ -24,6 +24,17 @@ jobs:
           node-version-file: 'src/frontend/.nvmrc'
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Generate types
+        working-directory: src/backend/
+        run: |
+          mvn clean install
+          mvn typescript-generator:generate@generate-frontend
       - name: Install dependencies
         working-directory: src/frontend/
         run: npm install
