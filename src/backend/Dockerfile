@@ -1,5 +1,5 @@
 # Start from a base image
-FROM mcr.microsoft.com/playwright:v1.38.0-jammy as build
+FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as build
 
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -19,7 +19,7 @@ COPY src ./src
 RUN mvn package
 
 # Start a new stage to minimize the final image size
-FROM mcr.microsoft.com/playwright:v1.38.0-jammy as package
+FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as package
 
 # Set the working directory
 WORKDIR /app
