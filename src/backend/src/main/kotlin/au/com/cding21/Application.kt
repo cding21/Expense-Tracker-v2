@@ -6,7 +6,6 @@ import au.com.cding21.security.token.TokenConfig
 import au.com.cding21.util.connectToMongoDB
 import io.ktor.server.application.*
 
-
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
