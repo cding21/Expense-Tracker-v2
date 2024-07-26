@@ -21,6 +21,10 @@ class MongoUserServiceImpl(
         return users.findOne { User::id eq ObjectId(userId) }
     }
 
+    override suspend fun getAllUsers(): List<User> {
+        return users.find().toList()
+    }
+
     override suspend fun getUserByUsername(username: String): User? {
         return users.findOne(User::username eq username)
     }

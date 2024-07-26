@@ -8,11 +8,10 @@ fun Application.configureAuth() {
         bearer("auth-bearer") {
             realm = "Access to bank-watcher-service"
             authenticate { token ->
-                if (token.token != "") {
-                    UserIdPrincipal("API")
-                } else {
-                    null
+                if (token.token != System.getenv("API_KEY")) {
+                    UserIdPrincipal(System.getenv("API_KEY"))
                 }
+                null
             }
         }
     }

@@ -1,6 +1,7 @@
 package au.com.cding21.routes
 
 import au.com.cding21.security.hashing.SHA256HashingService
+import au.com.cding21.security.encryption.RSAServiceImpl
 import au.com.cding21.security.token.JwtTokenService
 import au.com.cding21.security.token.TokenConfig
 import au.com.cding21.services.impl.MongoTransactionServiceImpl
@@ -32,7 +33,6 @@ fun Application.configureRouting(
     val hashingService = SHA256HashingService()
     val userService = MongoUserServiceImpl(db)
     val tokenService = JwtTokenService()
-
     val logger = LoggerFactory.getLogger("Routing")
 
     routing {
@@ -46,7 +46,7 @@ fun Application.configureRouting(
                 hashingService,
                 userService,
                 tokenService,
-                tokenConfig
+                tokenConfig,
             )
 
             authenticate("auth-jwt") {
@@ -70,6 +70,8 @@ fun Application.configureRouting(
                 // Swagger UI
                 swaggerUI(path = "openapi")
             }
+
+            configureInternalUserRoutes(userService)
         }
     }
 }

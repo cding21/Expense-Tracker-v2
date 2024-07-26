@@ -1,17 +1,21 @@
+import au.com.cding21.security.encryption.AESEncryptionServiceImpl
+import au.com.cding21.security.encryption.RSAServiceImpl
+import au.com.cding21.security.token.UnixTimeBasedSymmetricKeyService
 import auth.configureAuth
-import org.slf4j.LoggerFactory
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.auth.*
-import io.ktor.server.plugins.*
-import io.ktor.server.plugins.callloging.*
 import kotlinx.serialization.json.Json
-import org.slf4j.event.Level
+import java.util.*
 
 fun main() {
     embeddedServer(Netty, port = 3000, host = "0.0.0.0") {
@@ -22,12 +26,22 @@ fun main() {
         }
         configureAuth()
 
+        val client = HttpClient(CIO)
+        val keyService = UnixTimeBasedSymmetricKeyService(AESEncryptionServiceImpl())
+
         routing {
-            authenticate("auth-bearer") {
-                get("/") {
-                    LoggerFactory.getLogger("abc").info("call.request.origin.remoteHost")
-                    call.respond("Hello World!")
+            get("/") {
+                val encryption = keyService.encrypt(System.getenv("API_KEY"))
+                val bearerToken = "{\"encrypted\":\"${encryption.first}\",\"timeToken\":\"${encryption.second}\"}"
+                println(bearerToken)
+                val response = client.get("http://localhost:8080/api/v0/users/all") {
+                    headers {
+                        append(HttpHeaders.Authorization, "Bearer ${Base64.getEncoder().encodeToString(bearerToken.toByteArray())}")
+                    }
                 }
+                println(response.status)
+
+                call.respond(response.body<String>())
             }
         }
     }.start(true)
