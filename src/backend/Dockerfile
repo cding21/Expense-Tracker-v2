@@ -1,5 +1,9 @@
 # Start from a base image
-FROM maven:3.8.1-openjdk-11 as build
+FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as build
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y maven
 
 # Set the working directory
 WORKDIR /app
@@ -15,7 +19,7 @@ COPY src ./src
 RUN mvn package
 
 # Start a new stage to minimize the final image size
-FROM openjdk:11-jre-slim
+FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as package
 
 # Set the working directory
 WORKDIR /app
