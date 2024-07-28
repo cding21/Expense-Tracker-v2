@@ -3,7 +3,6 @@ package au.com.cding21
 import au.com.cding21.plugins.*
 import au.com.cding21.routes.configureRouting
 import au.com.cding21.security.encryption.AESEncryptionServiceImpl
-import au.com.cding21.security.encryption.RSAServiceImpl
 import au.com.cding21.security.token.TokenConfig
 import au.com.cding21.security.token.UnixTimeBasedSymmetricKeyService
 import au.com.cding21.util.connectToMongoDB
