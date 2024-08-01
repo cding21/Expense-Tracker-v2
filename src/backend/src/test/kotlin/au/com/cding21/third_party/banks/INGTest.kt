@@ -25,7 +25,7 @@ class INGTest {
             val page = context.newPage()
             page.navigate("https://www.ing.com.au/securebanking/")
             page.waitForResponse("https://www.ing.com.au/KeypadService/v1/KeypadService.svc/json/PinpadImages",
-                Page.WaitForResponseOptions().setTimeout(30000.0)) {}
+                Page.WaitForResponseOptions().setTimeout(60000.0)) {}
             val response = page.waitForResponse("https://www.ing.com.au/KeypadService/v1/KeypadService.svc/json/PinpadImages",
                 Page.WaitForResponseOptions().setTimeout(10000.0)) {}
             
