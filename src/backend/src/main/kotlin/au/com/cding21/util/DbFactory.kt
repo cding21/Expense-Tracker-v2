@@ -12,7 +12,6 @@ import org.bson.codecs.pojo.PojoCodecProvider
 import java.sql.Connection
 import java.sql.DriverManager
 
-
 /**
  * Establishes connection with a MongoDB database.
  *
@@ -39,19 +38,22 @@ fun Application.connectToMongoDB(): MongoDatabase {
     val credentials = user?.let { userVal -> password?.let { passwordVal -> "$userVal:$passwordVal@" } }.orEmpty()
     val uri = if (host == "127.0.0.1") "mongodb://$credentials$host:27017/?maxPoolSize=$maxPoolSize&w=majority" else "mongodb+srv://$credentials$host/?maxPoolSize=$maxPoolSize&w=majority"
 
-    val pojoCodecRegistry = fromProviders(
-        PojoCodecProvider.builder()
-            .automatic(true)
+    val pojoCodecRegistry =
+        fromProviders(
+            PojoCodecProvider.builder()
+                .automatic(true)
+                .build(),
+        )
+    val codecRegistry =
+        fromRegistries(
+            MongoClientSettings.getDefaultCodecRegistry(),
+            pojoCodecRegistry,
+        )
+    val settings =
+        MongoClientSettings.builder()
+            .applyConnectionString(ConnectionString(uri))
+            .codecRegistry(codecRegistry)
             .build()
-    )
-    val codecRegistry = fromRegistries(
-        MongoClientSettings.getDefaultCodecRegistry(),
-        pojoCodecRegistry
-    )
-    val settings = MongoClientSettings.builder()
-        .applyConnectionString(ConnectionString(uri))
-        .codecRegistry(codecRegistry)
-        .build()
 
     val mongoClient = MongoClients.create(settings)
     val database = mongoClient.getDatabase(databaseName)

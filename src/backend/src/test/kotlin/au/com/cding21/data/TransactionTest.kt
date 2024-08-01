@@ -1,43 +1,44 @@
 package au.com.cding21.data
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import org.bson.Document
 import org.junit.Assert.assertEquals
 import org.junit.Test
-
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class TransactionTest {
     @Test
     fun testToDocument() {
-        val transaction = Transaction(
-            "1234",
-            "testUser",
-            LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-            -100.0,
-            "AUD", // Default currency code to "AUD
-            "description",
-            "category",
-            "fromAccount",
-            "",
-            "toAccount",
-            ""
-        )
-        val expectedDocument = Document(
-            mapOf(
-                "id" to "1234",
-                "userId" to "testUser",
-                "date" to "01/01/2022",
-                "amount" to -100.0,
-                "currencyCode" to "AUD",
-                "description" to "description",
-                "category" to "category",
-                "fromAccount" to "fromAccount",
-                "fromNote" to "",
-                "toAccount" to "toAccount",
-                "toNote" to ""
+        val transaction =
+            Transaction(
+                "1234",
+                "testUser",
+                LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                -100.0,
+                "AUD", // Default currency code to "AUD
+                "description",
+                "category",
+                "fromAccount",
+                "",
+                "toAccount",
+                "",
             )
-        )
+        val expectedDocument =
+            Document(
+                mapOf(
+                    "id" to "1234",
+                    "userId" to "testUser",
+                    "date" to "01/01/2022",
+                    "amount" to -100.0,
+                    "currencyCode" to "AUD",
+                    "description" to "description",
+                    "category" to "category",
+                    "fromAccount" to "fromAccount",
+                    "fromNote" to "",
+                    "toAccount" to "toAccount",
+                    "toNote" to "",
+                ),
+            )
 
         val actualDocument = transaction.toDocument()
 
@@ -46,34 +47,36 @@ class TransactionTest {
 
     @Test
     fun testFromDocument() {
-        val document = Document(
-            mapOf(
-                "id" to "1234",
-                "userId" to "testUser",
-                "date" to "01/01/2022",
-                "amount" to -100.0,
-                "currencyCode" to "AUD",
-                "description" to "description",
-                "category" to "category",
-                "fromAccount" to "fromAccount",
-                "fromNote" to "",
-                "toAccount" to "toAccount",
-                "toNote" to ""
+        val document =
+            Document(
+                mapOf(
+                    "id" to "1234",
+                    "userId" to "testUser",
+                    "date" to "01/01/2022",
+                    "amount" to -100.0,
+                    "currencyCode" to "AUD",
+                    "description" to "description",
+                    "category" to "category",
+                    "fromAccount" to "fromAccount",
+                    "fromNote" to "",
+                    "toAccount" to "toAccount",
+                    "toNote" to "",
+                ),
             )
-        )
-        val expectedTransaction = Transaction(
-            "1234",
-            "testUser",
-            LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-            -100.0,
-            "AUD", // Default currency code to "AUD
-            "description",
-            "category",
-            "fromAccount",
-            "",
-            "toAccount",
-            ""
-        )
+        val expectedTransaction =
+            Transaction(
+                "1234",
+                "testUser",
+                LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                -100.0,
+                "AUD", // Default currency code to "AUD
+                "description",
+                "category",
+                "fromAccount",
+                "",
+                "toAccount",
+                "",
+            )
 
         val actualTransaction = Transaction.fromDocument(document)
 
@@ -84,19 +87,20 @@ class TransactionTest {
     fun testFromCsvLine() {
         val csvLine = "01/01/2022,\"-100.0\",description,category,fromAccount,,toAccount,"
         val userId = "testUser"
-        val expectedTransaction = Transaction(
-            "1234",
-            userId,
-            LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-            -100.0,
-            "AUD", // Default currency code to "AUD
-            "description",
-            "category",
-            "fromAccount",
-            "",
-            "toAccount",
-            ""
-        )
+        val expectedTransaction =
+            Transaction(
+                "1234",
+                userId,
+                LocalDate.parse("01/01/2022", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                -100.0,
+                "AUD", // Default currency code to "AUD
+                "description",
+                "category",
+                "fromAccount",
+                "",
+                "toAccount",
+                "",
+            )
 
         val actualTransaction = Transaction.fromCsvLine(csvLine, userId)
 

@@ -22,18 +22,23 @@ data class Transaction(
     val fromAccount: String?,
     val fromNote: String?,
     val toAccount: String?,
-    val toNote: String?
+    val toNote: String?,
 ) {
     fun toDocument(): Document = Document.parse(Json.encodeToString(this))
 
     companion object {
         private val json = Json { ignoreUnknownKeys = true }
+
         fun fromDocument(document: Document): Transaction = json.decodeFromString(document.toJson())
+
         /**
          * Static factory method that parses a CSV line to Transaction type. Due to no currency code being used in
          * ANZ's CSV export, the default currency code is set to "AUD"
          */
-        fun fromCsvLine(line: String, userId: String): Transaction {
+        fun fromCsvLine(
+            line: String,
+            userId: String,
+        ): Transaction {
             val cleanedLine = line.replace("\"", "").replace("\\s+".toRegex(), " ")
             val values = cleanedLine.split(",\\s*".toRegex()).toTypedArray()
             return Transaction(
@@ -47,19 +52,21 @@ data class Transaction(
                 values[4],
                 values[5],
                 values[6],
-                values[7]
+                values[7],
             )
         }
     }
 }
-
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = LocalDate::class)
 object LocalDateSerializer : KSerializer<LocalDate> {
     private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-    override fun serialize(encoder: Encoder, value: LocalDate) {
+    override fun serialize(
+        encoder: Encoder,
+        value: LocalDate,
+    ) {
         encoder.encodeString(value.format(formatter))
     }
 

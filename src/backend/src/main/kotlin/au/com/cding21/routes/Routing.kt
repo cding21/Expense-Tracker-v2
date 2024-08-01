@@ -19,11 +19,11 @@ import org.slf4j.LoggerFactory
 
 fun Application.configureRouting(
     db: MongoDatabase,
-    tokenConfig: TokenConfig
+    tokenConfig: TokenConfig,
 ) {
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
+            call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
         }
     }
 
@@ -36,7 +36,7 @@ fun Application.configureRouting(
     val logger = LoggerFactory.getLogger("Routing")
 
     routing {
-        route(System.getenv("API_VERSION") ?: "/api/v0"){
+        route(System.getenv("API_VERSION") ?: "/api/v0") {
             // Health check
             get("/health") {
                 call.respond(HttpStatusCode.OK)
@@ -46,7 +46,7 @@ fun Application.configureRouting(
                 hashingService,
                 userService,
                 tokenService,
-                tokenConfig
+                tokenConfig,
             )
 
             authenticate("auth-jwt") {
@@ -59,8 +59,10 @@ fun Application.configureRouting(
                     val requestIp = call.request.origin.remoteHost
                     if (!tokenIp.equals(requestIp)) {
                         // Log this event and do nothing
-                        logger.atWarn().log("User $userId is trying to access from a different IP. "
-                        + "{Request IP: $requestIp, Token IP: $tokenIp}")
+                        logger.atWarn().log(
+                            "User $userId is trying to access from a different IP. " +
+                                "{Request IP: $requestIp, Token IP: $tokenIp}",
+                        )
                     }
                 }
 

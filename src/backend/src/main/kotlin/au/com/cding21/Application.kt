@@ -13,12 +13,13 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val db = connectToMongoDB()
 
-    val tokenConfig = TokenConfig(
-        issuer = environment.config.property("jwt.issuer").getString(),
-        audience = environment.config.property("jwt.audience").getString(),
-        expiresIn = environment.config.property("jwt.expiresIn").getString().toLong(),
-        secret = environment.config.property("jwt.secret").getString(),
-    )
+    val tokenConfig =
+        TokenConfig(
+            issuer = environment.config.property("jwt.issuer").getString(),
+            audience = environment.config.property("jwt.audience").getString(),
+            expiresIn = environment.config.property("jwt.expiresIn").getString().toLong(),
+            secret = environment.config.property("jwt.secret").getString(),
+        )
 
     configureSecurity(tokenConfig, db)
     configureSerialization()

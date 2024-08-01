@@ -22,7 +22,7 @@ fun Route.authRoutes(
     hashingService: HashingService,
     userService: UserService,
     tokenService: TokenService,
-    tokenConfig: TokenConfig
+    tokenConfig: TokenConfig,
 ) {
     authenticate("auth-jwt") {
         get("/authenticate") {
@@ -42,11 +42,12 @@ fun Route.authRoutes(
             return@post
         }
         val saltedHash = hashingService.generateSaltedHash(req.password)
-        val newUser = User(
-            username = req.username,
-            password = saltedHash.hash,
-            salt = saltedHash.salt
-        )
+        val newUser =
+            User(
+                username = req.username,
+                password = saltedHash.hash,
+                salt = saltedHash.salt,
+            )
         val wasAcknowledged = userService.createUser(newUser)
         if (!wasAcknowledged) {
             call.respond(HttpStatusCode.Conflict)
@@ -68,27 +69,28 @@ fun Route.authRoutes(
             call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
             return@post
         }
-        val token = tokenService.generate(
-            tokenConfig,
-            user.password,
-            TokenClaim(
-                name = "userId",
-                value = user.id.toString()
-            ),
-            TokenClaim(
-                name = "ip",
-                value = call.request.origin.remoteHost,
+        val token =
+            tokenService.generate(
+                tokenConfig,
+                user.password,
+                TokenClaim(
+                    name = "userId",
+                    value = user.id.toString(),
+                ),
+                TokenClaim(
+                    name = "ip",
+                    value = call.request.origin.remoteHost,
+                ),
             )
-        )
         call.respond(HttpStatusCode.OK, AuthResponse(token))
     }
 }
 
 fun validateAuthRequest(user: AuthRequest): Boolean {
-    return user.username.isNotEmpty()
-            && user.password.isNotEmpty()
-            && user.password.length >= 8
-            && user.password.matches(Regex(".*[a-z].*"))
-            && user.password.matches(Regex(".*[0-9].*"))
-            && user.password.matches(Regex(".*[!@#\$%^&*()].*"))
+    return user.username.isNotEmpty() &&
+        user.password.isNotEmpty() &&
+        user.password.length >= 8 &&
+        user.password.matches(Regex(".*[a-z].*")) &&
+        user.password.matches(Regex(".*[0-9].*")) &&
+        user.password.matches(Regex(".*[!@#\$%^&*()].*"))
 }
