@@ -18,17 +18,27 @@ data class Account(
             val balancesArray = jsonObject.throwIfNullKey("balances").jsonArray
 
             return Account(
-                "${jsonObject.throwIfNullKey("branchCode").jsonPrimitive.content} ${jsonObject.throwIfNullKey("accountId").jsonPrimitive.content}",
+                "${jsonObject.throwIfNullKey(
+                    "branchCode",
+                ).jsonPrimitive.content} ${jsonObject.throwIfNullKey("accountId").jsonPrimitive.content}",
                 jsonObject.throwIfNullKey("accountName").jsonPrimitive.content,
-                CurrencyCode.fromString(jsonObject.throwIfNullKey("accountCurrency").jsonObject.throwIfNullKey("cmCode").jsonPrimitive.content),
-                balancesArray.filter { it.jsonObject.throwIfNullKey("type").jsonPrimitive.content == "Current Balance" }[0].jsonObject.throwIfNullKey("amountDetails").jsonObject.throwIfNullKey("amount").jsonPrimitive.content.toDouble(),
-                balancesArray.filter { it.jsonObject.throwIfNullKey("type").jsonPrimitive.content == "Available Balance" }[0].jsonObject.throwIfNullKey("amountDetails").jsonObject.throwIfNullKey("amount").jsonPrimitive.content.toDouble(),
-                )
+                CurrencyCode.fromString(
+                    jsonObject.throwIfNullKey("accountCurrency").jsonObject.throwIfNullKey("cmCode").jsonPrimitive.content,
+                ),
+                balancesArray.filter {
+                    it.jsonObject.throwIfNullKey("type").jsonPrimitive.content == "Current Balance"
+                }[0].jsonObject.throwIfNullKey("amountDetails").jsonObject.throwIfNullKey("amount").jsonPrimitive.content.toDouble(),
+                balancesArray.filter {
+                    it.jsonObject.throwIfNullKey("type").jsonPrimitive.content == "Available Balance"
+                }[0].jsonObject.throwIfNullKey("amountDetails").jsonObject.throwIfNullKey("amount").jsonPrimitive.content.toDouble(),
+            )
         }
 
         fun fromINGJson(jsonObject: JsonObject): Account {
             return Account(
-                "${jsonObject.throwIfNullKey("BSB").jsonPrimitive.content} ${jsonObject.throwIfNullKey("AccountNumber").jsonPrimitive.content}",
+                "${jsonObject.throwIfNullKey(
+                    "BSB",
+                ).jsonPrimitive.content} ${jsonObject.throwIfNullKey("AccountNumber").jsonPrimitive.content}",
                 jsonObject.throwIfNullKey("AccountName").jsonPrimitive.content,
                 CurrencyCode.AUD,
                 jsonObject.throwIfNullKey("CurrentBalance").jsonPrimitive.double,

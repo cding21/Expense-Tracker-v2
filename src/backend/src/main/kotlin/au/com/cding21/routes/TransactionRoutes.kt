@@ -13,28 +13,26 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.bson.types.ObjectId
 
-
-fun Route.transactionRoutes(
-    transactionService: MongoTransactionServiceImpl
-) {
+fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
     // Create transaction
     post("/transactions") {
         val principal = call.principal<JWTPrincipal>()
         val userId = principal!!.payload.getClaim("userId").asString()
         val transactionReq = call.receive<TransactionRequest>()
-        val transaction = Transaction(
-            ObjectId().toString(), // Generate a new ObjectId
-            userId,
-            transactionReq.date,
-            transactionReq.amount,
-            transactionReq.currencyCode,
-            transactionReq.description,
-            transactionReq.category,
-            transactionReq.fromAccount,
-            transactionReq.fromNote,
-            transactionReq.toAccount,
-            transactionReq.toNote
-        )
+        val transaction =
+            Transaction(
+                ObjectId().toString(), // Generate a new ObjectId
+                userId,
+                transactionReq.date,
+                transactionReq.amount,
+                transactionReq.currencyCode,
+                transactionReq.description,
+                transactionReq.category,
+                transactionReq.fromAccount,
+                transactionReq.fromNote,
+                transactionReq.toAccount,
+                transactionReq.toNote,
+            )
         println("transaction: $transaction")
         val id = transactionService.createTransaction(transaction)
         call.respond(HttpStatusCode.Created, id)
@@ -71,19 +69,20 @@ fun Route.transactionRoutes(
         val userId = principal!!.payload.getClaim("userId").asString()
         val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
         val transactionReq = call.receive<TransactionRequest>()
-        val transaction = Transaction(
-            id,
-            userId,
-            transactionReq.date,
-            transactionReq.amount,
-            transactionReq.currencyCode,
-            transactionReq.description,
-            transactionReq.category,
-            transactionReq.fromAccount,
-            transactionReq.fromNote,
-            transactionReq.toAccount,
-            transactionReq.toNote
-        )
+        val transaction =
+            Transaction(
+                id,
+                userId,
+                transactionReq.date,
+                transactionReq.amount,
+                transactionReq.currencyCode,
+                transactionReq.description,
+                transactionReq.category,
+                transactionReq.fromAccount,
+                transactionReq.fromNote,
+                transactionReq.toAccount,
+                transactionReq.toNote,
+            )
 
         transactionService.updateTransaction(id, transaction)?.also {
             it.userId.let { transactionUserId ->
@@ -113,12 +112,10 @@ fun Route.transactionRoutes(
         if (transactionToDelete.userId != userId) {
             call.respond(HttpStatusCode.Forbidden, "Unrelated user transaction")
             return@delete
-        }
-        else {
+        } else {
             transactionService.deleteTransaction(id)
             call.respond(HttpStatusCode.OK)
         }
-
     }
 
     // Upload transaction csv

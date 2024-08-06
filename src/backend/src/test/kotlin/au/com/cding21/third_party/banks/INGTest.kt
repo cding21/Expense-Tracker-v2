@@ -24,6 +24,7 @@ class INGTest {
             val context = browser.newContext()
             val page = context.newPage()
             page.navigate("https://www.ing.com.au/securebanking/")
+            // TODO: Temp fix to this test, will need longer term fix
             try {
                 page.waitForResponse("https://www.ing.com.au/KeypadService/v1/KeypadService.svc/json/PinpadImages",
                     Page.WaitForResponseOptions().setTimeout(10000.0)) {}
@@ -39,7 +40,7 @@ class INGTest {
                     assertEquals(validRefImages.size, 1)
                 }
             } catch (_ : TimeoutError ) { /* Do nothing */}
-
+            
             page.close()
             context.close()
         }

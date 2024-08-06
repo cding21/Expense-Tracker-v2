@@ -17,6 +17,7 @@ import java.util.regex.Pattern
  * List of extensions functions on existing types
  */
 fun String?.throwIfNull() = this ?: throw KotlinNullPointerException("Null string")
+
 // Converts string to MD5 Hash for ID purposes (insecure)
 fun String.md5Hash(): String {
     val md = MessageDigest.getInstance("MD5")
@@ -31,31 +32,45 @@ fun Response.isSuccess(): Boolean = this.status() - 200 in 0..99
 /**
  * Check if response code is 4XX
  */
-fun Response.isClientError(): Boolean = this.status() - 400 in 0 .. 99
+fun Response.isClientError(): Boolean = this.status() - 400 in 0..99
 
-fun JsonObject.throwIfNullKey(key: String): JsonElement = if (this[key] != null) this[key]!! else throw KotlinNullPointerException("$key doesn't exist on $this")
+fun JsonObject.throwIfNullKey(key: String): JsonElement =
+    if (this[key] != null) this[key]!! else throw KotlinNullPointerException("$key doesn't exist on $this")
 
 /**
  * Async variants of blocking webdriver operations
  */
 
-suspend fun Page.navigateAsync(url: String): Response = withContext(Dispatchers.IO) {
-    return@withContext this@navigateAsync.navigate(url)
-}
+suspend fun Page.navigateAsync(url: String): Response =
+    withContext(Dispatchers.IO) {
+        return@withContext this@navigateAsync.navigate(url)
+    }
 
-suspend fun Page.waitForSelectorAsync(selector: String, options: Page.WaitForSelectorOptions): ElementHandle = withContext(Dispatchers.IO) {
-    return@withContext this@waitForSelectorAsync.waitForSelector(selector, options)
-}
+suspend fun Page.waitForSelectorAsync(
+    selector: String,
+    options: Page.WaitForSelectorOptions,
+): ElementHandle =
+    withContext(Dispatchers.IO) {
+        return@withContext this@waitForSelectorAsync.waitForSelector(selector, options)
+    }
 
-suspend fun Page.waitForResponseAsync(url: String): Response = withContext(Dispatchers.IO) {
-    return@withContext this@waitForResponseAsync.waitForResponse(url) {}
-}
+suspend fun Page.waitForResponseAsync(url: String): Response =
+    withContext(Dispatchers.IO) {
+        return@withContext this@waitForResponseAsync.waitForResponse(url) {}
+    }
 
-suspend fun Page.waitForResponseAsync(url: String, options: WaitForResponseOptions): Response = withContext(Dispatchers.IO) {
-    return@withContext this@waitForResponseAsync.waitForResponse(url, options) {}
-}
+suspend fun Page.waitForResponseAsync(
+    url: String,
+    options: WaitForResponseOptions,
+): Response =
+    withContext(Dispatchers.IO) {
+        return@withContext this@waitForResponseAsync.waitForResponse(url, options) {}
+    }
 
-suspend fun Page.waitForUrlAsync(pattern: Pattern, options: WaitForURLOptions) = withContext(Dispatchers.IO) {
+suspend fun Page.waitForUrlAsync(
+    pattern: Pattern,
+    options: WaitForURLOptions,
+) = withContext(Dispatchers.IO) {
     return@withContext this@waitForUrlAsync.waitForURL(pattern)
 }
 

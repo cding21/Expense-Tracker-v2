@@ -15,5 +15,5 @@ data class TransactionRequest(
     val fromAccount: String,
     val fromNote: String,
     val toAccount: String,
-    val toNote: String
+    val toNote: String,
 )

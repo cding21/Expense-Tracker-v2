@@ -5,7 +5,7 @@ import javax.imageio.ImageIO
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-class ImageCodec (initialImage: BufferedImage) {
+class ImageCodec(initialImage: BufferedImage) {
     var image: BufferedImage = initialImage
 
     companion object {
@@ -18,7 +18,12 @@ class ImageCodec (initialImage: BufferedImage) {
         }
     }
 
-    fun crop(x: Int, y: Int, width: Int, height: Int): ImageCodec {
+    fun crop(
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+    ): ImageCodec {
         image = image.getSubimage(x, y, width, height)
         return this
     }

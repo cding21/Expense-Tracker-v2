@@ -8,8 +8,8 @@ import org.bson.types.ObjectId
 import org.litote.kmongo.*
 
 class MongoUserServiceImpl(
-    private val db: MongoDatabase
-): UserService {
+    private val db: MongoDatabase,
+) : UserService {
     private val users: MongoCollection<User>
 
     init {

@@ -5,11 +5,11 @@ import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Playwright
+import java.util.ArrayList
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
-import java.util.ArrayList
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -21,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
  * @param poolSize Number of browser instances in the pool
  * @param instanceSize Number of contexts within an individual browser instance
  */
-class QueueAllocatorImpl(poolSize: Int, instanceSize: Int): SynchronousAllocator {
+class QueueAllocatorImpl(poolSize: Int, instanceSize: Int) : SynchronousAllocator {
     private val instancePool: MutableList<Instance> = ArrayList()
     private val playwright: Playwright = Playwright.create()
     private val taskQueue: BlockingQueue<Action> = LinkedBlockingQueue()
@@ -29,7 +29,10 @@ class QueueAllocatorImpl(poolSize: Int, instanceSize: Int): SynchronousAllocator
 
     init {
         for (i in 0 until poolSize) {
-            val browser: Browser = playwright.chromium().launch(BrowserType.LaunchOptions().setHeadless(false).setArgs(listOf("--incognito")))
+            val browser: Browser =
+                playwright.chromium().launch(
+                    BrowserType.LaunchOptions().setHeadless(false).setArgs(listOf("--incognito")),
+                )
             for (j in 0 until instanceSize) {
                 val context = browser.newContext()
                 instancePool.add(Instance(browser, context, InstanceState.FREE))
@@ -51,10 +54,11 @@ class QueueAllocatorImpl(poolSize: Int, instanceSize: Int): SynchronousAllocator
         }
     }
 
-    override suspend fun acquire(): BrowserContext = suspendCoroutine {
-        taskQueue.put(Action(callback = it::resume))
-        processNext()
-    }
+    override suspend fun acquire(): BrowserContext =
+        suspendCoroutine {
+            taskQueue.put(Action(callback = it::resume))
+            processNext()
+        }
 
     override fun release(context: BrowserContext) {
         poolLock.withLock {

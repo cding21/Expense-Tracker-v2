@@ -24,7 +24,7 @@ import javax.security.auth.login.CredentialNotFoundException
 class ANZClientImpl(
     private val allocator: SynchronousAllocator,
     private val username: String,
-    private val password: String
+    private val password: String,
 ) : BankClient {
     private val DEFAULT_SELECTOR_WAIT_OPTIONS = Page.WaitForSelectorOptions().setTimeout(5000.0)
     private val DEFAULT_WAIT_TIME = 5000L
@@ -32,7 +32,10 @@ class ANZClientImpl(
     /**
      * Internal login function. Release instance upon task completion.
      */
-    private suspend inline fun <T> withLoggedInSession(permanent: Boolean = false, task: (context: BrowserContext, page: Page) -> T): T {
+    private suspend inline fun <T> withLoggedInSession(
+        permanent: Boolean = false,
+        task: (context: BrowserContext, page: Page) -> T,
+    ): T {
         val context = allocator.acquire()
         val page = context.newPage()
         page.navigateAsync("https://login.anz.com/internetbanking")
@@ -61,7 +64,9 @@ class ANZClientImpl(
         try {
             page.waitForUrlAsync(Pattern.compile("https://.+/broadcast-message"), Page.WaitForURLOptions().setTimeout(2000.0))
             page.getByText("Continue to Internet Banking").click()
-        } catch (_: TimeoutError) { /* NO-OP */ }
+        } catch (_: TimeoutError) {
+            // NO-OP
+        }
 
         val result = task(context, page)
         if (!permanent) {
@@ -82,7 +87,10 @@ class ANZClientImpl(
         return dataArray.map { BankTransaction.fromANZJson(it.jsonObject) }
     }
 
-    private suspend fun navigateToAccount(accountId: String, page: Page) {
+    private suspend fun navigateToAccount(
+        accountId: String,
+        page: Page,
+    ) {
         page.waitForSelectorAsync("#card-number", DEFAULT_SELECTOR_WAIT_OPTIONS)
         val accountTabs = page.querySelectorAll("#card-number")
         val filteredAccountTabs = accountTabs.filter { it.innerHTML() == accountId }
@@ -100,7 +108,10 @@ class ANZClientImpl(
         }
     }
 
-    override suspend fun getTransactions(accountId: String, limit: Int): List<BankTransaction> {
+    override suspend fun getTransactions(
+        accountId: String,
+        limit: Int,
+    ): List<BankTransaction> {
         return withLoggedInSession { _, page ->
             navigateToAccount(accountId, page)
             val response = page.waitForResponseAsync("https://authib.anz.com/ib/bff/accounts/v1/transactions")
@@ -113,13 +124,21 @@ class ANZClientImpl(
                     }
 
                     try {
-                        val response_ = page.waitForResponseAsync("https://authib.anz.com/ib/bff/accounts/v1/transactions", Page.WaitForResponseOptions().setTimeout(5000.0))
+                        val response_ =
+                            page.waitForResponseAsync(
+                                "https://authib.anz.com/ib/bff/accounts/v1/transactions",
+                                Page.WaitForResponseOptions().setTimeout(5000.0),
+                            )
                         if (response_.isSuccess()) {
                             results.addAll(parseTransactionsFromJsonString(response_.text()))
                         } else {
-                            throw ServerException("Unknown ANZ Transactions API error. Status: ${response.status()}, Data: ${response.body()}")
+                            throw ServerException(
+                                "Unknown ANZ Transactions API error. Status: ${response.status()}, Data: ${response.body()}",
+                            )
                         }
-                    } catch (_: TimeoutError) { /* No-Op */ }
+                    } catch (_: TimeoutError) {
+                        // No-Op
+                    }
                 }
                 if (results.size > limit) {
                     return@withLoggedInSession results.dropLast(results.size - limit)

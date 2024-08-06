@@ -11,17 +11,16 @@ import io.ktor.server.auth.jwt.*
 import kotlinx.coroutines.runBlocking
 import org.litote.kmongo.bson
 import org.litote.kmongo.json
-import org.slf4j.LoggerFactory
 
 fun Application.configureSecurity(
     config: TokenConfig,
-    db: MongoDatabase
+    db: MongoDatabase,
 ) {
     val userService = MongoUserServiceImpl(db)
     authentication {
         jwt("auth-jwt") {
             realm = this@configureSecurity.environment.config.property("jwt.realm").getString()
-            verifier{ jwt ->
+            verifier { jwt ->
                 // Get user's hashed pw for dynamic hashing signature
                 val blob = jwt.json.bson.getString("blob")
                 val token = JWT.decode(blob.value.toString())
@@ -42,9 +41,8 @@ fun Application.configureSecurity(
             validate { jwtCredential ->
                 if (jwtCredential.payload.audience.contains(config.audience)) {
                     JWTPrincipal(jwtCredential.payload)
-                }
-                else {
-                     null
+                } else {
+                    null
                 }
             }
         }

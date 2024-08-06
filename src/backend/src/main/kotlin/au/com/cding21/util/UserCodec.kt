@@ -8,10 +8,14 @@ import org.bson.codecs.CollectibleCodec
 import org.bson.codecs.DecoderContext
 import org.bson.codecs.EncoderContext
 
-class UserCodec: CollectibleCodec<User> {
+class UserCodec : CollectibleCodec<User> {
     private val userCodec: Codec<Document> = MongoClientSettings.getDefaultCodecRegistry().get(Document::class.java)
 
-    override fun encode(w: BsonWriter?, user: User?, context: EncoderContext?) {
+    override fun encode(
+        w: BsonWriter?,
+        user: User?,
+        context: EncoderContext?,
+    ) {
         val doc = Document()
         doc["username"] = user?.username
         doc["password"] = user?.password
@@ -35,14 +39,18 @@ class UserCodec: CollectibleCodec<User> {
         return User::class.java
     }
 
-    override fun decode(reader: BsonReader, decoderContext: DecoderContext): User {
+    override fun decode(
+        reader: BsonReader,
+        decoderContext: DecoderContext,
+    ): User {
         val document = userCodec.decode(reader, decoderContext)
-        val user = User(
-            document.getString("username"),
-            document.getString("password"),
-            document.getString("salt"),
-            document.getObjectId("_id")
-        )
+        val user =
+            User(
+                document.getString("username"),
+                document.getString("password"),
+                document.getString("salt"),
+                document.getObjectId("_id"),
+            )
         return user
     }
 }
