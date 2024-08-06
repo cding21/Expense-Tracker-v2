@@ -3,11 +3,10 @@ package au.com.cding21.routes
 import au.com.cding21.data.User
 import au.com.cding21.data.requests.AuthRequest
 import au.com.cding21.data.responses.AuthResponse
+import au.com.cding21.security.encryption.AsymmetricEncryptionService
 import au.com.cding21.security.hashing.HashingService
 import au.com.cding21.security.hashing.SaltedHash
-import au.com.cding21.security.token.TokenClaim
-import au.com.cding21.security.token.TokenConfig
-import au.com.cding21.security.token.TokenService
+import au.com.cding21.security.token.*
 import au.com.cding21.services.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -22,7 +21,7 @@ fun Route.authRoutes(
     hashingService: HashingService,
     userService: UserService,
     tokenService: TokenService,
-    tokenConfig: TokenConfig
+    tokenConfig: TokenConfig,
 ) {
     authenticate("auth-jwt") {
         get("/authenticate") {
