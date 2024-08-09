@@ -5,7 +5,7 @@ import { useDisclosure } from '@mantine/hooks';
 import Transaction, { TransactionProps } from '../Transaction/Transaction';
 
 export function TransactionListItem({ transaction }: TransactionProps) {
-  const { toAccount, amount, date } = transaction;
+  const { amount, date, toAccount } = transaction;
   const [opened, { open, close }] = useDisclosure();
 
   return (
