@@ -41,6 +41,13 @@ fun Route.authRoutes(
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
+
+        // Check if username already exists
+        if (userService.getUserByUsername(req.username) != null) {
+            call.respond(HttpStatusCode.Conflict, "Username already exists")
+            return@post
+        }
+
         val saltedHash = hashingService.generateSaltedHash(req.password)
         val newUser =
             User(
