@@ -2,10 +2,7 @@ package au.com.cding21.third_party.banks
 
 import au.com.cding21.third_party.banks.util.ImageCodec
 import au.com.cding21.third_party.banks.util.throwIfNullKey
-import au.com.cding21.third_party.banks.util.waitForResponseAsync
-import au.com.cding21.third_party.banks.util.waitForSelectorAsync
 import com.microsoft.playwright.*
-import com.microsoft.playwright.options.LoadState
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
