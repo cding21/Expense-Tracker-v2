@@ -4,20 +4,18 @@ import classes from './Transaction.module.css';
 import { FaArrowRight } from 'react-icons/fa';
 
 export interface TransactionProps {
-  transaction: {
-    userId: string;
-    date: string;
-    amount: number;
-    description: string;
-    category: string;
-    fromAccount: string;
-    fromNote: string;
-    toAccount: string;
-    toNote: string;
-  };
+  userId: string;
+  date: string;
+  amount: number;
+  description: string;
+  category: string;
+  fromAccount: string;
+  fromNote: string;
+  toAccount: string;
+  toNote: string;
 };
 
-const Transaction: React.FC<TransactionProps> = ({ transaction }) => {
+const Transaction: React.FC<TransactionProps> = (transaction) => {
   const { date, amount, description, category, fromAccount, fromNote, toAccount, toNote } =
     transaction;
   return (
