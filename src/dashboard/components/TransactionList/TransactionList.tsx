@@ -8,11 +8,11 @@ export interface TransactionListProps {
   transactions : TransactionProps[];
 };
 
-export function TransactionList({ transactions }: TransactionListProps) {
+export function TransactionList(transactionsProps: TransactionListProps) {
   return (
     <Stack my="xl">
-      {transactions.map((transaction, index) => (
-        <TransactionListItem key={index} transaction={transaction} />
+      {transactionsProps.transactions.map((transaction, index) => (
+        <TransactionListItem key={index} {...transaction} />
       ))}
     </Stack>
   );
