@@ -2,25 +2,14 @@
 
 import { logout } from '@/auth';
 import { Button } from '@mantine/core';
-import { QueryClient, useMutation, QueryClientProvider } from '@tanstack/react-query';
-
-// Create a client
-const queryClient = new QueryClient();
+import { useMutation } from '@tanstack/react-query';
 
 export function SignOut() {
-	return (
-		<QueryClientProvider client={queryClient}>
-			<SignOutComponent />
-		</QueryClientProvider>
-	);
-}
-
-export function SignOutComponent() {
 	const mutation = useMutation({
 		mutationFn: () => logout(),
 		onSuccess: () => {
-			// Reload the page
-			window.location.href = "/sign-in";
+			// Redirect to the sign-in page
+			window.location.href = '/sign-in';
 		},
 		onError: (error) => {
 			console.log(error);

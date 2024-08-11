@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   TextInput,
   PasswordInput,
@@ -15,34 +15,36 @@ import {
 } from '@mantine/core';
 import classes from './SignIn.module.css';
 import { login } from '@/auth';
+import { useMutation } from '@tanstack/react-query';
+import { UserLogin } from '@/models/user.model';
+import { useForm } from '@mantine/form';
 
 export function SignIn() {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+  const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: { username: '', password: '' },
+
+    // functions will be used to validate values at corresponding key
+    validate: {
+      username: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
+      password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : null),
+    },
   });
-  const [error, setError] = useState(false);
-
-  const handleSubmit = async () => {
-    try {
-      await login(formData);
-      setError(false);
+  
+  const mutation = useMutation({
+    mutationFn: (e: UserLogin) => login(e),
+    onSuccess: () => {
+      // Redirect to dashboard page
       window.location.href = '/';
-    } catch (e) {
-      if (e instanceof Error) {
-        // Display an error message to the user
-        setError(true);
-      }
-    }
-  };
-
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+    },
+    onError: (error) => {
+      console.error(error);
+      form.setErrors({ 
+        username: error.message, 
+        password: error.message 
+      });
+    },
+  });
 
   return (
     <Container size={420} my={40}>
@@ -63,43 +65,49 @@ export function SignIn() {
       </Text>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <TextInput
-          name="username"
-          label="Username"
-          placeholder="Your username"
-          required
-          onChange={handleChange}
-          error={error}
-        />
-        <PasswordInput
-          name="password"
-          label="Password"
-          placeholder="Your password"
-          required
-          mt="md"
-          onChange={handleChange}
-          error={error}
-        />
-        <Group justify="space-between" mt="lg">
-          <Checkbox label="Remember me" />
-          <Anchor
-            component="button"
-            size="sm"
-            onClick={() => {
-              window.location.href = '/forgot-password';
-            }}
+        <form
+            onSubmit={form.onSubmit((values) =>
+              mutation.mutate({ username: values.username, password: values.password })
+            )}
           >
-            Forgot password?
-          </Anchor>
-        </Group>
-        {error && (
-          <Text c="red" mt="md" ta="center">
-            Invalid username/password
-          </Text>
-        )}
-        <Button name="Sign in" fullWidth mt="xl" onClick={() => handleSubmit()}>
-          Sign in
-        </Button>
+          <TextInput
+            name="username"
+            label="Username"
+            placeholder="Your username"
+            required
+            key={form.key('username')}
+            {...form.getInputProps('username')}
+          />
+          <PasswordInput
+            name="password"
+            label="Password"
+            placeholder="Your password"
+            required
+            mt="md"
+            key={form.key('password')}
+            {...form.getInputProps('password')}
+          />
+          <Group justify="space-between" mt="lg">
+            <Checkbox label="Remember me" />
+            <Anchor
+              component="button"
+              size="sm"
+              onClick={() => {
+                window.location.href = '/forgot-password';
+              }}
+            >
+              Forgot password?
+            </Anchor>
+          </Group>
+          {mutation.isError && (
+            <Text c="red" mt="md" ta="center">
+              Invalid username/password
+            </Text>
+          )}
+          <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
+            Sign in
+          </Button>
+        </form>
       </Paper>
     </Container>
   );

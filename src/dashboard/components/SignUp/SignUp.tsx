@@ -12,50 +12,41 @@ import {
   Anchor,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import classes from './SignUp.module.css';
 import { signUp } from '@/auth';
-
-// Create a client
-const queryClient = new QueryClient();
+import { UserLogin } from '@/models/user.model';
 
 export function SignUp() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <SignUpComponent />
-    </QueryClientProvider>
-  );
-}
-
-export function SignUpComponent() {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '', confirmPassword: '' },
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
-      password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : null),
+      username: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : mutation.isError),
+      password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : mutation.isError),
       confirmPassword: (value, values) =>
-        value !== values.password ? 'Passwords do not match' : null,
+        value !== values.password ? 'Passwords do not match' : mutation.isError,
     },
+
   });
 
-  type SignUpData = {
-    username: string;
-    password: string;
-  };
-
   const mutation = useMutation({
-    mutationFn: (e: SignUpData) => signUp(e),
+    mutationFn: (e: UserLogin) => signUp(e),
     onSuccess: (data) => {
       console.log(data);
       // Redirect to sign-in page
       window.location.href = '/sign-in';
     },
     onError: (error) => {
-      console.log(error);
-    },
+      console.error(error);
+      form.setErrors({ 
+        username: error.message, 
+        password: error.message, 
+        confirmPassword: error.message 
+      });
+    }
   });
 
   return (
@@ -108,11 +99,6 @@ export function SignUpComponent() {
             key={form.key('confirmPassword')}
             {...form.getInputProps('confirmPassword')}
           />
-          {mutation.error && (
-            <Text mt="xl" ta="center" color="red">
-              {mutation.error.message}
-            </Text>
-          )}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
             Sign up
           </Button>
