@@ -28,7 +28,7 @@ export function SignIn() {
       await login(formData);
       setError(false);
       window.location.href = '/';
-    } catch (e: any) {
+    } catch (e) {
       if (e instanceof Error) {
         // Display an error message to the user
         setError(true);
