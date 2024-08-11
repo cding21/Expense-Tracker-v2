@@ -4,14 +4,14 @@ import { Card, Flex, Modal, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Transaction, { TransactionProps } from '../Transaction/Transaction';
 
-export function TransactionListItem( transaction: TransactionProps) {
+export function TransactionListItem( { transaction } : TransactionProps) {
   const { amount, date, toAccount } = transaction;
   const [opened, { open, close }] = useDisclosure();
 
   return (
     <>
       <Modal opened={opened} onClose={close} title="Transaction Details" centered radius="md">
-        <Transaction {...transaction} />
+        <Transaction transaction={transaction} />
       </Modal>
 
       <Card withBorder onClick={open}>

@@ -20,7 +20,7 @@ export function Dashboard() {
       </Title>
 			<Text ta="center">Welcome to your dashboard</Text>
 			<Text ta="center">More to come soon...</Text>
-      <TransactionList {...mockTransactionList}/>
+      <TransactionList transaction={mockTransactionList}/>
 			<SignOut />
       <ColorSchemeToggle />
     </Container>
