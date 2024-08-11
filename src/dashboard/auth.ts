@@ -20,7 +20,7 @@ export async function login(loginData: UserLogin) {
     cookies().set('token', resp.token, { sameSite: 'strict' });
   } else {
     const resp = await response.text();
-    throw new Error('Login failed: ' + resp);
+    throw new Error(resp);
   }
 }
 
@@ -41,7 +41,7 @@ export async function signUp(signUpData: UserLogin) {
     return resp;
   } else {
     const resp = await response.text();
-    throw new Error('Sign-up failed: ' + resp);
+    throw new Error(resp);
   }
 }
 
