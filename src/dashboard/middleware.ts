@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const isAuthenticated = cookies().get('token') !== undefined;
-  console.log('The user is authenticated: ', isAuthenticated);
   return !isAuthenticated
     ? NextResponse.redirect(new NextURL('/sign-in', request.url))
     : NextResponse.next();
