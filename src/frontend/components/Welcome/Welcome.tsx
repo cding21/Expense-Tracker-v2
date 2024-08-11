@@ -5,7 +5,7 @@ export function Welcome() {
   return (
     <>
       <Title className={classes.title} ta="center" mt={200}>
-        Welcome to{' '}
+        Welcome to{' '}<br></br>
         <Text
           inherit
           variant="gradient"
@@ -16,8 +16,6 @@ export function Welcome() {
         </Text>
       </Title>
       <Text c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl" mb={250}>
-        This starter Next.js project is a minimal setup for Charlie&apos;s Ultimate Expense Tracker
-        v2.{' '}
         <Anchor href="https://github.com/cding21/Expense-Tracker-v2" size="lg">
           Click here
         </Anchor>{' '}
