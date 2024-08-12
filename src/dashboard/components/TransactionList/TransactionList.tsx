@@ -2,15 +2,29 @@
 
 import { Stack } from '@mantine/core';
 import { TransactionListItem } from './TransactionListItem';
-import { TransactionProps } from '../Transaction/Transaction';
 
+export interface TransactionListProps {
+  transactions: {
+    userId: string;
+    date: string;
+    amount: number;
+    description: string;
+    category: string;
+    fromAccount: string;
+    fromNote: string;
+    toAccount: string;
+    toNote: string;
+    }[];
+}
 
-export function TransactionList(transactions: TransactionProps[]) {
+const TransactionList: React.FC<TransactionListProps> = ({ transactions }) =>  {
   return (
     <Stack my="xl">
       {transactions.map((transaction, index) => (
-        <TransactionListItem key={index} {...transaction} />
+        <TransactionListItem key={index} transaction={transaction.transaction} />
       ))}
     </Stack>
   );
 }
+
+export default TransactionList;

@@ -8,7 +8,7 @@ import {
 } from '@mantine/core';
 import classes from './Dashboard.module.css';
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
-import { TransactionList } from '../TransactionList/TransactionList';
+import TransactionList from '../TransactionList/TransactionList';
 import { mockTransactionList } from '@/mockTransaction';
 import { SignOut } from '../SignOut/SignOut';
 
@@ -20,7 +20,7 @@ export function Dashboard() {
       </Title>
 			<Text ta="center">Welcome to your dashboard</Text>
 			<Text ta="center">More to come soon...</Text>
-      <TransactionList transaction={mockTransactionList}/>
+      <TransactionList transactions={mockTransactionList}/>
 			<SignOut />
       <ColorSchemeToggle />
     </Container>
