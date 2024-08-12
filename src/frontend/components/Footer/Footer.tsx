@@ -1,7 +1,7 @@
 'use client';
 
 import { Container, Group, Anchor, Loader, Text } from '@mantine/core';
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import classes from './Footer.module.css';
 
 const links = [
@@ -12,28 +12,21 @@ const links = [
 ];
 
 async function probeBackend() {
-  try {
-    // Provide a default URL if BACKEND_URL is undefined
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
-    const res = await fetch(`${backendUrl}/health`);
-    return res;
-  } catch (e) {
-    return { ok: false };
+  // Provide a default URL if BACKEND_URL is undefined
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
+  const res = await fetch(`${backendUrl}/health`);
+  if (res.status === 200) {
+    return { ok: true };
   }
+  throw new Error('Server may be down');
 }
 
 export function Footer() {
-  const [serverStatus, setServerStatus] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const result = async () => {
-    const res = await probeBackend();
-    setLoading(false);
-    setServerStatus(res.ok);
-  };
-
-  useEffect(() => {
-    setInterval(result, 10000);
-  }, []);
+  const { isSuccess, isLoading } = useQuery({
+    queryKey: ['probeBackend'],
+    queryFn: () => probeBackend(),
+    refetchInterval: 5000,
+  });
 
   const items = links.map((link) => (
     <Anchor<'a'>
@@ -54,8 +47,8 @@ export function Footer() {
       <Container className={classes.inner}>
         <Text c="dimmed" size="sm">
           Current server status: &nbsp;
-          <span key="status" style={{ color: serverStatus ? 'green' : 'red' }}>
-            {loading ? <Loader size={15} /> : '⬤'}
+          <span key="status" style={{ color: isSuccess ? 'green' : 'red' }}>
+            {isLoading ? <Loader size={15} /> : '⬤'}
           </span>
         </Text>
         <Group className={classes.links}>{items}</Group>

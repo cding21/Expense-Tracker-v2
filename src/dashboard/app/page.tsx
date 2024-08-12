@@ -1,10 +1,10 @@
 import { Container } from '@mantine/core';
-import { TransactionList } from '@/components/TransactionList/TransactionList';
+import { Dashboard } from '@/components/Dashboard/Dashboard';
 
 export default function HomePage() {
   return (
     <Container>
-      <TransactionList />
+      <Dashboard />
     </Container>
   );
 }

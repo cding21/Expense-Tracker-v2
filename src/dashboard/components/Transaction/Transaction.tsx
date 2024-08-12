@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Card, Flex, Group, Text } from '@mantine/core';
+import { FaArrowRight } from 'react-icons/fa';
 import classes from './Transaction.module.css';
 
-export type TransactionProps = {
+export interface TransactionProps {
   transaction: {
     userId: string;
     date: string;
@@ -14,30 +15,40 @@ export type TransactionProps = {
     toAccount: string;
     toNote: string;
   };
-};
+}
 
 const Transaction: React.FC<TransactionProps> = ({ transaction }) => {
-  const { userId, date, amount, description, category, fromAccount, fromNote, toAccount, toNote } =
-    transaction;
+  const { date, amount, description, category, fromAccount, fromNote, toAccount } = transaction;
   return (
-    <Box maw={400}>
+    <Box maw={450}>
       <Flex align="center" justify="center" bg="blue" className={classes.category}>
         <Text c="white" size="xs">
           {category}
         </Text>
       </Flex>
       <Card shadow="sm" radius="md">
-        <Text>{userId}</Text>
-        <Text>{date}</Text>
-        <Text>{amount}</Text>
-        <Text>{description}</Text>
-        <Text>{category}</Text>
         <Group>
+          <Text fw={500}>Date:</Text>
+          <Text>{date}</Text>
+        </Group>
+        <Group>
+          <Text fw={500}>Amount:</Text>
+          <Text>{amount}</Text>
+        </Group>
+        <Group>
+          <Text fw={500}>Description:</Text>
+          <Text>{description}</Text>
+        </Group>
+        <Group>
+          <Text fw={500}>Accounts:</Text>
           <Text>{fromAccount}</Text>
+          <FaArrowRight />
           <Text>{toAccount}</Text>
         </Group>
-        <Text>{fromNote}</Text>
-        <Text>{toNote}</Text>
+        <Group>
+          <Text fw={500}>Note:</Text>
+          <Text>{fromNote}</Text>
+        </Group>
       </Card>
     </Box>
   );

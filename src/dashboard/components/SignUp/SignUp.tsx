@@ -4,43 +4,46 @@ import React from 'react';
 import {
   TextInput,
   PasswordInput,
-  Checkbox,
-  Anchor,
   Paper,
   Title,
   Text,
   Container,
-  Group,
   Button,
+  Anchor,
 } from '@mantine/core';
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from '@mantine/form';
-import classes from './SignIn.module.css';
-import { login } from '@/auth';
+import { useMutation } from '@tanstack/react-query';
+import classes from './SignUp.module.css';
+import { signUp } from '@/auth';
 import { UserLogin } from '@/models/user.model';
 
-export function SignIn() {
+export function SignUp() {
   const form = useForm({
     mode: 'uncontrolled',
-    initialValues: { username: '', password: '' },
+    initialValues: { username: '', password: '', confirmPassword: '' },
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
-      password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : null),
+      username: (value) =>
+        value.length < 2 ? 'Name must have at least 2 letters' : mutation.isError,
+      password: (value) =>
+        value.length < 6 ? 'Password must have at least 6 characters' : mutation.isError,
+      confirmPassword: (value, values) =>
+        value !== values.password ? 'Passwords do not match' : mutation.isError,
     },
   });
 
   const mutation = useMutation({
-    mutationFn: (e: UserLogin) => login(e),
+    mutationFn: (e: UserLogin) => signUp(e),
     onSuccess: () => {
-      // Redirect to dashboard page
-      window.location.href = '/';
+      // Redirect to sign-in page
+      window.location.href = '/sign-in';
     },
     onError: () => {
       form.setErrors({
         username: ' ',
         password: ' ',
+        confirmPassword: ' ',
       });
     },
   });
@@ -48,18 +51,18 @@ export function SignIn() {
   return (
     <Container size={420} my={40}>
       <Title ta="center" className={classes.title}>
-        Welcome back!
+        Create account
       </Title>
-      <Text c="dimmed" size="sm" ta="center" mt={5}>
-        Do not have an account yet?{' '}
+      <Text c="dimmed" size="sm" ta="center" mt="5">
+        Already have an account?{' '}
         <Anchor
           size="sm"
           component="button"
           onClick={() => {
-            window.location.href = '/sign-up';
+            window.location.href = '/sign-in';
           }}
         >
-          Create account
+          Sign-in
         </Anchor>
       </Text>
 
@@ -86,25 +89,22 @@ export function SignIn() {
             key={form.key('password')}
             {...form.getInputProps('password')}
           />
-          <Group justify="space-between" mt="lg">
-            <Checkbox label="Remember me" />
-            <Anchor
-              component="button"
-              size="sm"
-              onClick={() => {
-                window.location.href = '/forgot-password';
-              }}
-            >
-              Forgot password?
-            </Anchor>
-          </Group>
+          <PasswordInput
+            name="confirm-password"
+            label="Confirm password"
+            placeholder="Your confirm password"
+            required
+            mt="md"
+            key={form.key('confirmPassword')}
+            {...form.getInputProps('confirmPassword')}
+          />
           {mutation.isError && (
             <Text c="red" mt="md" ta="center">
-              Invalid username/password
+              Sign-up failed
             </Text>
           )}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
-            Sign in
+            Sign up
           </Button>
         </form>
       </Paper>
