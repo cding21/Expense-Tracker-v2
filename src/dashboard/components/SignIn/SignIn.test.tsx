@@ -53,10 +53,7 @@ describe('SignIn', () => {
     );
 
     // Mock the login function to simulate a failed login
-    const mockLogin = jest.fn().mockRejectedValue(new Error('Login failed'));
-    jest.mock('../../auth', () => ({
-      login: mockLogin,
-    }));
+    global.fetch = jest.fn().mockRejectedValue(new Error('Login failed'));
 
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
@@ -65,7 +62,7 @@ describe('SignIn', () => {
 
     // Act
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+    fireEvent.change(passwordInput, { target: { value: 'AVerySecurePassword!234' } });
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
