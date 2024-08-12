@@ -55,7 +55,7 @@ export function Header() {
       href={dashboardURL}
       mt="md"
       target="_blank"
-      style={{ display: 'fixed', justifyContent: 'center' }}
+      style={{ display: 'flex', justifyContent: 'center' }}
     >
       Dashboard
     </Button>
