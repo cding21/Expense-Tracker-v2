@@ -1,9 +1,8 @@
 'use client';
 
 import { Container, Group, Anchor, Loader, Text } from '@mantine/core';
-import { useState, useEffect } from 'react';
-import classes from './Footer.module.css';
 import { useQuery } from '@tanstack/react-query';
+import classes from './Footer.module.css';
 
 const links = [
   { link: 'contact', label: 'Contact' },
@@ -18,9 +17,8 @@ async function probeBackend() {
   const res = await fetch(`${backendUrl}/health`);
   if (res.status === 200) {
     return { ok: true };
-  } else {
-    throw new Error('Server may be down');
   }
+  throw new Error('Server may be down');
 }
 
 export function Footer() {

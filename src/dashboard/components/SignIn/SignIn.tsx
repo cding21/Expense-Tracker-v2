@@ -37,7 +37,7 @@ export function SignIn() {
       // Redirect to dashboard page
       window.location.href = '/';
     },
-    onError: (error) => {
+    onError: () => {
       form.setErrors({
         username: ' ',
         password: ' ',

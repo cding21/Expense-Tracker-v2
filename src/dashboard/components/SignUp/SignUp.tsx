@@ -39,7 +39,7 @@ export function SignUp() {
       // Redirect to sign-in page
       window.location.href = '/sign-in';
     },
-    onError: (error) => {
+    onError: () => {
       form.setErrors({
         username: ' ',
         password: ' ',
