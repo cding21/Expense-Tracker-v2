@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Card, Flex, Group, Text } from '@mantine/core';
-import classes from './Transaction.module.css';
 import { FaArrowRight } from 'react-icons/fa';
+import classes from './Transaction.module.css';
 
 export interface TransactionProps {
   transaction: {
@@ -15,11 +15,10 @@ export interface TransactionProps {
     toAccount: string;
     toNote: string;
   };
-};
+}
 
 const Transaction: React.FC<TransactionProps> = ({ transaction }) => {
-  const { date, amount, description, category, fromAccount, fromNote, toAccount, toNote } =
-    transaction;
+  const { date, amount, description, category, fromAccount, fromNote, toAccount } = transaction;
   return (
     <Box maw={450}>
       <Flex align="center" justify="center" bg="blue" className={classes.category}>
@@ -48,7 +47,7 @@ const Transaction: React.FC<TransactionProps> = ({ transaction }) => {
         </Group>
         <Group>
           <Text fw={500}>Note:</Text>
-          <Text >{fromNote}</Text>
+          <Text>{fromNote}</Text>
         </Group>
       </Card>
     </Box>

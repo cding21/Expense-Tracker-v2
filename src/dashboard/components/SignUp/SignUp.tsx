@@ -24,29 +24,28 @@ export function SignUp() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : mutation.isError),
-      password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : mutation.isError),
+      username: (value) =>
+        value.length < 2 ? 'Name must have at least 2 letters' : mutation.isError,
+      password: (value) =>
+        value.length < 6 ? 'Password must have at least 6 characters' : mutation.isError,
       confirmPassword: (value, values) =>
         value !== values.password ? 'Passwords do not match' : mutation.isError,
     },
-
   });
 
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => signUp(e),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       // Redirect to sign-in page
       window.location.href = '/sign-in';
     },
     onError: (error) => {
-      console.error(error);
-      form.setErrors({ 
-        username: error.message, 
-        password: error.message, 
-        confirmPassword: error.message 
+      form.setErrors({
+        username: error.message,
+        password: error.message,
+        confirmPassword: error.message,
       });
-    }
+    },
   });
 
   return (

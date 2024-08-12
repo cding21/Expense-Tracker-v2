@@ -13,11 +13,11 @@ import {
   Group,
   Button,
 } from '@mantine/core';
+import { useMutation } from '@tanstack/react-query';
+import { useForm } from '@mantine/form';
 import classes from './SignIn.module.css';
 import { login } from '@/auth';
-import { useMutation } from '@tanstack/react-query';
 import { UserLogin } from '@/models/user.model';
-import { useForm } from '@mantine/form';
 
 export function SignIn() {
   const form = useForm({
@@ -30,7 +30,7 @@ export function SignIn() {
       password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : null),
     },
   });
-  
+
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => login(e),
     onSuccess: () => {
@@ -38,10 +38,9 @@ export function SignIn() {
       window.location.href = '/';
     },
     onError: (error) => {
-      console.error(error);
-      form.setErrors({ 
-        username: error.message, 
-        password: error.message 
+      form.setErrors({
+        username: error.message,
+        password: error.message,
       });
     },
   });
@@ -66,10 +65,10 @@ export function SignIn() {
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form
-            onSubmit={form.onSubmit((values) =>
-              mutation.mutate({ username: values.username, password: values.password })
-            )}
-          >
+          onSubmit={form.onSubmit((values) =>
+            mutation.mutate({ username: values.username, password: values.password })
+          )}
+        >
           <TextInput
             name="username"
             label="Username"

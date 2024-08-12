@@ -22,9 +22,7 @@ export default function RootLayout({ children }: { children: any }) {
       </head>
       <body>
         <Providers>
-          <MantineProvider theme={theme}>
-            {children}
-          </MantineProvider>
+          <MantineProvider theme={theme}>{children}</MantineProvider>
         </Providers>
       </body>
     </html>

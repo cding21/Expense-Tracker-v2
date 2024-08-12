@@ -34,7 +34,7 @@ export async function signUp(signUpData: UserLogin) {
     },
     body: JSON.stringify(signUpData),
   });
-  
+
   // Check if the login was successful
   if (response.status === 200) {
     const resp = await response.text();

@@ -14,10 +14,11 @@ export interface TransactionListProps {
     fromNote: string;
     toAccount: string;
     toNote: string;
-    }[];
+  }[];
 }
 
-const TransactionList: React.FC<TransactionListProps> = ({ transactions }) =>  {
+// eslint-disable-next-line arrow-body-style
+const TransactionList: React.FC<TransactionListProps> = ({ transactions }) => {
   return (
     <Stack my="xl">
       {transactions.map((transaction, index) => (
@@ -25,6 +26,6 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions }) =>  {
       ))}
     </Stack>
   );
-}
+};
 
 export default TransactionList;
