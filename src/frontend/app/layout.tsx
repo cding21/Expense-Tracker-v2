@@ -29,7 +29,6 @@ export default function RootLayout({ children }: { children: any }) {
             {children}
             <Footer />
           </Providers>
-
         </MantineProvider>
       </body>
     </html>

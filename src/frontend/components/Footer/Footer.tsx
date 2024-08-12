@@ -16,10 +16,9 @@ async function probeBackend() {
   // Provide a default URL if BACKEND_URL is undefined
   const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
   const res = await fetch(`${backendUrl}/health`);
-  if(res.status === 200) {
+  if (res.status === 200) {
     return { ok: true };
-  }
-  else {
+  } else {
     throw new Error('Server may be down');
   }
 }
@@ -29,7 +28,7 @@ export function Footer() {
     queryKey: ['probeBackend'],
     queryFn: () => probeBackend(),
     refetchInterval: 5000,
-  })
+  });
 
   const items = links.map((link) => (
     <Anchor<'a'>

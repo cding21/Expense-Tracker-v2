@@ -1,6 +1,17 @@
 'use client';
 
-import { Menu, Group, Center, Burger, Container, Button, Anchor, Accordion, Stack, Drawer } from '@mantine/core';
+import {
+  Menu,
+  Group,
+  Center,
+  Burger,
+  Container,
+  Button,
+  Anchor,
+  Accordion,
+  Stack,
+  Drawer,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconFileInfo, IconHelpHexagon } from '@tabler/icons-react';
 import classes from './Header.module.css';
@@ -39,11 +50,11 @@ export function Header() {
   ));
 
   mobileItems.push(
-    <Button 
-      component="a" 
-      href={dashboardURL} 
+    <Button
+      component="a"
+      href={dashboardURL}
       mt="md"
-      target="_blank" 
+      target="_blank"
       style={{ display: 'fixed', justifyContent: 'center' }}
     >
       Dashboard

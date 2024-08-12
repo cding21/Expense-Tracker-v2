@@ -5,7 +5,7 @@ export function Welcome() {
   return (
     <>
       <Title className={classes.title} ta="center" mt={200}>
-        Welcome to{' '}<br></br>
+        Welcome to <br></br>
         <Text
           inherit
           variant="gradient"

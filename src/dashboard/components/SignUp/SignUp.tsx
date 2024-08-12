@@ -41,9 +41,9 @@ export function SignUp() {
     },
     onError: (error) => {
       form.setErrors({
-        username: " ",
-        password: " ",
-        confirmPassword: " ",
+        username: ' ',
+        password: ' ',
+        confirmPassword: ' ',
       });
     },
   });
