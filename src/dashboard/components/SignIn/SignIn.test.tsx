@@ -1,10 +1,15 @@
+import Providers from '@/app/providers';
 import { SignIn } from './SignIn';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
 
 describe('SignIn', () => {
   it('renders form with username, password, submit button, and link to sign up', () => {
     // Arrange
-    render(<SignIn />);
+    render(
+      <Providers>
+        <SignIn />
+      </Providers>
+    );
     // Assert
     expect(screen.getByText('Username')).toBeDefined();
     expect(screen.getByText('Password')).toBeDefined();
@@ -17,7 +22,11 @@ describe('SignIn', () => {
     }));
 
     // Arrange
-    render(<SignIn />);
+    render(
+      <Providers>
+        <SignIn />
+      </Providers>
+    );
 
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
@@ -37,7 +46,11 @@ describe('SignIn', () => {
   });
   it('displays an error message if login fails', async () => {
     // Arrange
-    render(<SignIn />);
+    render(
+      <Providers>
+        <SignIn />
+      </Providers>
+    );
 
     // Mock the login function to simulate a failed login
     const mockLogin = jest.fn().mockRejectedValue(new Error('Login failed'));

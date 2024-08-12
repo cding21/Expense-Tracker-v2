@@ -39,8 +39,8 @@ export function SignIn() {
     },
     onError: (error) => {
       form.setErrors({
-        username: error.message,
-        password: error.message,
+        username: " ",
+        password: " ",
       });
     },
   });

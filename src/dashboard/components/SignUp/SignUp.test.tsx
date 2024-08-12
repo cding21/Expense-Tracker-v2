@@ -1,10 +1,15 @@
+import Providers from '@/app/providers';
 import { SignUp } from './SignUp';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
 
 describe('SignUp', () => {
   it('renders form with username, password, confirmPassword, submit button, and link to back in sign-in page', () => {
     // Arrange
-    render(<SignUp />);
+    render(
+      <Providers>
+        <SignUp />
+      </Providers>
+    );
     // Assert
     expect(screen.getByText('Username')).toBeDefined();
     expect(screen.getByText('Password')).toBeDefined();
@@ -19,7 +24,11 @@ describe('SignUp', () => {
     }));
 
     // Arrange
-    render(<SignUp />);
+    render(
+      <Providers>
+        <SignUp />
+      </Providers>
+    );
 
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
@@ -42,7 +51,11 @@ describe('SignUp', () => {
 
   it('displays an error message if sign-up fails', async () => {
     // Arrange
-    render(<SignUp />);
+    render(
+      <Providers>
+        <SignUp />
+      </Providers>
+    );
 
     // Mock the login function to simulate a failed login
     const mockSignUp = jest.fn().mockRejectedValue(new Error('Sign-up failed'));
@@ -63,9 +76,9 @@ describe('SignUp', () => {
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText('Failed to sign-up.');
+    await screen.findByText('Sign-up failed');
 
     // Assert
-    expect(screen.getByText('Failed to sign-up.')).toBeDefined();
+    expect(screen.getByText('Sign-up failed')).toBeDefined();
   });
 });

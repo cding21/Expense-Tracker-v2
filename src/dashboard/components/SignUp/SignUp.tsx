@@ -41,9 +41,9 @@ export function SignUp() {
     },
     onError: (error) => {
       form.setErrors({
-        username: error.message,
-        password: error.message,
-        confirmPassword: error.message,
+        username: " ",
+        password: " ",
+        confirmPassword: " ",
       });
     },
   });
@@ -98,6 +98,11 @@ export function SignUp() {
             key={form.key('confirmPassword')}
             {...form.getInputProps('confirmPassword')}
           />
+          {mutation.isError && (
+            <Text c="red" mt="md" ta="center">
+              Sign-up failed
+            </Text>
+          )}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
             Sign up
           </Button>
