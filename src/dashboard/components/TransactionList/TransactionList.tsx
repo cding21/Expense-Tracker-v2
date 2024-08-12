@@ -21,7 +21,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions }) =>  {
   return (
     <Stack my="xl">
       {transactions.map((transaction, index) => (
-        <TransactionListItem key={index} transaction={transaction.transaction} />
+        <TransactionListItem key={index} transaction={transaction} />
       ))}
     </Stack>
   );
