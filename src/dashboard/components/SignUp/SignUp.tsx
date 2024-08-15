@@ -28,9 +28,7 @@ export function SignUp() {
       username: (value) => validateUsername(value),
       password: (value) => validatePassword(value),
       confirmPassword: (value, values) =>
-        value !== values.password
-          ? 'Passwords do not match'
-          : validatePassword(value),
+        value !== values.password ? 'Passwords do not match' : validatePassword(value),
     },
   });
 
