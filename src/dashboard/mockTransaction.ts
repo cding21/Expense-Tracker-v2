@@ -67,3 +67,24 @@ export const mockTransactionList = [
     toNote: 'Payment for internet service',
   },
 ];
+
+export const mockTransactionStats = [
+  {
+    title: 'Money In',
+    diff: 25,
+    icon: 'receipt',
+    value: 1000,
+  },
+  {
+    title: 'Money Out',
+    diff: -4,
+    icon: 'coin',
+    value: -500,
+  },
+  {
+    title: 'Transactions',
+    diff: 0,
+    icon: 'discount',
+    value: 512,
+  },
+];
