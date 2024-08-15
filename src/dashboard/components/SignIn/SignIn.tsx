@@ -68,9 +68,6 @@ export function SignIn() {
           onSubmit={form.onSubmit((values) => {
             mutation.mutate({ username: values.username, password: values.password });
           })}
-          onChange={() => {
-            mutation.reset();
-          }}
         >
           <TextInput
             name="username"
@@ -92,7 +89,7 @@ export function SignIn() {
           <Group justify="space-between" mt="lg">
             <Checkbox label="Remember me" />
             <Anchor
-              component="button"
+              component="a"
               size="sm"
               onClick={() => {
                 window.location.href = '/forgot-password';
