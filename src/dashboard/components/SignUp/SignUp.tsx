@@ -25,12 +25,12 @@ export function SignUp() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => validateUsername(value) || mutation.isError,
-      password: (value) => validatePassword(value) || mutation.isError,
+      username: (value) => validateUsername(value),
+      password: (value) => validatePassword(value),
       confirmPassword: (value, values) =>
         value !== values.password
           ? 'Passwords do not match'
-          : validatePassword(value) || mutation.isError,
+          : validatePassword(value),
     },
   });
 
@@ -72,9 +72,6 @@ export function SignUp() {
           onSubmit={form.onSubmit((values) => {
             mutation.mutate({ username: values.username, password: values.password });
           })}
-          onChange={() => {
-            mutation.reset();
-          }}
         >
           <TextInput
             name="username"
