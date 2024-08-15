@@ -57,11 +57,11 @@ describe('SignUp', () => {
       </Providers>
     );
 
-    // Mock the login function to simulate a failed login
-    const mockSignUp = jest.fn().mockRejectedValue(new Error('Sign-up failed'));
-    jest.mock('../../auth', () => ({
-      signUp: mockSignUp,
-    }));
+    // Mock the sign-up function to simulate a failed login
+    // Must mocked the global fetch function as TanStack requires this to be defined....
+    global.fetch = jest
+      .fn()
+      .mockImplementation(() => Promise.reject(new Error('Username already exists')));
 
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
@@ -71,14 +71,14 @@ describe('SignUp', () => {
 
     // Act
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'testpassword' } });
+    fireEvent.change(passwordInput, { target: { value: 'AVerySecurePassword!234' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'AVerySecurePassword!234' } });
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText('Sign-up failed');
+    await screen.findByText('Sign-up failed: Username already exists');
 
     // Assert
-    expect(screen.getByText('Sign-up failed')).toBeDefined();
+    expect(screen.getByText('Sign-up failed: Username already exists')).toBeDefined();
   });
 });

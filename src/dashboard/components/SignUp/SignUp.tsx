@@ -16,6 +16,7 @@ import { useMutation } from '@tanstack/react-query';
 import classes from './SignUp.module.css';
 import { signUp } from '@/auth';
 import { UserLogin } from '@/models/user.model';
+import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignUp() {
   const form = useForm({
@@ -24,12 +25,10 @@ export function SignUp() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) =>
-        value.length < 2 ? 'Name must have at least 2 letters' : mutation.isError,
-      password: (value) =>
-        value.length < 6 ? 'Password must have at least 6 characters' : mutation.isError,
+      username: (value) => validateUsername(value),
+      password: (value) => validatePassword(value),
       confirmPassword: (value, values) =>
-        value !== values.password ? 'Passwords do not match' : mutation.isError,
+        value !== values.password ? 'Passwords do not match' : validatePassword(value),
     },
   });
 
@@ -68,9 +67,9 @@ export function SignUp() {
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form
-          onSubmit={form.onSubmit((values) =>
-            mutation.mutate({ username: values.username, password: values.password })
-          )}
+          onSubmit={form.onSubmit((values) => {
+            mutation.mutate({ username: values.username, password: values.password });
+          })}
         >
           <TextInput
             name="username"
@@ -100,7 +99,7 @@ export function SignUp() {
           />
           {mutation.isError && (
             <Text c="red" mt="md" ta="center">
-              Sign-up failed
+              Sign-up failed: {mutation.error.message}
             </Text>
           )}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
