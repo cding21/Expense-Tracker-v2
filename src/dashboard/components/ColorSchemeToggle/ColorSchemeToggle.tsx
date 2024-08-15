@@ -13,11 +13,11 @@ export function ColorSchemeToggle() {
     },
     dark: {
       icon: <FaMoon />,
-      variant: 'filled',
+      variant: 'outline',
     },
     auto: {
       icon: <BsNintendoSwitch />,
-      variant: 'light',
+      variant: 'outline',
     },
   };
 
