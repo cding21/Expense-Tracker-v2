@@ -17,6 +17,7 @@ import classes from './SignUp.module.css';
 import { signUp } from '@/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
+import { notifications } from '@mantine/notifications';
 
 export function SignUp() {
   const form = useForm({
@@ -38,11 +39,12 @@ export function SignUp() {
       // Redirect to sign-in page
       window.location.href = '/sign-in';
     },
-    onError: () => {
-      form.setErrors({
-        username: ' ',
-        password: ' ',
-        confirmPassword: ' ',
+    onError: (error) => {
+      notifications.show({ 
+        title: 'Sign-up failed', 
+        message: error.message, 
+        color: 'red', 
+        position: 'bottom-center'
       });
     },
   });

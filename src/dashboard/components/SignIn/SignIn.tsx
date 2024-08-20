@@ -18,6 +18,8 @@ import { useForm } from '@mantine/form';
 import classes from './SignIn.module.css';
 import { login } from '@/auth';
 import { UserLogin } from '@/models/user.model';
+import { notifications } from '@mantine/notifications';
+import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignIn() {
   const form = useForm({
@@ -26,8 +28,8 @@ export function SignIn() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
-      password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : null),
+      username: (value) => (validateUsername(value)),
+      password: (value) => (validatePassword(value)),
     },
   });
 
@@ -37,10 +39,12 @@ export function SignIn() {
       // Redirect to dashboard page
       window.location.href = '/';
     },
-    onError: () => {
-      form.setErrors({
-        username: ' ',
-        password: ' ',
+    onError: (error) => {
+      notifications.show({ 
+        title: 'Login failed', 
+        message: error.message, 
+        color: 'red', 
+        position: 'bottom-center'
       });
     },
   });

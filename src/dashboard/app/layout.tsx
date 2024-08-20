@@ -1,8 +1,10 @@
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import React from 'react';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 import { theme } from '../theme';
 import Providers from './providers';
+import { Notifications } from '@mantine/notifications';
 
 export const metadata = {
   title: 'Budget Buddy Dashboard',
@@ -22,7 +24,10 @@ export default function RootLayout({ children }: { children: any }) {
       </head>
       <body>
         <Providers>
-          <MantineProvider theme={theme}>{children}</MantineProvider>
+          <MantineProvider theme={theme}>
+              <Notifications /> 
+              {children}
+            </MantineProvider>
         </Providers>
       </body>
     </html>
