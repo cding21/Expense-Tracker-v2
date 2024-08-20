@@ -72,19 +72,19 @@ export const mockTransactionStats = [
   {
     title: 'Money In',
     diff: 25,
-    icon: 'receipt',
-    value: 1000,
+    icon: 'pigMoney',
+    value: 1357.5,
   },
   {
     title: 'Money Out',
     diff: -4,
-    icon: 'coin',
-    value: -500,
+    icon: 'cash',
+    value: -5120.39,
   },
   {
-    title: 'Transactions',
+    title: 'Net Change',
     diff: 0,
-    icon: 'discount',
-    value: 512,
+    icon: 'report',
+    value: -3762.89,
   },
 ];
