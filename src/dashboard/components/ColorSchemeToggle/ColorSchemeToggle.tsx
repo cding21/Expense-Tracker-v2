@@ -9,16 +9,16 @@ enum ThemeColorKey {
   dark = 'dark',
   auto = 'auto',
 }
-  
+
 interface ThemeDescriptor {
   icon: React.ReactNode;
   variant: string;
 }
-  
+
 interface Theme {
-  [ThemeColorKey.light]: ThemeDescriptor
-  [ThemeColorKey.dark]: ThemeDescriptor
-  [ThemeColorKey.auto]: ThemeDescriptor
+  [ThemeColorKey.light]: ThemeDescriptor;
+  [ThemeColorKey.dark]: ThemeDescriptor;
+  [ThemeColorKey.auto]: ThemeDescriptor;
 }
 
 export function ColorSchemeToggle() {
