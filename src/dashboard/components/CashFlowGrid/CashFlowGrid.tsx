@@ -9,7 +9,7 @@ import {
   IconEqual,
   IconCash,
   IconPigMoney,
-  IconReportMoney
+  IconReportMoney,
 } from '@tabler/icons-react';
 import classes from './CashFlowGrid.module.css';
 import { formatCurrency, formatPercentage } from '@/helper/formatter';
@@ -67,7 +67,11 @@ const CashFlowGrid: React.FC<TransactionStatsProps> = ({ statistics }) => {
             fw={500}
             className={classes.diff}
           >
-            <span>{stat.diff >= 0? formatPercentage(stat.diff, {prefix: '+'}): formatPercentage(stat.diff)}</span>
+            <span>
+              {stat.diff >= 0
+                ? formatPercentage(stat.diff, { prefix: '+' })
+                : formatPercentage(stat.diff)}
+            </span>
             <DiffIcon size="1rem" stroke={1.5} />
           </Text>
         </Group>

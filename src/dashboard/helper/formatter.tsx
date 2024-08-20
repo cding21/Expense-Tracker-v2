@@ -37,13 +37,17 @@ export function formatDecimal(value: number | string, options?: FormatterOptions
   return `${prefix}${integerPart}`
     .concat(decimalPart ? `${decimalSeparator}${decimalPart}` : '')
     .concat(suffix);
-  }
+}
 
 export function formatInt(value: number | string, options?: FormatterOptions) {
   return formatDecimal(value, { ...options, precision: 0 });
 }
 
-export function formatCurrency(value: number | string, currency: string = '$', options?: FormatterOptions): string {
+export function formatCurrency(
+  value: number | string,
+  currency: string = '$',
+  options?: FormatterOptions
+): string {
   return formatDecimal(value, { ...options, prefix: currency });
 }
 
