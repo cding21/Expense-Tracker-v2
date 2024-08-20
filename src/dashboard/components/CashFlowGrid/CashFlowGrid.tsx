@@ -7,14 +7,31 @@ import {
   IconArrowUpRight,
   IconArrowDownRight,
   IconEqual,
+  IconCash,
+  IconPigMoney,
+  IconReportMoney
 } from '@tabler/icons-react';
-import classes from './StatsGrid.module.css';
+import classes from './CashFlowGrid.module.css';
+import { formatCurrency, formatPercentage } from '@/helper/formatter';
+
+enum IconsKey {
+  user = 'user',
+  discount = 'discount',
+  receipt = 'receipt',
+  coin = 'coin',
+  cash = 'cash',
+  pig = 'pig',
+  report = 'report',
+}
 
 const icons = {
-  user: IconUserPlus,
-  discount: IconDiscount2,
-  receipt: IconReceipt2,
-  coin: IconCoin,
+  [IconsKey.user]: IconUserPlus,
+  [IconsKey.discount]: IconDiscount2,
+  [IconsKey.receipt]: IconReceipt2,
+  [IconsKey.coin]: IconCoin,
+  [IconsKey.cash]: IconCash,
+  [IconsKey.pig]: IconPigMoney,
+  [IconsKey.report]: IconReportMoney,
 };
 
 export interface TransactionStatsProps {
@@ -26,9 +43,10 @@ export interface TransactionStatsProps {
   }[];
 }
 
-const StatsGrid: React.FC<TransactionStatsProps> = ({ statistics }) => {
+const CashFlowGrid: React.FC<TransactionStatsProps> = ({ statistics }) => {
   const stats = statistics.map((stat) => {
-    const Icon = icons[stat.icon as keyof typeof icons];
+    const key = stat.icon as keyof typeof IconsKey;
+    const Icon = icons[key] ? icons[key] : IconCoin;
     const DiffIcon =
       stat.diff > 0 ? IconArrowUpRight : stat.diff === 0 ? IconEqual : IconArrowDownRight;
 
@@ -42,14 +60,14 @@ const StatsGrid: React.FC<TransactionStatsProps> = ({ statistics }) => {
         </Group>
 
         <Group align="flex-end" gap="xs" mt={25}>
-          <Text className={classes.value}>{stat.value}</Text>
+          <Text className={classes.value}>{formatCurrency(stat.value)}</Text>
           <Text
             c={stat.diff > 0 ? 'teal' : stat.diff === 0 ? 'yellow' : 'red'}
             fz="sm"
             fw={500}
             className={classes.diff}
           >
-            <span>{stat.diff}%</span>
+            <span>{stat.diff >= 0? formatPercentage(stat.diff, {prefix: '+'}): formatPercentage(stat.diff)}</span>
             <DiffIcon size="1rem" stroke={1.5} />
           </Text>
         </Group>
@@ -67,4 +85,4 @@ const StatsGrid: React.FC<TransactionStatsProps> = ({ statistics }) => {
   );
 };
 
-export default StatsGrid;
+export default CashFlowGrid;
