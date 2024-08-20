@@ -13,11 +13,11 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
+import { notifications } from '@mantine/notifications';
 import classes from './SignUp.module.css';
 import { signUp } from '@/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
-import { notifications } from '@mantine/notifications';
 
 export function SignUp() {
   const form = useForm({
@@ -39,10 +39,9 @@ export function SignUp() {
       // Redirect to sign-in page
       window.location.href = '/sign-in';
     },
-    onError: (error) => {
+    onError: () => {
       notifications.show({
-        title: 'Sign-up failed',
-        message: error.message,
+        message: 'Sign-up failed',
         color: 'red',
         position: 'bottom-center',
       });
@@ -99,11 +98,11 @@ export function SignUp() {
             key={form.key('confirmPassword')}
             {...form.getInputProps('confirmPassword')}
           />
-          {mutation.isError && (
+          {/* {mutation.isError && (
             <Text c="red" mt="md" ta="center">
               Sign-up failed: {mutation.error.message}
             </Text>
-          )}
+          )} */}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
             Sign up
           </Button>

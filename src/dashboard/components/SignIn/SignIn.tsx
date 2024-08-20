@@ -15,10 +15,10 @@ import {
 } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import classes from './SignIn.module.css';
 import { login } from '@/auth';
 import { UserLogin } from '@/models/user.model';
-import { notifications } from '@mantine/notifications';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignIn() {
@@ -39,10 +39,9 @@ export function SignIn() {
       // Redirect to dashboard page
       window.location.href = '/';
     },
-    onError: (error) => {
+    onError: () => {
       notifications.show({
-        title: 'Login failed',
-        message: error.message,
+        message: 'Login failed',
         color: 'red',
         position: 'bottom-center',
       });
@@ -102,11 +101,11 @@ export function SignIn() {
               Forgot password?
             </Anchor>
           </Group>
-          {mutation.isError && (
+          {/* {mutation.isError && (
             <Text c="red" mt="md" ta="center">
-              Invalid username/password
+              Login failed
             </Text>
-          )}
+          )} */}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
             Sign in
           </Button>

@@ -1,13 +1,19 @@
+import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import Providers from '@/app/providers';
 import { SignIn } from './SignIn';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
+import { theme } from '@/theme';
 
 describe('SignIn', () => {
   it('renders form with username, password, submit button, and link to sign up', () => {
     // Arrange
     render(
       <Providers>
-        <SignIn />
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <SignIn />
+        </MantineProvider>
       </Providers>
     );
     // Assert
@@ -24,7 +30,10 @@ describe('SignIn', () => {
     // Arrange
     render(
       <Providers>
-        <SignIn />
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <SignIn />
+        </MantineProvider>
       </Providers>
     );
 
@@ -48,7 +57,10 @@ describe('SignIn', () => {
     // Arrange
     render(
       <Providers>
-        <SignIn />
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <SignIn />
+        </MantineProvider>
       </Providers>
     );
 
@@ -66,9 +78,9 @@ describe('SignIn', () => {
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText('Invalid username/password');
+    await screen.findByText('Login failed');
 
     // Assert
-    expect(screen.getByText('Invalid username/password')).toBeDefined();
+    expect(screen.getByText('Login failed')).toBeDefined();
   });
 });
