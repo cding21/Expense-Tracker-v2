@@ -28,8 +28,8 @@ export function SignIn() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => (validateUsername(value)),
-      password: (value) => (validatePassword(value)),
+      username: (value) => validateUsername(value),
+      password: (value) => validatePassword(value),
     },
   });
 
@@ -40,11 +40,11 @@ export function SignIn() {
       window.location.href = '/';
     },
     onError: (error) => {
-      notifications.show({ 
-        title: 'Login failed', 
-        message: error.message, 
-        color: 'red', 
-        position: 'bottom-center'
+      notifications.show({
+        title: 'Login failed',
+        message: error.message,
+        color: 'red',
+        position: 'bottom-center',
       });
     },
   });

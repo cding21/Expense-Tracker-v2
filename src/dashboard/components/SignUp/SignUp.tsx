@@ -40,11 +40,11 @@ export function SignUp() {
       window.location.href = '/sign-in';
     },
     onError: (error) => {
-      notifications.show({ 
-        title: 'Sign-up failed', 
-        message: error.message, 
-        color: 'red', 
-        position: 'bottom-center'
+      notifications.show({
+        title: 'Sign-up failed',
+        message: error.message,
+        color: 'red',
+        position: 'bottom-center',
       });
     },
   });
