@@ -13,6 +13,8 @@ const main = async () => {
     await decomissionBlueDeployments(oldNodes, latestCommit);
 }
 
+const sleep = (timeout) => new Promise(resolve => setTimeout(resolve, timeout));
+
 const fetchWithErrorHandling = async (url, body=undefined) => {
     const response = await (body === undefined ? fetch(url) : fetch(url, {
         method: 'POST',
@@ -47,6 +49,9 @@ const startNewInstance = async (host, baseImageName, basePort, newVersion, docke
 
 const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVersion, dockerPath) => {
     const newNodes = (await Promise.all(nodes.map(async (it) => await startNewInstance(it, baseImageName, basePort, newVersion, dockerPath)))).map((it) => ({ dial: it }));
+    // Wait for all new nodes to spin up
+    await sleep(30000);
+    await Promise.all(newNodes.map(async (it) => await fetchWithErrorHandling(`http://${it.dial}/healthcheck`)));
     await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { upstreams: newNodes });
     return newNodes;
 }
