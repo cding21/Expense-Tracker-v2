@@ -51,7 +51,7 @@ const startNewInstance = async (host, baseImageName, basePort, newVersion, docke
 
 const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVersion, dockerPath) => {
     const newNodes = (await Promise.all(nodes.map(async (it) => await startNewInstance(it, baseImageName, basePort, newVersion, dockerPath)))).map((it) => ({ dial: it }));
-    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { upstreams: [...nodes, ...newNodes] });
+    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { upstreams: [...nodes.map((it) => ({ dial: it })), ...newNodes] });
     await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/load_balancing/selection_policy", { policy :"weighted_round_robin", weights: [...(new Array(nodes.length).fill(0)), ...(new Array(newNodes.length).fill(1))]})
     return newNodes;
 }
