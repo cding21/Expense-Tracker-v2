@@ -15,9 +15,11 @@ import {
 } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import classes from './SignIn.module.css';
 import { login } from '@/auth';
 import { UserLogin } from '@/models/user.model';
+import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignIn() {
   const form = useForm({
@@ -26,8 +28,8 @@ export function SignIn() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
-      password: (value) => (value.length < 6 ? 'Password must have at least 6 characters' : null),
+      username: (value) => validateUsername(value),
+      password: (value) => validatePassword(value),
     },
   });
 
@@ -38,9 +40,10 @@ export function SignIn() {
       window.location.href = '/';
     },
     onError: () => {
-      form.setErrors({
-        username: ' ',
-        password: ' ',
+      notifications.show({
+        message: 'Login failed',
+        color: 'red',
+        position: 'bottom-center',
       });
     },
   });
@@ -68,9 +71,6 @@ export function SignIn() {
           onSubmit={form.onSubmit((values) => {
             mutation.mutate({ username: values.username, password: values.password });
           })}
-          onChange={() => {
-            mutation.reset();
-          }}
         >
           <TextInput
             name="username"
@@ -92,7 +92,7 @@ export function SignIn() {
           <Group justify="space-between" mt="lg">
             <Checkbox label="Remember me" />
             <Anchor
-              component="button"
+              component="a"
               size="sm"
               onClick={() => {
                 window.location.href = '/forgot-password';
@@ -101,11 +101,11 @@ export function SignIn() {
               Forgot password?
             </Anchor>
           </Group>
-          {mutation.isError && (
+          {/* {mutation.isError && (
             <Text c="red" mt="md" ta="center">
-              Invalid username/password
+              Login failed
             </Text>
-          )}
+          )} */}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
             Sign in
           </Button>

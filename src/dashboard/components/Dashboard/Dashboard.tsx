@@ -5,8 +5,9 @@ import { Title, Text, Container } from '@mantine/core';
 import classes from './Dashboard.module.css';
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
 import TransactionList from '../TransactionList/TransactionList';
-import { mockTransactionList } from '@/mockTransaction';
+import { mockTransactionList, mockTransactionStats } from '@/mockTransaction';
 import { SignOut } from '../SignOut/SignOut';
+import CashFlowGrid from '../CashFlowGrid/CashFlowGrid';
 
 export function Dashboard() {
   return (
@@ -16,6 +17,7 @@ export function Dashboard() {
       </Title>
       <Text ta="center">Welcome to your dashboard</Text>
       <Text ta="center">More to come soon...</Text>
+      <CashFlowGrid statistics={mockTransactionStats} />
       <TransactionList transactions={mockTransactionList} />
       <SignOut />
       <ColorSchemeToggle />

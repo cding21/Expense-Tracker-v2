@@ -1,13 +1,19 @@
+import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import Providers from '@/app/providers';
 import { SignUp } from './SignUp';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
+import { theme } from '@/theme';
 
 describe('SignUp', () => {
   it('renders form with username, password, confirmPassword, submit button, and link to back in sign-in page', () => {
     // Arrange
     render(
       <Providers>
-        <SignUp />
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <SignUp />
+        </MantineProvider>
       </Providers>
     );
     // Assert
@@ -26,7 +32,10 @@ describe('SignUp', () => {
     // Arrange
     render(
       <Providers>
-        <SignUp />
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <SignUp />
+        </MantineProvider>
       </Providers>
     );
 
@@ -53,7 +62,10 @@ describe('SignUp', () => {
     // Arrange
     render(
       <Providers>
-        <SignUp />
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <SignUp />
+        </MantineProvider>
       </Providers>
     );
 
@@ -76,9 +88,9 @@ describe('SignUp', () => {
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText('Sign-up failed: Username already exists');
+    await screen.findByText('Sign-up failed');
 
     // Assert
-    expect(screen.getByText('Sign-up failed: Username already exists')).toBeDefined();
+    expect(screen.getByText('Sign-up failed')).toBeDefined();
   });
 });
