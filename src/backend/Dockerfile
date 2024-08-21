@@ -29,4 +29,4 @@ WORKDIR /app
 COPY --from=build /app/target/*-jar-with-dependencies.jar ./app.jar
 
 # Run the application
-CMD ["java", "-jar", "/app/app.jar", "-host", "$host"]
+CMD java -jar /app/app.jar -host ${host}
