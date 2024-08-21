@@ -9,13 +9,9 @@ const main = async () => {
     const latestCommit = execSync("git log -n 1 --pretty=format:\"%H\"").toString().substring(0, 10);
     const args = process.argv.slice(1);
     const oldNodes = await getNodes();
-    const newNodes = await provisionGreenDeployments(oldNodes, args[0], Number(args[1]), latestCommit, args[2]);
-    // Wait 30 seconds
-    await sleep(30000);
-    await decomissionBlueDeployments(oldNodes, newNodes, latestCommit);
+    await provisionGreenDeployments(oldNodes, args[0], Number(args[1]), latestCommit, args[2]);
+    await decomissionBlueDeployments(oldNodes, latestCommit);
 }
-
-const sleep = (timeout) => new Promise(resolve => setTimeout(resolve, timeout));
 
 const fetchWithErrorHandling = async (url, body=undefined) => {
     const response = await (body === undefined ? fetch(url) : fetch(url, {
@@ -51,19 +47,15 @@ const startNewInstance = async (host, baseImageName, basePort, newVersion, docke
 
 const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVersion, dockerPath) => {
     const newNodes = (await Promise.all(nodes.map(async (it) => await startNewInstance(it, baseImageName, basePort, newVersion, dockerPath)))).map((it) => ({ dial: it }));
-    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { upstreams: [...nodes.map((it) => ({ dial: it })), ...newNodes] });
-    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/load_balancing/selection_policy", { policy :"weighted_round_robin", weights: [...(new Array(nodes.length).fill(0)), ...(new Array(newNodes.length).fill(1))]})
+    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { upstreams: newNodes });
     return newNodes;
 }
 
-const decomissionBlueDeployments = async (oldNodes, newNodes, newVersion) => {
+const decomissionBlueDeployments = async (oldNodes, newVersion) => {
     for (let node of oldNodes) {
         const [hostName, _] = node.split(":");
         await execSSH(hostName, `docker ps -a --format '{{.Names}}' | grep -v "${newVersion}" | xargs docker kill && docker ps -a --format '{{.Names}}' | grep -v "${newVersion}" | xargs docker rmi`)
     }
-    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { upstreams: newNodes });
-    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/load_balancing/selection_policy", { policy :"weighted_round_robin", weights: new Array(newNodes.length).fill(1)})
-
 };
 
 main();
