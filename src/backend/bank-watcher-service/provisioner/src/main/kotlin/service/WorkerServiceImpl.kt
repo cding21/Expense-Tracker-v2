@@ -28,28 +28,26 @@ class WorkerServiceImpl(private val store: WorkerStore,
     }
 
     override suspend fun assignTasks(tasks: Set<String>) {
-        val workers = store.getAllWorkers()
-        var isAssigned: Boolean
-
         for (taskId in tasks) {
-            isAssigned = false
-            for (workerId in workers) {
-                // TODO: Assign task to worker via worker API (verify worker can handle task)
-                isAssigned = true
-                break
+            val workers = store.getAllWorkers()
+            val workersByTaskSize = workers.map { Pair(it, store.getTasksByWorkerId(it).size) }.sortedBy { it.second }
+            val firstWorker = workersByTaskSize.firstOrNull {
+                TODO("Implement task allocation API call to worker")
             }
-            if (!isAssigned) {
-                // Check if new workers has been added
-                val newWorkers = store.getAllWorkers() subtract workers
-                for (workerId in newWorkers) {
-                    // TODO: Assign task to worker via worker API (verify worker can handle task)
-                    isAssigned = true
-                    break
+            if (firstWorker == null) {
+                continue
+            }
+            // Check set diff to see if new workers has been added
+            val diff = store.getAllWorkers() subtract workers;
+            if (diff.isNotEmpty()) {
+                val finalWorker = diff.map { Pair(it, store.getTasksByWorkerId(it).size) }.sortedBy { it.second }.firstOrNull {
+                    TODO("Implement task allocation API call to worker")
+                }
+                if (finalWorker != null) {
+                    continue
                 }
             }
-            if (!isAssigned) {
-                throw NotFoundException("Unable to assign task to worker")
-            }
+            throw NotFoundException("Unable to allocate task to available worker")
         }
     }
 }

@@ -19,6 +19,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
         <ktor_version>2.3.10</ktor_version>
+        <slf4j_version>2.0.9</slf4j_version>
     </properties>
 
     <repositories>
@@ -111,6 +112,11 @@
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
             <version>6.3.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j_version}</version>
         </dependency>
     </dependencies>
 
