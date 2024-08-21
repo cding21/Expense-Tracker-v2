@@ -1,4 +1,5 @@
 # Start from a base image
+ARG host
 FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as build
 
 RUN apt-get update && \
@@ -28,4 +29,4 @@ WORKDIR /app
 COPY --from=build /app/target/*-jar-with-dependencies.jar ./app.jar
 
 # Run the application
-CMD ["java", "-jar", "/app/app.jar"]
+CMD ["java", "-jar", "/app/app.jar", "-host", "$host"]

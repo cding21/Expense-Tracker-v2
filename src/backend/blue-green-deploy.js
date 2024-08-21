@@ -43,7 +43,8 @@ const startNewInstance = async (host, baseImageName, basePort, newVersion, docke
     const [hostName, port] = host.split(":");
     const newPort = Number(port) === basePort ? basePort + 1 : basePort;
     const newImageName = baseImageName + '-' + newVersion;
-    await execSSH(hostName, `cd Expense-Tracker-v2 && git pull && cd ${dockerPath} && docker build -t ${newImageName} . && docker run -dp 127.0.0.1:${newPort}:${basePort} ${newImageName}`);
+    const localIp = execSync("ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'");
+    await execSSH(hostName, `cd Expense-Tracker-v2 && git pull && cd ${dockerPath} && docker build -t ${newImageName} --build-arg host=${localIp} . && docker run -dp ${localIp}:${newPort}:${basePort} ${newImageName}`);
     return `${hostName}:${newPort}`;
 }
 
