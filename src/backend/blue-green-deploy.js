@@ -72,8 +72,7 @@ const decomissionBlueDeployments = async (oldNodes, newVersion) => {
         if (res.toString().length === 0 || res.toString() === 'null') continue;
         const containerName = res.toString().split(" ")[0];
         if (containerName.length === 0) continue;
-        execSSH(hostName, `docker ps -qf 'ancestor=${containerName}' | xargs docker kill`);
-        execSSH(hostName, `&& docker rmi -f ${containerName}`);
+        execSSH(hostName, `docker container ls | grep '${containerName}' | awk '{print \$1}' | xargs docker kill && docker rmi -f ${containerName}`);
     }
 };
 
