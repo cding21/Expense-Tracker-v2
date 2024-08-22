@@ -1,10 +1,6 @@
 # Start from a base image
 FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as build
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y maven
-
 # Set the working directory
 WORKDIR /app
 
@@ -19,7 +15,14 @@ COPY src ./src
 RUN mvn package
 
 # Start a new stage to minimize the final image size
-FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as package
+FROM openjdk:11-jre-slim as package
+
+# Install node16
+RUN apt-get update && apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -y nodejs
+
+RUN npx playwright install --with-deps chromium
 
 # Set the working directory
 WORKDIR /app
