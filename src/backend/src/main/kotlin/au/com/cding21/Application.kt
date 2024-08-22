@@ -1,10 +1,12 @@
 package au.com.cding21
 
 import au.com.cding21.plugins.*
-import au.com.cding21.routes.configureRouting
 import au.com.cding21.security.token.TokenConfig
 import au.com.cding21.util.connectToMongoDB
+import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -21,8 +23,15 @@ fun Application.module() {
             secret = environment.config.property("jwt.secret").getString(),
         )
 
-    configureSecurity(tokenConfig, db)
+    // Initialize healthcheck before everything else
+    routing {
+        get("/healthcheck") {
+            call.respond(HttpStatusCode.OK)
+        }
+    }
+
+    // configureSecurity(tokenConfig, db)
     configureSerialization()
     configureHTTP()
-    configureRouting(db, tokenConfig)
+    // configureRouting(db, tokenConfig)
 }
