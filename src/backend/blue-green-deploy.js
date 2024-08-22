@@ -34,7 +34,7 @@ const fetchWithErrorHandling = async (url, body=undefined) => {
 }
 
 const execSSH = (host, command) => {
-    return execSync(`ssh ${SSH_USER}@${host} -t "${command}"`);
+    return execSync(`ssh ${SSH_USER}@${host} -t "${command}"`, { stdio: 'ignore' });
 }
 
 const getNodes = async () => {
