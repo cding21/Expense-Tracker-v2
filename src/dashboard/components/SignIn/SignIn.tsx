@@ -28,8 +28,8 @@ export function SignIn() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => validateUsername(value),
-      password: (value) => validatePassword(value),
+      username: (value) => value.length > 0?"": "Username is required",
+      password: (value) => value.length > 0? "": "Password is required",
     },
   });
 
