@@ -1,11 +1,12 @@
 /**
  * Script to automate blue green deployment
- * node blue-green-deploy.js dockerImageName defaultPort dockerFilePath networkInterface
+ * node blue-green-deploy.js dockerImageName defaultPort dockerFilePath networkInterface SSHUserName
  */
 
 const { execSync } = require('child_process');
 
 const NETWORK_INTERFACE = process.argv.slice(2)[3];
+const SSH_USER = process.argv.slice(2)[4];
 
 const main = async () => {
     const latestCommit = execSync("git log -n 1 --pretty=format:\"%H\"").toString().substring(0, 10);
@@ -33,7 +34,7 @@ const fetchWithErrorHandling = async (url, body=undefined) => {
 }
 
 const execSSH = async (host, command) => {
-    return await execSync(`ssh user@${host} -t "${command}"`);
+    return await execSync(`ssh ${SSH_USER}@${host} -t "${command}"`);
 }
 
 const getNodes = async () => {
@@ -45,7 +46,7 @@ const startNewInstance = async (host, baseImageName, basePort, newVersion, docke
     const [hostName, port] = host.split(":");
     const newPort = Number(port) === basePort ? basePort + 1 : basePort;
     const newImageName = baseImageName + '-' + newVersion;
-    const localIp = execSync(`ifconfig ${NETWORK_INTERFACE} | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'`);
+    const localIp = execSync(`ifconfig ${NETWORK_INTERFACE} | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'`).toString().split("\n")[0];
     await execSSH(hostName, `cd Expense-Tracker-v2 && git pull && cd ${dockerPath} && docker build -t ${newImageName} --build-arg host=${localIp} . && docker run -dp ${localIp}:${newPort}:${basePort} ${newImageName}`);
     return `${hostName}:${newPort}`;
 }
