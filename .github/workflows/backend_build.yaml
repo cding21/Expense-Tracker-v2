@@ -48,7 +48,6 @@ jobs:
 
     environment: 
       name: Production - Backend
-      url: https://backend.budgetbuddy.au
 
     steps:
       - name: Checkout the repo 
@@ -77,7 +76,6 @@ jobs:
 
     environment: 
       name: Production - Backend
-      url: https://backend.budgetbuddy.au
     
     steps:
       - name: Deploy to Digital Ocean droplet via SSH action
