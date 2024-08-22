@@ -33,8 +33,8 @@ const fetchWithErrorHandling = async (url, body=undefined) => {
     return await response.json();
 }
 
-const execSSH = async (host, command) => {
-    return await execSync(`ssh ${SSH_USER}@${host} -t "${command}"`);
+const execSSH = (host, command) => {
+    return execSync(`ssh ${SSH_USER}@${host} -t "${command}"`);
 }
 
 const getNodes = async () => {
@@ -47,14 +47,14 @@ const startNewInstance = async (host, baseImageName, basePort, newVersion, docke
     const newPort = Number(port) === basePort ? basePort + 1 : basePort;
     const newImageName = baseImageName + '-' + newVersion;
     const localIp = execSync(`ifconfig ${NETWORK_INTERFACE} | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'`).toString().split("\n")[0];
-    await execSSH(hostName, `cd Expense-Tracker-v2 && git pull && cd ${dockerPath} && docker build -t ${newImageName} --build-arg host=${localIp} . && docker run -dp ${localIp}:${newPort}:${basePort} ${newImageName}`);
+    execSSH(hostName, `cd Expense-Tracker-v2 && git pull && cd ${dockerPath} && docker build -t ${newImageName} --build-arg host=${localIp} --network="host" . && docker run -dp ${localIp}:${newPort}:${basePort} ${newImageName}`);
     return `${hostName}:${newPort}`;
 }
 
 const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVersion, dockerPath) => {
-    const newNodes = (await Promise.all(nodes.map(async (it) => await startNewInstance(it, baseImageName, basePort, newVersion, dockerPath)))).map((it) => ({ dial: it }));
+    const newNodes = nodes.map((it) => startNewInstance(it, baseImageName, basePort, newVersion, dockerPath)).map((it) => ({ dial: it }));
     // Wait for all new nodes to spin up
-    await sleep(30000);
+    await sleep(10000);
     await Promise.all(newNodes.map(async (it) => await fetchWithErrorHandling(`http://${it.dial}/healthcheck`)));
     await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { upstreams: newNodes });
     return newNodes;
