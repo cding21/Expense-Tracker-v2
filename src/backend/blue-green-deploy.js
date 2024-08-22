@@ -30,7 +30,11 @@ const fetchWithErrorHandling = async (url, body=undefined) => {
     if (!response.ok) {
         throw new Error(`Fetching ${url} failed with ${await response.text()}`);
     }
-    return await response.json();
+    try {
+        return await response.json();
+    } catch (_) {
+        return ''
+    }
 }
 
 const execSSH = (host, command) => {
@@ -63,7 +67,8 @@ const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVers
 const decomissionBlueDeployments = async (oldNodes, newVersion) => {
     for (let node of oldNodes) {
         const [hostName, _] = node.split(":");
-        await execSSH(hostName, `docker ps -a --format '{{.Names}}' | grep -v "${newVersion}" | xargs docker kill && docker ps -a --format '{{.Names}}' | grep -v "${newVersion}" | xargs docker rmi`)
+        const containerName = execSSH(hostName, `docker ps --format '{{.Image}}' | grep -v "${newVersion}" | tr '\\n' ' '`);
+        execSSH(hostName, `docker container ls | grep "${containerName}" | awk '{print $1}' | xargs docker kill && docker image rmi ${containerName}`);
     }
 };
 
