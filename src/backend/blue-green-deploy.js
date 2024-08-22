@@ -20,7 +20,7 @@ const sleep = (timeout) => new Promise(resolve => setTimeout(resolve, timeout));
 
 const fetchWithErrorHandling = async (url, body=undefined) => {
     const response = await (body === undefined ? fetch(url) : fetch(url, {
-        method: 'POST',
+        method: 'PATCH',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -60,15 +60,17 @@ const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVers
     // Wait for all new nodes to spin up
     await sleep(10000);
     await Promise.all(newNodes.map(async (it) => await fetchWithErrorHandling(`http://${it.dial}/healthcheck`)));
-    console.log(await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { handler: "reverse_proxy", upstreams: newNodes }));
-    return newNodes;
+    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { handler: "reverse_proxy", upstreams: newNodes });
+    return newNodes
 }
 
 const decomissionBlueDeployments = async (oldNodes, newVersion) => {
     for (let node of oldNodes) {
         const [hostName, _] = node.split(":");
         const res = execSSH(hostName, `docker ps --format '{{.Image}}' | grep -v '${newVersion}' | tr '\\n' ' '`, false);
+        if (res.toString().length === 0 || res.toString() === 'null') continue;
         const containerName = res.toString().split(" ")[0];
+        if (containerName.length === 0) continue;
         execSSH(hostName, `docker container ls | grep '${containerName}' | awk '{print $1}' | xargs docker kill && docker rmi -f ${containerName}`);
     }
 };
