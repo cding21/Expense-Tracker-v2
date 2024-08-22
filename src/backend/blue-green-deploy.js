@@ -37,8 +37,8 @@ const fetchWithErrorHandling = async (url, body=undefined) => {
     }
 }
 
-const execSSH = (host, command) => {
-    return execSync(`ssh ${SSH_USER}@${host} -t "${command}"`, { stdio: 'ignore' });
+const execSSH = (host, command, ignore=true) => {
+    return execSync(`ssh ${SSH_USER}@${host} -t "${command}"`, ignore ? { stdio: 'ignore' } : undefined);
 }
 
 const getNodes = async () => {
@@ -61,13 +61,15 @@ const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVers
     await sleep(10000);
     await Promise.all(newNodes.map(async (it) => await fetchWithErrorHandling(`http://${it.dial}/healthcheck`)));
     await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { handler: "reverse_proxy", upstreams: newNodes });
+    console.log(newNodes);
     return newNodes;
 }
 
 const decomissionBlueDeployments = async (oldNodes, newVersion) => {
     for (let node of oldNodes) {
         const [hostName, _] = node.split(":");
-        const containerName = execSSH(hostName, `docker ps --format '{{.Image}}' | grep -v "${newVersion}" | tr '\\n' ' '`);
+        const res = execSSH(hostName, `docker ps --format '{{.Image}}' | grep -v '${newVersion}' | tr '\\n' ' '`, false);
+        const containerName = res.toString().split(" ")[0];
         execSSH(hostName, `docker container ls | grep "${containerName}" | awk '{print $1}' | xargs docker kill && docker rmi -f ${containerName}`);
     }
 };
