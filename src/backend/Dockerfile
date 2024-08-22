@@ -1,4 +1,5 @@
 # Start from a base image
+ARG host
 FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as build
 
 # Set the working directory
@@ -30,8 +31,5 @@ WORKDIR /app
 # Copy the jar file from the build stage
 COPY --from=build /app/target/*-jar-with-dependencies.jar ./app.jar
 
-# Expose port 8080
-EXPOSE 8080
-
 # Run the application
-CMD ["java", "-jar", "/app/app.jar"]
+CMD java -jar /app/app.jar -host ${host}
