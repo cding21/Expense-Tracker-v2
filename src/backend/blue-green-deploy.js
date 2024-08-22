@@ -42,7 +42,7 @@ const getNodes = async () => {
     return res.map((it) => it['dial']);
 }
 
-const startNewInstance = async (host, baseImageName, basePort, newVersion, dockerPath) => {
+const startNewInstance = (host, baseImageName, basePort, newVersion, dockerPath) => {
     const [hostName, port] = host.split(":");
     const newPort = Number(port) === basePort ? basePort + 1 : basePort;
     const newImageName = baseImageName + '-' + newVersion;
