@@ -9,7 +9,7 @@ const NETWORK_INTERFACE = process.argv.slice(2)[3];
 const SSH_USER = process.argv.slice(2)[4];
 
 const main = async () => {
-    const latestCommit = execSync("git log -n 1 --pretty=format:\"%H\"").toString().substring(0, 10);
+    const latestCommit = execSync("git pull && git log -n 1 --pretty=format:\"%H\"").toString().substring(0, 10);
     const args = process.argv.slice(2);
     const oldNodes = await getNodes();
     await provisionGreenDeployments(oldNodes, args[0], Number(args[1]), latestCommit, args[2]);
@@ -75,5 +75,5 @@ const decomissionBlueDeployments = async (oldNodes, newVersion) => {
     }
 };
 
-main(); 
+main();
 
