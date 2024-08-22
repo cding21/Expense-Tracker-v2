@@ -60,8 +60,7 @@ const provisionGreenDeployments = async (nodes, baseImageName, basePort, newVers
     // Wait for all new nodes to spin up
     await sleep(10000);
     await Promise.all(newNodes.map(async (it) => await fetchWithErrorHandling(`http://${it.dial}/healthcheck`)));
-    await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { handler: "reverse_proxy", upstreams: newNodes });
-    console.log(newNodes);
+    console.log(await fetchWithErrorHandling("http://127.0.0.1:2019/config/apps/http/servers/srv0/routes/0/handle/0/routes/0/handle/0/", { handler: "reverse_proxy", upstreams: newNodes }));
     return newNodes;
 }
 
@@ -70,7 +69,7 @@ const decomissionBlueDeployments = async (oldNodes, newVersion) => {
         const [hostName, _] = node.split(":");
         const res = execSSH(hostName, `docker ps --format '{{.Image}}' | grep -v '${newVersion}' | tr '\\n' ' '`, false);
         const containerName = res.toString().split(" ")[0];
-        execSSH(hostName, `docker container ls | grep "${containerName}" | awk '{print $1}' | xargs docker kill && docker rmi -f ${containerName}`);
+        execSSH(hostName, `docker container ls | grep '${containerName}' | awk '{print $1}' | xargs docker kill && docker rmi -f ${containerName}`);
     }
 };
 
