@@ -25,12 +25,12 @@ class INGTest {
             try {
                 page.waitForResponse(
                     "https://www.ing.com.au/KeypadService/v1/KeypadService.svc/json/PinpadImages",
-                    Page.WaitForResponseOptions().setTimeout(10000.0),
+                    Page.WaitForResponseOptions().setTimeout(5000.0),
                 ) {}
                 val response =
                     page.waitForResponse(
                         "https://www.ing.com.au/KeypadService/v1/KeypadService.svc/json/PinpadImages",
-                        Page.WaitForResponseOptions().setTimeout(10000.0),
+                        Page.WaitForResponseOptions().setTimeout(5000.0),
                     ) {}
                 val keys = Json.decodeFromString<JsonObject>(response.text()).throwIfNullKey("KeypadImages").jsonArray
                 assertEquals(keys.size, 10)
