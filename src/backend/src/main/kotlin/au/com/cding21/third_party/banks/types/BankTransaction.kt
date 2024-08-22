@@ -6,8 +6,10 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
+@Serializable
 data class BankTransaction(
     val id: String,
     val date: LocalDateTime,

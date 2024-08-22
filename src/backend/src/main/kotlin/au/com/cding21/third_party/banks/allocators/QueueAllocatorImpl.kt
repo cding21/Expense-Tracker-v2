@@ -31,7 +31,7 @@ class QueueAllocatorImpl(poolSize: Int, instanceSize: Int) : SynchronousAllocato
         for (i in 0 until poolSize) {
             val browser: Browser =
                 playwright.chromium().launch(
-                    BrowserType.LaunchOptions().setHeadless(false).setArgs(listOf("--incognito")),
+                    BrowserType.LaunchOptions().setHeadless(true).setArgs(listOf("--incognito")),
                 )
             for (j in 0 until instanceSize) {
                 val context = browser.newContext()

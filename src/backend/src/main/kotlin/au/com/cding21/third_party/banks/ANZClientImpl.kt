@@ -61,12 +61,13 @@ class ANZClientImpl(
             throw ServerException("Unknown ANZ Auth API error. Status: ${response.status()}, Data: ${response.body()}")
         }
 
-        try {
-            page.waitForUrlAsync(Pattern.compile("https://.+/broadcast-message"), Page.WaitForURLOptions().setTimeout(2000.0))
-            page.getByText("Continue to Internet Banking").click()
-        } catch (_: TimeoutError) {
-            // NO-OP
-        }
+//        try {
+//            page.waitForUrlAsync(Pattern.compile("https://.+/broadcast-message"), Page.WaitForURLOptions().setTimeout(2000.0))
+//            page.getByText("Continue to Internet Banking").click()
+//        } catch (_: TimeoutError) {
+//            // NO-OP
+//            println()
+//        }
 
         val result = task(context, page)
         if (!permanent) {

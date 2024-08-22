@@ -1,5 +1,5 @@
 # Start from a base image
-FROM mcr.microsoft.com/playwright/java:v1.30.0-focal as build
+FROM mcr.microsoft.com/playwright/java:v1.44.0-focal as build
 
 # Set the working directory
 WORKDIR /app

@@ -3,6 +3,9 @@ package au.com.cding21.routes
 import au.com.cding21.data.Transaction
 import au.com.cding21.data.requests.TransactionRequest
 import au.com.cding21.services.impl.MongoTransactionServiceImpl
+import au.com.cding21.third_party.banks.ANZClientImpl
+import au.com.cding21.third_party.banks.allocators.QueueAllocatorImpl
+import au.com.cding21.third_party.banks.types.BankTransaction
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -11,6 +14,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
 
 fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
@@ -130,5 +134,22 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
         val filePart = parts.filterIsInstance<PartData.FileItem>().first()
         val transactions = transactionService.uploadTransactions(filePart.streamProvider().bufferedReader(), userId)
         call.respond(transactions)
+    }
+
+    get("/anz/transactions") {
+        val anzUsername = call.parameters["username"] ?: throw IllegalArgumentException("No username found")
+        val anzPassword = call.parameters["password"] ?: throw IllegalArgumentException("No password found")
+        val transactions: List<BankTransaction>
+        val allocator = QueueAllocatorImpl(1, 1)
+        runBlocking {
+            val anz = ANZClientImpl(allocator, "username", "password")
+            val accountId = anz.getAccounts()[0].id
+            transactions = anz.getTransactions(accountId, 10)
+
+        }
+        allocator.close()
+
+        call.respond(transactions)
+
     }
 }
