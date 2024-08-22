@@ -19,6 +19,10 @@ The `.env` file should contain the following variables:
 
 # Ktor Application
 DEVELOPMENT_MODE=false
+API_VERSION=/api/v1
+
+CORS_STATIC_WEBSITE=localhost:3000
+CORS_DASHBOARD=localhost:3001
 
 # Database
 DB_TYPE=mongo
