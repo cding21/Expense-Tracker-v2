@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    val db = connectToMongoDB()
+    // val db = connectToMongoDB()
 
     val tokenConfig =
         TokenConfig(
