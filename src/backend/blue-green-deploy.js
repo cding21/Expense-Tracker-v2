@@ -75,5 +75,5 @@ const decomissionBlueDeployments = async (oldNodes, newVersion) => {
     }
 };
 
-main();
+main(); 
 
