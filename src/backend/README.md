@@ -41,8 +41,8 @@ DB_POSTGRES_URL=http://localhost:5432
 DB_POSTGRES_DATABASE=test
 
 # JWT
-JWT_ISSUER=expense-tracker
-JWT_DOMAIN=cding21.com.au
+JWT_ISSUER=example.com
+JWT_DOMAIN='Example'
 JWT_SECRET=topsecret
-JWT_EXPIRATION=1000
+JWT_EXPIRATION=99999999
 ```
