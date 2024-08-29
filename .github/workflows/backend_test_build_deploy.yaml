@@ -88,6 +88,20 @@ jobs:
             docker rm $(echo $IMAGE_NAME)
             # Run a new container from a new image
             docker run -d \
+            -e DEVELOPMENT_MODE=false\
+            -e API_VERSION=${{vars.API_VERSION}}\
+            -e DB_TYPE=${{vars.DB_TYPE}}\
+            -e CORS_STATIC_WEBSITE=${{vars.CORS_STATIC_WEBSITE}}\
+            -e CORS_DASHBOARD=${{vars.CORS_DASHBOARD}}\
+            -e DB_MONGO_USER=${{secrets.DB_MONGO_USER}}\
+            -e DB_MONGO_PASSWORD=${{secrets.DB_MONGO_PASSWORD}}\
+            -e DB_MONGO_HOST=${{secrets.DB_MONGO_HOST}}\
+            -e DB_MONGO_MAX_POOL_SIZE=${{secrets.DB_MONGO_MAX_POOL_SIZE}}\
+            -e DB_MONGO_DATABASE=${{secrets.MONGO_DATABASE}}\
+            -e JWT_ISSUER=${{secrets.JWT_ISSUER}}\
+            -e JWT_DOMAIN=${{secrets.JWT_DOMAIN}}\
+            -e JWT_SECRET=${{secrets.JWT_SECRET}}\
+            -e JWT_EXPIRATION=${{secrets.JWT_EXPIRATION}}\          
             --restart always \
             --name $(echo $IMAGE_NAME) \
             $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
