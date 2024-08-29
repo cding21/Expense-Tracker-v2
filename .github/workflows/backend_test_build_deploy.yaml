@@ -64,7 +64,7 @@ jobs:
         run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
 
       - name: Start Garbage Collection in DigitalOcean Container Registry
-        run: doctl registry garbage-collection start
+        run: doctl registry garbage-collection start --force
 
   deploy:
     runs-on: ubuntu-latest

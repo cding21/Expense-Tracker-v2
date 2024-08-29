@@ -6,7 +6,8 @@ user authentication and authorization.
 
 ## Set-up
 ### Database
-The project uses MongoDB and PostgreSQL databases. The databases should be set up before running the application.
+The project uses MongoDB and PostgreSQL databases. The databases should be set up before running the application using 
+the provided `init-local-dbs.js` script
 
 ### Environment Variables
 The project uses environment variables to store sensitive information. The `.env` file should be created in the root of 
