@@ -15,7 +15,7 @@ the project. The `.env` file should be added to the `.gitignore` file to prevent
 The `.env` file should contain the following variables:
 
 ``` properties
-# Example .env file to include in the root of the project
+# Example .env.dev file included in the root of the project
 
 # Ktor Application
 DEVELOPMENT_MODE=false
