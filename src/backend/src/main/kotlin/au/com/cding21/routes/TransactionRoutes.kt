@@ -55,10 +55,12 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
         when(mode) {
             SortBy.YEARLY -> {
                 val response = HashMap<Int, MutableList<Transaction>>()
+                // Group transactions by year
                 call.respond(transactions.groupByTo(response) { it.date.year })
             }
             SortBy.MONTHLY -> {
                 val response = HashMap<Int, MutableList<Transaction>>()
+                // Group transactions by year and then by month
                 call.respond(transactions.groupByTo(response) { it.date.year }.mapValues {
                     (_, transactions) ->
                         val t = HashMap<Month, MutableList<Transaction>>()
@@ -66,16 +68,22 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
                 })
             }
             SortBy.WEEKLY -> {
-                val response = HashMap<WeekPeriod, MutableList<Transaction>>()
+                val response = HashMap<Int, MutableList<Transaction>>()
                 val weekFields = WeekFields.of(Locale.getDefault())
-                call.respond(transactions.groupByTo(response) { transaction ->
-                    val startOfWeek = transaction.date.with(weekFields.dayOfWeek(), 1).toKotlinLocalDate()
-                    val endOfWeek = transaction.date.with(weekFields.dayOfWeek(), 7).toKotlinLocalDate()
-                    WeekPeriod(startOfWeek, endOfWeek)
+                // Group transactions by year and then by month
+                call.respond(transactions.groupByTo(response) { it.date.year }.mapValues {
+                    (_, transactions) ->
+                        val t = HashMap<WeekPeriod, MutableList<Transaction>>()
+                        transactions.groupByTo(t) { transaction ->
+                            val startOfWeek = transaction.date.with(weekFields.dayOfWeek(), 1).toKotlinLocalDate()
+                            val endOfWeek = transaction.date.with(weekFields.dayOfWeek(), 7).toKotlinLocalDate()
+                            WeekPeriod(startOfWeek, endOfWeek)
+                    }
                 })
             }
             SortBy.DAILY -> {
                 val response = HashMap<LocalDate, MutableList<Transaction>>()
+                // Group transactions by date
                 call.respond(transactions.groupByTo(response) { it.date.toKotlinLocalDate() })
             }
             else -> call.respond(transactions)
