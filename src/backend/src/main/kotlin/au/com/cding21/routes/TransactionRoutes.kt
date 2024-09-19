@@ -1,6 +1,8 @@
 package au.com.cding21.routes
 
+import au.com.cding21.data.SortBy
 import au.com.cding21.data.Transaction
+import au.com.cding21.data.WeekPeriod
 import au.com.cding21.data.requests.TransactionRequest
 import au.com.cding21.services.impl.MongoTransactionServiceImpl
 import io.ktor.http.*
@@ -11,7 +13,12 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.*
+import kotlinx.datetime.*
 import org.bson.types.ObjectId
+import java.time.temporal.WeekFields
+import java.util.*
+
 
 fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
     // Create transaction
@@ -42,7 +49,37 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
         val principal = call.principal<JWTPrincipal>()
         val userId = principal!!.payload.getClaim("userId").asString()
         val transactions = transactionService.getTransactionByUserId(userId)
-        call.respond(transactions)
+        val mode = call.request.queryParameters["sortBy"]?.let {
+            it1 -> enumValueOf<SortBy>(it1.toUpperCasePreservingASCIIRules())
+        }
+        when(mode) {
+            SortBy.YEARLY -> {
+                val response = HashMap<Int, MutableList<Transaction>>()
+                call.respond(transactions.groupByTo(response) { it.date.year })
+            }
+            SortBy.MONTHLY -> {
+                val response = HashMap<Int, MutableList<Transaction>>()
+                call.respond(transactions.groupByTo(response) { it.date.year }.mapValues {
+                    (_, transactions) ->
+                        val t = HashMap<Month, MutableList<Transaction>>()
+                        transactions.groupByTo(t) { it.date.month }
+                })
+            }
+            SortBy.WEEKLY -> {
+                val response = HashMap<WeekPeriod, MutableList<Transaction>>()
+                val weekFields = WeekFields.of(Locale.getDefault())
+                call.respond(transactions.groupByTo(response) { transaction ->
+                    val startOfWeek = transaction.date.with(weekFields.dayOfWeek(), 1).toKotlinLocalDate()
+                    val endOfWeek = transaction.date.with(weekFields.dayOfWeek(), 7).toKotlinLocalDate()
+                    WeekPeriod(startOfWeek, endOfWeek)
+                })
+            }
+            SortBy.DAILY -> {
+                val response = HashMap<LocalDate, MutableList<Transaction>>()
+                call.respond(transactions.groupByTo(response) { it.date.toKotlinLocalDate() })
+            }
+            else -> call.respond(transactions)
+        }
     }
     // Read transaction
     get("/transactions/{id}") {
@@ -132,3 +169,5 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
         call.respond(transactions)
     }
 }
+
+

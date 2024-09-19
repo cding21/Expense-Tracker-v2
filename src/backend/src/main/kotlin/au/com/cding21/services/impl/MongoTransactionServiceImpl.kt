@@ -64,7 +64,7 @@ class MongoTransactionServiceImpl(
             .filter { it.isNotBlank() }
             .map {
                 val t = Transaction.fromCsvLine(it, userId)
-//            transactions.insertOne(t.toDocument())
+                transactions.insertOne(t.toDocument())
                 t
             }.collect(Collectors.toList())
     }
