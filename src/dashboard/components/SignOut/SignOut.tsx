@@ -2,7 +2,7 @@
 
 import { Button } from '@mantine/core';
 import { useMutation } from '@tanstack/react-query';
-import { logout } from '@/auth';
+import { logout } from '@/helper/auth';
 
 export function SignOut() {
   const mutation = useMutation({
