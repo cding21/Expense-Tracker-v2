@@ -18,7 +18,6 @@ export async function login(loginData: UserLogin) {
     // Set session JWT token
     const resp = await response.json();
     cookies().set('token', resp.get('token'), { sameSite: 'strict' });
-
   } else {
     const resp = await response.text();
     throw new Error(resp);
