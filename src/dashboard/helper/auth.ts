@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { UserLogin } from '../models/user.model';
+import Error from 'next/error';
 
 export async function login(loginData: UserLogin) {
   // Make an API request to authenticate the user
@@ -19,8 +20,8 @@ export async function login(loginData: UserLogin) {
     const resp = await response.json();
     cookies().set('token', resp.get('token'), { sameSite: 'strict' });
   } else {
-    const resp = await response.text();
-    throw new Error(resp);
+    const resp = await response.json();
+    throw new Error(resp.message);
   }
 }
 
@@ -40,8 +41,8 @@ export async function signUp(signUpData: UserLogin) {
     const resp = await response.text();
     return resp;
   } else {
-    const resp = await response.text();
-    throw new Error(resp);
+    const resp = await response.json();
+    throw new Error(resp.message);
   }
 }
 

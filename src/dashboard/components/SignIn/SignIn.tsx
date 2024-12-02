@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TextInput,
   PasswordInput,
@@ -20,7 +20,9 @@ import classes from './SignIn.module.css';
 import { login } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 
+
 export function SignIn() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '' },
@@ -38,9 +40,9 @@ export function SignIn() {
       // Redirect to dashboard page
       window.location.href = '/';
     },
-    onError: (e: Error) => {
+    onError: () => {
       notifications.show({
-        message: `Login failed: ${e.message}`,
+        message: `Login failed: Invalid username or password`,
         color: 'red',
         position: 'bottom-center',
       });

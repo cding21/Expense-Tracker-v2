@@ -39,9 +39,9 @@ export function SignUp() {
       // Redirect to sign-in page
       window.location.href = '/sign-in';
     },
-    onError: (e: Error) => {
+    onError: () => {
       notifications.show({
-        message: `Sign-up failed: ${e.message}`,
+        message: `Sign-up failed`,
         color: 'red',
         position: 'bottom-center',
       });
@@ -98,11 +98,6 @@ export function SignUp() {
             key={form.key('confirmPassword')}
             {...form.getInputProps('confirmPassword')}
           />
-          {/* {mutation.isError && (
-            <Text c="red" mt="md" ta="center">
-              Sign-up failed: {mutation.error.message}
-            </Text>
-          )} */}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
             Sign up
           </Button>
