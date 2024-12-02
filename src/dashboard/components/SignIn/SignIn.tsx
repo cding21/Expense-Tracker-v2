@@ -27,8 +27,8 @@ export function SignIn() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => value.length > 0 ? null: 'Username is required',
-      password: (value) => value.length > 0 ? null: 'Password is required',
+      username: (value) => (value.length > 0 ? null : 'Username is required'),
+      password: (value) => (value.length > 0 ? null : 'Password is required'),
     },
   });
 
@@ -40,7 +40,7 @@ export function SignIn() {
     },
     onError: (e: Error) => {
       notifications.show({
-        message: 'Login failed: ' + e.message,
+        message: `Login failed: ${e.message}`,
         color: 'red',
         position: 'bottom-center',
       });

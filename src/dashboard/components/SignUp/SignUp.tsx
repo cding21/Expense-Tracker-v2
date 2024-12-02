@@ -41,7 +41,7 @@ export function SignUp() {
     },
     onError: (e: Error) => {
       notifications.show({
-        message: 'Sign-up failedP: ' + e.message,
+        message: `Sign-up failed: ${e.message}`,
         color: 'red',
         position: 'bottom-center',
       });
