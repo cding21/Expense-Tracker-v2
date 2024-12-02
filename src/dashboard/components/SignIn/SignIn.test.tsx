@@ -23,7 +23,7 @@ describe('SignIn', () => {
   it('submits form data to the server', async () => {
     // Mock the login function
     const mockLogin = jest.fn();
-    jest.mock('../../auth', () => ({
+    jest.mock('../../helper/auth', () => ({
       login: mockLogin,
     }));
 
@@ -65,7 +65,7 @@ describe('SignIn', () => {
     );
 
     // Mock the login function to simulate a failed login
-    global.fetch = jest.fn().mockRejectedValue(new Error('Login failed'));
+    global.fetch = jest.fn().mockRejectedValue(new Error('Invalid username/password'));
 
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
@@ -78,9 +78,9 @@ describe('SignIn', () => {
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText('Login failed');
+    await screen.findByText('Login failed: Invalid username/password');
 
     // Assert
-    expect(screen.getByText('Login failed')).toBeDefined();
+    expect(screen.getByText('Login failed: Invalid username/password')).toBeDefined();
   });
 });

@@ -25,7 +25,7 @@ describe('SignUp', () => {
   it('submits form data to the server', async () => {
     // Mock the login function
     const mockSignUp = jest.fn();
-    jest.mock('../../auth', () => ({
+    jest.mock('../../helper/auth', () => ({
       signUp: mockSignUp,
     }));
 
@@ -88,9 +88,9 @@ describe('SignUp', () => {
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText('Sign-up failed');
+    await screen.findByText('Sign-up failed: Username already exists');
 
     // Assert
-    expect(screen.getByText('Sign-up failed')).toBeDefined();
+    expect(screen.getByText('Sign-up failed: Username already exists')).toBeDefined();
   });
 });
