@@ -15,7 +15,7 @@ import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import classes from './SignUp.module.css';
-import { signUp } from '@/auth';
+import { signUp } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
@@ -39,9 +39,9 @@ export function SignUp() {
       // Redirect to sign-in page
       window.location.href = '/sign-in';
     },
-    onError: () => {
+    onError: (e: Error) => {
       notifications.show({
-        message: 'Sign-up failed',
+        message: 'Sign-up failedP: ' + e.message,
         color: 'red',
         position: 'bottom-center',
       });

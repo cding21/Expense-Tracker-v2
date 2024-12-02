@@ -17,9 +17,8 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import classes from './SignIn.module.css';
-import { login } from '@/auth';
+import { login } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
-import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignIn() {
   const form = useForm({
@@ -28,8 +27,8 @@ export function SignIn() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => value.length > 0?"": "Username is required",
-      password: (value) => value.length > 0? "": "Password is required",
+      username: (value) => value.length > 0 ? null: 'Username is required',
+      password: (value) => value.length > 0 ? null: 'Password is required',
     },
   });
 
@@ -39,9 +38,9 @@ export function SignIn() {
       // Redirect to dashboard page
       window.location.href = '/';
     },
-    onError: () => {
+    onError: (e: Error) => {
       notifications.show({
-        message: 'Login failed',
+        message: 'Login failed: ' + e.message,
         color: 'red',
         position: 'bottom-center',
       });
@@ -101,11 +100,6 @@ export function SignIn() {
               Forgot password?
             </Anchor>
           </Group>
-          {/* {mutation.isError && (
-            <Text c="red" mt="md" ta="center">
-              Login failed
-            </Text>
-          )} */}
           <Button name="Sign in" type="submit" fullWidth mt="xl" loading={mutation.isPending}>
             Sign in
           </Button>
