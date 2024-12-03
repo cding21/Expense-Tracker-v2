@@ -39,7 +39,7 @@ export function SignIn() {
     },
     onError: () => {
       notifications.show({
-        message: 'Login failed: Invalid username or password',
+        message: 'Login failed: Invalid username/password',
         color: 'red',
         position: 'bottom-center',
       });
