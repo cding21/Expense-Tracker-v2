@@ -96,7 +96,6 @@ fun Route.authRoutes(
 fun validateAuthRequest(user: AuthRequest): Boolean {
     return user.username.isNotEmpty() &&
         user.username.length >= 4 &&
-        user.username.matches(Regex("^[a-zA-Z0-9]*\$")) &&
         user.password.isNotEmpty() &&
         user.password.length >= 8 &&
         user.password.matches(Regex(".*[a-z].*")) &&
