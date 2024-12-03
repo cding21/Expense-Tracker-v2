@@ -52,4 +52,3 @@ export async function logout() {
   cookies().delete('token');
   redirect('/sign-in');
 }
-

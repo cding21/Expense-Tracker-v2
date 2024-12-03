@@ -36,11 +36,11 @@ export function SignUp() {
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => signUp(e),
     onSuccess: () => {
-     //Do nothing
+      //Do nothing
     },
     onError: () => {
       notifications.show({
-        message: `Sign-up failed`,
+        message: 'Sign-up failed',
         color: 'red',
         position: 'bottom-center',
       });
@@ -63,7 +63,6 @@ export function SignUp() {
         >
           Sign-in
         </Anchor>
-
       </Text>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
