@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   TextInput,
   PasswordInput,
@@ -20,9 +20,7 @@ import classes from './SignIn.module.css';
 import { login } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 
-
 export function SignIn() {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '' },
@@ -37,8 +35,7 @@ export function SignIn() {
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => login(e),
     onSuccess: () => {
-      // Redirect to dashboard page
-      window.location.href = '/';
+      // Do nothing
     },
     onError: () => {
       notifications.show({
@@ -72,12 +69,14 @@ export function SignIn() {
           onSubmit={form.onSubmit((values) => {
             mutation.mutate({ username: values.username, password: values.password });
           })}
+          autoComplete="off"
         >
           <TextInput
             name="username"
             label="Username"
             placeholder="Your username"
             required
+            autoComplete="new-username"
             key={form.key('username')}
             {...form.getInputProps('username')}
           />
@@ -86,6 +85,7 @@ export function SignIn() {
             label="Password"
             placeholder="Your password"
             required
+            autoComplete="new-password"
             mt="md"
             key={form.key('password')}
             {...form.getInputProps('password')}

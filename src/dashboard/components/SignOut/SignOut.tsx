@@ -8,8 +8,7 @@ export function SignOut() {
   const mutation = useMutation({
     mutationFn: () => logout(),
     onSuccess: () => {
-      // Redirect to the sign-in page
-      window.location.href = '/sign-in';
+      // Do nothing
     },
   });
 

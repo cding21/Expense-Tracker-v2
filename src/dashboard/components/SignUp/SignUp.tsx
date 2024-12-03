@@ -36,8 +36,7 @@ export function SignUp() {
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => signUp(e),
     onSuccess: () => {
-      // Redirect to sign-in page
-      window.location.href = '/sign-in';
+     //Do nothing
     },
     onError: () => {
       notifications.show({
@@ -64,6 +63,7 @@ export function SignUp() {
         >
           Sign-in
         </Anchor>
+
       </Text>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
@@ -71,12 +71,14 @@ export function SignUp() {
           onSubmit={form.onSubmit((values) => {
             mutation.mutate({ username: values.username, password: values.password });
           })}
+          autoComplete="off"
         >
           <TextInput
             name="username"
             label="Username"
             placeholder="Your username"
             required
+            autoComplete="new-username"
             key={form.key('username')}
             {...form.getInputProps('username')}
           />
@@ -85,6 +87,7 @@ export function SignUp() {
             label="Password"
             placeholder="Your password"
             required
+            autoComplete="new-password"
             mt="md"
             key={form.key('password')}
             {...form.getInputProps('password')}
@@ -94,6 +97,7 @@ export function SignUp() {
             label="Confirm password"
             placeholder="Your confirm password"
             required
+            autoComplete="new-password"
             mt="md"
             key={form.key('confirmPassword')}
             {...form.getInputProps('confirmPassword')}
