@@ -4,8 +4,20 @@ import Providers from '@/app/providers';
 import { SignIn } from './SignIn';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
 import { theme } from '@/theme';
+import { login } from '@/helper/auth';
+
+// Mock the login function
+jest.mock('../../helper/auth', () => ({
+  login: jest.fn(),
+}));
+
+const mockLogin = login as jest.Mock;
 
 describe('SignIn', () => {
+  beforeEach(() => {
+    mockLogin.mockClear();
+  });
+
   it('renders form with username, password, submit button, and link to sign up', () => {
     // Arrange
     render(
@@ -16,16 +28,14 @@ describe('SignIn', () => {
         </MantineProvider>
       </Providers>
     );
+
     // Assert
     expect(screen.getByText('Username')).toBeDefined();
     expect(screen.getByText('Password')).toBeDefined();
   });
   it('submits form data to the server', async () => {
     // Mock the login function
-    const mockLogin = jest.fn();
-    jest.mock('../../helper/auth', () => ({
-      login: mockLogin,
-    }));
+    mockLogin.mockReturnValueOnce(Promise.resolve());
 
     // Arrange
     render(
@@ -54,7 +64,11 @@ describe('SignIn', () => {
     );
   });
   it('displays an error message if login fails', async () => {
+    const msg = 'An error occurred';
+
     // Arrange
+    mockLogin.mockRejectedValueOnce(new Error(msg));
+
     render(
       <Providers>
         <MantineProvider theme={theme}>
@@ -65,7 +79,7 @@ describe('SignIn', () => {
     );
 
     // Mock the login function to simulate a failed login
-    global.fetch = jest.fn().mockRejectedValue(new Error('Invalid username/password'));
+    global.fetch = jest.fn().mockRejectedValue(new Error(msg));
 
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
@@ -78,9 +92,9 @@ describe('SignIn', () => {
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText('Login failed: Invalid username/password');
+    await screen.findByText(`Login failed: ${msg}`);
 
     // Assert
-    expect(screen.getByText('Login failed: Invalid username/password')).toBeDefined();
+    expect(screen.getByText(`Login failed: ${msg}`)).toBeDefined();
   });
 });

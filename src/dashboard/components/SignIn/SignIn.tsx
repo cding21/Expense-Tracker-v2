@@ -35,12 +35,21 @@ export function SignIn() {
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => login(e),
     onSuccess: () => {
-      // Redirect to dashboard page
-      window.location.href = '/';
+      // Do nothing
     },
     onError: (e: Error) => {
+      let msg = 'An error occurred';
+
+      switch (e.message) {
+        case 'Invalid username/password':
+          msg = 'Username is not available';
+          break;
+        default:
+          break;
+      }
+
       notifications.show({
-        message: `Login failed: ${e.message}`,
+        message: `Login failed: ${msg}`,
         color: 'red',
         position: 'bottom-center',
       });
@@ -70,12 +79,14 @@ export function SignIn() {
           onSubmit={form.onSubmit((values) => {
             mutation.mutate({ username: values.username, password: values.password });
           })}
+          autoComplete="off"
         >
           <TextInput
             name="username"
             label="Username"
             placeholder="Your username"
             required
+            autoComplete="new-username"
             key={form.key('username')}
             {...form.getInputProps('username')}
           />
@@ -84,6 +95,7 @@ export function SignIn() {
             label="Password"
             placeholder="Your password"
             required
+            autoComplete="new-password"
             mt="md"
             key={form.key('password')}
             {...form.getInputProps('password')}
