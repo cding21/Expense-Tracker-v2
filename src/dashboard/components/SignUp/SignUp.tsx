@@ -10,16 +10,19 @@ import {
   Container,
   Button,
   Anchor,
+  Loader,
 } from '@mantine/core';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import classes from './SignUp.module.css';
-import { signUp } from '@/helper/auth';
+import { checkUsername, signUp } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignUp() {
+  let username = '';
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '', confirmPassword: '' },
@@ -33,14 +36,36 @@ export function SignUp() {
     },
   });
 
+  const query = useQuery({
+    queryKey: ['username'],
+    queryFn: () => checkUsername(username),
+    enabled: false,
+    retry: false,
+  });
+
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => signUp(e),
     onSuccess: () => {
       //Do nothing
     },
-    onError: () => {
+    onError: (e: Error) => {
+      let msg = 'An error occurred';
+      switch (e.message) {
+        case 'Username is not available':
+          msg = 'Username is not available';
+          break;
+        case 'Invalid username':
+          msg = 'Invalid username';
+          break;
+        case 'Password is not strong enough':
+          msg = 'Password is not strong enough';
+          break;
+        default:
+          break;
+      }
+
       notifications.show({
-        message: 'Sign-up failed',
+        message: `Sign-up failed: ${msg}`,
         color: 'red',
         position: 'bottom-center',
       });
@@ -80,6 +105,18 @@ export function SignUp() {
             autoComplete="new-username"
             key={form.key('username')}
             {...form.getInputProps('username')}
+            onChange={(e) => {
+              username = e.currentTarget.value;
+              query.refetch();
+            }}
+            error={query.isError ? 'Username is not available' : null}
+            rightSection={
+              query.isLoading ? (
+                <Loader size={15} />
+              ) : query.isSuccess ? (
+                <IconCircleCheck color="green" />
+              ) : null
+            }
           />
           <PasswordInput
             name="password"

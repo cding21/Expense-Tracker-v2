@@ -35,16 +35,33 @@ fun Route.authRoutes(
         }
     }
 
-    post("/signup") {
-        val req = call.receive<AuthRequest>()
-        if (!validateAuthRequest(req)) {
-            call.respond(HttpStatusCode.BadRequest, "Invalid username/password")
-            return@post
+    get("/check") {
+        val username = call.request.queryParameters["username"] ?: throw MissingRequestParameterException("No username found")
+
+        if (userService.getUserByUsername(username) != null) {
+            call.respond(HttpStatusCode.Conflict, "Username already exists")
+            return@get
         }
 
-        // Check if username already exists
+        call.respond(HttpStatusCode.OK, "Username doesn't already exist")
+        return@get
+    }
+
+    post("/signup") {
+        val req = call.receive<AuthRequest>()
+        // Check if username is available
         if (userService.getUserByUsername(req.username) != null) {
-            call.respond(HttpStatusCode.Conflict, "Username already exists")
+            call.respond(HttpStatusCode.Conflict, "Username is not available")
+            return@post
+        }
+        // Check username validity
+        if (!validateUsername(req.username)) {
+            call.respond(HttpStatusCode.BadRequest, "Invalid username")
+            return@post
+        }
+        // Check password validity
+        if (!validatePassword(req.password)) {
+            call.respond(HttpStatusCode.BadRequest, "Password is not strong enough")
             return@post
         }
 
@@ -68,12 +85,12 @@ fun Route.authRoutes(
 
         val user = userService.getUserByUsername(req.username)
         if (user == null) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+            call.respond(HttpStatusCode.Conflict, "Invalid username/password")
             return@post
         }
         val isValid = hashingService.verify(req.password, SaltedHash(user.password, user.salt))
         if (!isValid) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+            call.respond(HttpStatusCode.Conflict, "Invalid username/password")
             return@post
         }
         val token =
@@ -93,13 +110,17 @@ fun Route.authRoutes(
     }
 }
 
-fun validateAuthRequest(user: AuthRequest): Boolean {
-    return user.username.isNotEmpty() &&
-        user.username.length >= 4 &&
-        user.password.isNotEmpty() &&
-        user.password.length >= 8 &&
-        user.password.matches(Regex(".*[a-z].*")) &&
-        user.password.matches(Regex(".*[A-Z].*")) &&
-        user.password.matches(Regex(".*[0-9].*")) &&
-        user.password.matches(Regex(".*[!@#\$%^&*()].*"))
+
+fun validatePassword(pw: String): Boolean {
+    return pw.isNotEmpty() &&
+            pw.length >= 8 &&
+            pw.matches(Regex(".*[a-z].*")) &&
+            pw.matches(Regex(".*[A-Z].*")) &&
+            pw.matches(Regex(".*[0-9].*")) &&
+            pw.matches(Regex(".*[!@#\$%^&*()_-].*"))
+}
+
+fun validateUsername(user: String): Boolean {
+    return user.isNotEmpty() &&
+            user.length >= 4
 }

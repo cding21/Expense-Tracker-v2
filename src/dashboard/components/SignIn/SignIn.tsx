@@ -37,9 +37,19 @@ export function SignIn() {
     onSuccess: () => {
       // Do nothing
     },
-    onError: () => {
+    onError: (e: Error) => {
+      let msg = 'An error occurred';
+
+      switch (e.message) {
+        case 'Invalid username/password':
+          msg = 'Username is not available';
+          break;
+        default:
+          break;
+      }
+
       notifications.show({
-        message: 'Login failed: Invalid username/password',
+        message: `Login failed: ${msg}`,
         color: 'red',
         position: 'bottom-center',
       });

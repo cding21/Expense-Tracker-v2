@@ -47,6 +47,24 @@ export async function signUp(signUpData: UserLogin) {
   }
 }
 
+export async function checkUsername(username: string) {
+  // Make an API request to check if the username is available
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
+  const response = await fetch(`${backendUrl}/check?username=${username}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // Check if the username is available
+  if (response.status === 200) {
+    return true;
+  } else {
+    throw new Error('Username already exists');
+  }
+}
+
 export async function logout() {
   // Remove the session JWT token
   cookies().delete('token');
