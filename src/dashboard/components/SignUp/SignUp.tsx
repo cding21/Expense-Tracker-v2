@@ -22,7 +22,7 @@ import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignUp() {
-  let username = '';
+  let usernameQuery = '';
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '', confirmPassword: '' },
@@ -38,7 +38,7 @@ export function SignUp() {
 
   const query = useQuery({
     queryKey: ['username'],
-    queryFn: () => checkUsername(username),
+    queryFn: () => checkUsername(usernameQuery),
     enabled: false,
     retry: false,
   });
@@ -106,7 +106,8 @@ export function SignUp() {
             key={form.key('username')}
             {...form.getInputProps('username')}
             onChange={(e) => {
-              username = e.currentTarget.value;
+              form.setFieldValue('username', e.currentTarget.value);
+              usernameQuery = e.currentTarget.value;
               query.refetch();
             }}
             error={query.isError ? 'Username is not available' : null}
