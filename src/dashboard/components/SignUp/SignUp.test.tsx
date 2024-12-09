@@ -5,7 +5,6 @@ import { SignUp } from './SignUp';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
 import { theme } from '@/theme';
 import { checkUsername, signUp } from '@/helper/auth';
-import { act } from 'react';
 
 // Mock the login function
 jest.mock('../../helper/auth', () => ({
@@ -122,7 +121,6 @@ describe('SignUp', () => {
       </Providers>
     );
 
-
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
     const passwordInput = screen.getByPlaceholderText('Your password');
@@ -130,12 +128,10 @@ describe('SignUp', () => {
     const submitButton = screen.getByText('Sign up');
 
     // Act
-    act(() => {
-      fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-      fireEvent.change(passwordInput, { target: { value: 'AVerySecurePassword!234' } });
-      fireEvent.change(confirmPasswordInput, { target: { value: 'AVerySecurePassword!234' } });
-      fireEvent.click(submitButton);
-    });
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(passwordInput, { target: { value: 'AVerySecurePassword!234' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'AVerySecurePassword!234' } });
+    fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
     await screen.findByText(`Sign-up failed: ${msg}`);
