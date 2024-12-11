@@ -10,9 +10,7 @@ import {
   Container,
   Button,
   Anchor,
-  Loader,
 } from '@mantine/core';
-import { IconCircleCheck } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
@@ -22,7 +20,7 @@ import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignUp() {
-  let usernameQuery = '';
+  // let usernameQuery = '';
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '', confirmPassword: '' },
@@ -36,12 +34,12 @@ export function SignUp() {
     },
   });
 
-  const query = useQuery({
-    queryKey: ['username'],
-    queryFn: () => checkUsername(usernameQuery),
-    enabled: false,
-    retry: false,
-  });
+  // const query = useQuery({
+  //   queryKey: ['username'],
+  //   queryFn: () => checkUsername(usernameQuery),
+  //   enabled: false,
+  //   retry: false,
+  // });
 
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => signUp(e),
@@ -105,19 +103,20 @@ export function SignUp() {
             autoComplete="new-username"
             key={form.key('username')}
             {...form.getInputProps('username')}
-            onChange={(e) => {
-              form.setFieldValue('username', e.currentTarget.value);
-              usernameQuery = e.currentTarget.value;
-              query.refetch();
-            }}
-            error={query.isError ? 'Username is not available' : null}
-            rightSection={
-              query.isLoading ? (
-                <Loader size={15} />
-              ) : query.isSuccess ? (
-                <IconCircleCheck color="green" />
-              ) : null
-            }
+            // TODO: Issue with setting value of username in form
+            // onChange={(e) => {
+            //   usernameQuery = e.currentTarget.value;
+            //   query.refetch();
+            // }}
+            // onSubmit={(e) => {form.setFieldValue('username', e.currentTarget.value);}}
+            // error={query.isError ? 'Username is not available' : null}
+            // rightSection={
+            //   query.isLoading ? (
+            //     <Loader size={15} />
+            //   ) : query.isSuccess ? (
+            //     <IconCircleCheck color="green" />
+            //   ) : null
+            // }
           />
           <PasswordInput
             name="password"

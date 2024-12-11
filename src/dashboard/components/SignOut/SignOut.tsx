@@ -17,7 +17,6 @@ export function SignOut() {
       variant="outline"
       color="red"
       fullWidth
-      mt="md"
       onClick={() => mutation.mutate()}
       loading={mutation.isPending}
     >
