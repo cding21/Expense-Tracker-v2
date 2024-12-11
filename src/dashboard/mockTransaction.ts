@@ -88,3 +88,36 @@ export const mockTransactionStats = [
     value: -3762.89,
   },
 ];
+
+export const mockChartDataByMonth = [
+  {
+    date: 'Mar 24',
+    expenses: 2890,
+    income: 2338,
+    total: 2452,
+  },
+  {
+    date: 'Apr 24',
+    expenses: 2756,
+    income: 2103,
+    total: 2402,
+  },
+  {
+    date: 'May 24',
+    expenses: 3322,
+    income: 986,
+    total: 1821,
+  },
+  {
+    date: 'Jun 24',
+    expenses: 3470,
+    income: 2108,
+    total: 2809,
+  },
+  {
+    date: 'Jul 24',
+    expenses: 3129,
+    income: 1726,
+    total: 2290,
+  },
+];
