@@ -36,6 +36,7 @@ const icons = {
 
 export interface TransactionStatsProps {
   data: {
+    id: string;
     title: string;
     diff: number;
     icon: string;
@@ -51,7 +52,7 @@ const CashFlowGrid: React.FC<TransactionStatsProps> = ({ data }) => {
       stat.diff > 0 ? IconArrowUpRight : stat.diff === 0 ? IconEqual : IconArrowDownRight;
 
     return (
-      <Grid.Col span={4}>
+      <Grid.Col span={4} key={stat.id}>
         <Paper withBorder p="md" radius="md" key={stat.title}>
           <Group justify="space-between">
             <Text size="xs" c="dimmed" className={classes.title}>

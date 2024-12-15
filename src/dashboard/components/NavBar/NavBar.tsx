@@ -1,7 +1,6 @@
 import {
   IconBulb,
   IconCheckbox,
-  IconChevronRight,
   IconMessageCircle,
   IconPhoto,
   IconPlus,
@@ -11,23 +10,19 @@ import {
 } from '@tabler/icons-react';
 import {
   ActionIcon,
-  Avatar,
   Badge,
   Box,
-  Button,
-  Code,
   Group,
   Menu,
   rem,
   Text,
-  TextInput,
   Tooltip,
   UnstyledButton,
 } from '@mantine/core';
+import { forwardRef } from 'react';
 import classes from './NavBar.module.css';
 import { UserButton } from '../UserButton/UserButton';
 import { SignOut } from '../SignOut/SignOut';
-import { forwardRef } from 'react';
 
 const links = [
   { icon: IconBulb, label: 'Dashboard', href: '/' },
@@ -93,7 +88,7 @@ export function NavBar() {
   ));
 
   return (
-    <nav className={classes.navbar}>
+    <div className={classes.navbar}>
       <div className={classes.section}>
         <Menu position="right">
           <Menu.Target>
@@ -154,6 +149,6 @@ export function NavBar() {
         </Group>
         <div className={classes.collections}>{collectionLinks}</div>
       </div>
-    </nav>
+    </div>
   );
 }

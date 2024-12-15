@@ -12,6 +12,7 @@ export const mockTransaction = {
 
 export const mockTransactionList = [
   {
+    id: '1',
     userId: 'user123',
     date: '15/05/2023',
     amount: 75.5,
@@ -23,6 +24,7 @@ export const mockTransactionList = [
     toNote: 'Payment for groceries',
   },
   {
+    id: '2',
     userId: 'user124',
     date: '16/05/2023',
     amount: 150.0,
@@ -34,6 +36,7 @@ export const mockTransactionList = [
     toNote: 'Payment for electricity bill',
   },
   {
+    id: '3',
     userId: 'user125',
     date: '17/05/2023',
     amount: 45.0,
@@ -45,6 +48,7 @@ export const mockTransactionList = [
     toNote: 'Payment for dinner',
   },
   {
+    id: '4',
     userId: 'user126',
     date: '18/05/2023',
     amount: 20.0,
@@ -56,6 +60,7 @@ export const mockTransactionList = [
     toNote: 'Payment for public transport',
   },
   {
+    id: '5',
     userId: 'user127',
     date: '19/05/2023',
     amount: 100.0,
@@ -70,18 +75,21 @@ export const mockTransactionList = [
 
 export const mockTransactionStats = [
   {
+    id: '1',
     title: 'Money In',
     diff: 25,
     icon: 'pigMoney',
     value: 1357.5,
   },
   {
+    id: '2',
     title: 'Money Out',
     diff: -4,
     icon: 'cash',
     value: -5120.39,
   },
   {
+    id: '3',
     title: 'Net Change',
     diff: 0,
     icon: 'report',

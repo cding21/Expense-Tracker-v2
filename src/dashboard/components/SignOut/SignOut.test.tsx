@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import Providers from '@/app/providers';
+import Providers from '@/app/(feature_pages)/providers';
 import { SignOut } from './SignOut';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
 

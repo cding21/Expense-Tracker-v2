@@ -10,6 +10,7 @@ import {
   Container,
   Button,
   Anchor,
+  Loader,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -18,9 +19,10 @@ import classes from './SignUp.module.css';
 import { checkUsername, signUp } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
+import { IconCircleCheck } from '@tabler/icons-react';
 
 export function SignUp() {
-  // let usernameQuery = '';
+  let usernameQuery = '';
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '', confirmPassword: '' },
@@ -34,12 +36,12 @@ export function SignUp() {
     },
   });
 
-  // const query = useQuery({
-  //   queryKey: ['username'],
-  //   queryFn: () => checkUsername(usernameQuery),
-  //   enabled: false,
-  //   retry: false,
-  // });
+  const query = useQuery({
+    queryKey: ['username'],
+    queryFn: () => checkUsername(usernameQuery),
+    enabled: false,
+    retry: false,
+  });
 
   const mutation = useMutation({
     mutationFn: (e: UserLogin) => signUp(e),
@@ -91,6 +93,7 @@ export function SignUp() {
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form
           onSubmit={form.onSubmit((values) => {
+            query.refetch();
             mutation.mutate({ username: values.username, password: values.password });
           })}
           autoComplete="off"
@@ -109,14 +112,14 @@ export function SignUp() {
             //   query.refetch();
             // }}
             // onSubmit={(e) => {form.setFieldValue('username', e.currentTarget.value);}}
-            // error={query.isError ? 'Username is not available' : null}
-            // rightSection={
-            //   query.isLoading ? (
-            //     <Loader size={15} />
-            //   ) : query.isSuccess ? (
-            //     <IconCircleCheck color="green" />
-            //   ) : null
-            // }
+            error={query.isError ? 'Username is not available' : null}
+            rightSection={
+              query.isLoading ? (
+                <Loader size={15} />
+              ) : query.isSuccess ? (
+                <IconCircleCheck color="green" />
+              ) : null
+            }
           />
           <PasswordInput
             name="password"

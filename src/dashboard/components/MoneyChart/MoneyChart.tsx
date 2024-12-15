@@ -10,10 +10,18 @@ export interface TransactionStatsProps {
 }
 
 const MoneyChart: React.FC<TransactionStatsProps> = ({ data }) => {
+  const stats = data.map((stat) => {
+    return {
+      date: stat.date,
+      expenses: stat.expenses,
+      income: stat.income,
+      total: stat.total,
+    };
+  });
   return (
     <LineChart
       h={400}
-      data={data}
+      data={stats}
       dataKey="date"
       series={[
         { name: 'expenses', label: 'Expenses', color: 'red.6' },
