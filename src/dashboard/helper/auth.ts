@@ -18,7 +18,7 @@ export async function login(loginData: UserLogin) {
   if (response.status === 200) {
     // Set session JWT token
     const resp = await response.json();
-    cookies().set('token', resp.token, { sameSite: 'strict' });
+    (await cookies()).set('token', resp.token, { sameSite: 'strict' });
     redirect('/');
   } else {
     const resp = await response.text();
@@ -67,6 +67,6 @@ export async function checkUsername(username: string) {
 
 export async function logout() {
   // Remove the session JWT token
-  cookies().delete('token');
+  (await cookies()).delete('token');
   redirect('/sign-in');
 }

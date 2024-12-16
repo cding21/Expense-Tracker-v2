@@ -2,19 +2,15 @@
 
 import React from 'react';
 import {
-  Title,
   Text,
   Container,
-  AppShell,
-  Burger,
   Divider,
   Grid,
-  Card,
   Space,
   Group,
   Paper,
 } from '@mantine/core';
-import { mockChartDataByMonth, mockTransactionList, mockTransactionStats } from '@/mockTransaction';
+import { mockChartDataByMonth, mockTransactionStats } from '@/mockTransaction';
 import CashFlowGrid from '../CashFlowGrid/CashFlowGrid';
 import MoneyChart from '../MoneyChart/MoneyChart';
 import classes from './Dashboard.module.css';
