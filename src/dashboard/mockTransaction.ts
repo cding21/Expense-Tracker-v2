@@ -1,4 +1,4 @@
-import { Transaction } from "./models/transaction.model";
+import { Transaction } from './models/transaction.model';
 
 export const mockTransaction: Transaction = {
   id: '1',

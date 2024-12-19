@@ -5,11 +5,12 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function middleware(request: NextRequest) {
   const isAuthenticated = (await cookies()).get('token') !== undefined;
 
-  if (isAuthenticated && 
-    (request.nextUrl.pathname === '/sign-in' 
-      || request.nextUrl.pathname === '/sign-up' 
-      || request.nextUrl.pathname === '/forgot-password')
-    ) {
+  if (
+    isAuthenticated &&
+    (request.nextUrl.pathname === '/sign-in' ||
+      request.nextUrl.pathname === '/sign-up' ||
+      request.nextUrl.pathname === '/forgot-password')
+  ) {
     return NextResponse.redirect(new NextURL('/', request.url));
   }
 

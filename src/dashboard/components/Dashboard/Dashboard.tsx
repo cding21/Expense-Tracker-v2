@@ -1,15 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Text,
-  Container,
-  Divider,
-  Grid,
-  Space,
-  Group,
-  Paper,
-} from '@mantine/core';
+import { Text, Container, Divider, Grid, Space, Group, Paper } from '@mantine/core';
 import { mockChartDataByMonth, mockTransactionStats } from '@/mockTransaction';
 import CashFlowGrid from '../CashFlowGrid/CashFlowGrid';
 import MoneyLineChart from '../MoneyLineChart/MoneyLineChart';

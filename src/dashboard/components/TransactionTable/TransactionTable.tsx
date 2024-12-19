@@ -10,20 +10,17 @@ import {
 import { ActionIcon, Box, Button, Flex, Text, Tooltip } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconTrash } from '@tabler/icons-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { mockTransactionCategories, mockTransactionCurrencyCodes, mockTransactionList } from '@/mockTransaction';
+  mockTransactionCategories,
+  mockTransactionCurrencyCodes,
+  mockTransactionList,
+} from '@/mockTransaction';
 import { Transaction } from '@/models/transaction.model';
 import dayjs, { Dayjs } from 'dayjs';
 
-
 const TransactionTable = () => {
-  const [validationErrors, setValidationErrors] = useState<
-    Record<string, string | undefined>
-  >({});
+  const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({});
   //keep track of rows that have been edited
   const [editedTransactions, setEditedTransactions] = useState<Record<string, Transaction>>({});
 
@@ -72,8 +69,8 @@ const TransactionTable = () => {
       title: 'Are you sure you want to delete this transaction?',
       children: (
         <Text>
-          Are you sure you want to delete {row.original.description}{' '}
-          {row.original.amount}? This action cannot be undone.
+          Are you sure you want to delete {row.original.description} {row.original.amount}? This
+          action cannot be undone.
         </Text>
       ),
       labels: { confirm: 'Delete', cancel: 'Cancel' },
@@ -81,10 +78,10 @@ const TransactionTable = () => {
       onConfirm: () => deleteTransaction(row.original.id),
     });
 
-    const [transactionAmountMax] = useMemo(() => {
-      const amounts = fetchedTransactions.map((transaction) => transaction.amount);
-      return [Math.max(...amounts)];
-    }, [fetchedTransactions]);
+  const [transactionAmountMax] = useMemo(() => {
+    const amounts = fetchedTransactions.map((transaction) => transaction.amount);
+    return [Math.max(...amounts)];
+  }, [fetchedTransactions]);
 
   const columns = useMemo<MRT_ColumnDef<Transaction>[]>(
     () => [
@@ -95,7 +92,7 @@ const TransactionTable = () => {
         size: 80,
       },
       {
-        accessorFn: (row) => dayjs(row.date,'DD/MM/YYYY'),
+        accessorFn: (row) => dayjs(row.date, 'DD/MM/YYYY'),
         header: 'Date',
         editVariant: 'text',
         filterVariant: 'date-range',
@@ -114,7 +111,13 @@ const TransactionTable = () => {
               [cell.id]: validationError,
             });
             row.original.date = dayjs(event.currentTarget.value).format('DD/MM/YYYY');
-            setEditedTransactions({ ...editedTransactions, [row.id]: {...row.original, date: dayjs(event.currentTarget.value).format('DD/MM/YYYY')} });
+            setEditedTransactions({
+              ...editedTransactions,
+              [row.id]: {
+                ...row.original,
+                date: dayjs(event.currentTarget.value).format('DD/MM/YYYY'),
+              },
+            });
           },
         }),
       },
@@ -207,7 +210,7 @@ const TransactionTable = () => {
         }),
       },
     ],
-    [editedTransactions, validationErrors],
+    [editedTransactions, validationErrors]
   );
 
   const table = useMantineReactTable({
@@ -308,7 +311,7 @@ function useCreateTransaction() {
               ...newTransInfo,
               id: (Math.random() + 1).toString(36).substring(7),
             },
-          ] as Transaction[],
+          ] as Transaction[]
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['Transactions'] }), //refetch Transactions after mutation, disabled for demo
@@ -343,7 +346,7 @@ function useUpdateTransactions() {
         prevTransactions?.map((trans: Transaction) => {
           const newTrans = newTransactions.find((u) => u.id === trans.id);
           return newTrans ? newTrans : trans;
-        }),
+        })
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['Transactions'] }), //refetch Transactions after mutation, disabled for demo
@@ -362,7 +365,7 @@ function useDeleteTrasanction() {
     //client side optimistic update
     onMutate: (transactionId: string) => {
       queryClient.setQueryData(['trans'], (prevTransactions: any) =>
-        prevTransactions?.filter((transaction: Transaction) => transaction.id !== transactionId),
+        prevTransactions?.filter((transaction: Transaction) => transaction.id !== transactionId)
       );
     },
     // onSettled: () => queryClient.invalidateQueries({ queryKey: ['transactions'] }), //refetch Transactions after mutation, disabled for demo
@@ -378,22 +381,15 @@ const validateEmail = (email: string) =>
   email
     .toLowerCase()
     .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
 
 function validateTransaction(transaction: Transaction) {
   return {
     date: !validateRequired(transaction.date) ? 'Date is Required' : '',
-    amount: !validateNumber(transaction.amount)
-      ? 'Amount is Required'
-      : '',
-    currencyCode: !validateRequired(transaction.currencyCode)
-        ? 'Currency Code is Required'
-        : '',
-    description: !validateRequired(transaction.description)
-        ? 'Description is Required'
-        : '',
+    amount: !validateNumber(transaction.amount) ? 'Amount is Required' : '',
+    currencyCode: !validateRequired(transaction.currencyCode) ? 'Currency Code is Required' : '',
+    description: !validateRequired(transaction.description) ? 'Description is Required' : '',
     category: !validateRequired(transaction.category) ? 'Category is Required' : '',
-    
   };
 }
