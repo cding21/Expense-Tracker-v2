@@ -1,7 +1,11 @@
-export const mockTransaction = {
+import { Transaction } from "./models/transaction.model";
+
+export const mockTransaction: Transaction = {
+  id: '1',
   userId: 'cding',
   date: '15/05/2023',
   amount: 75.5,
+  currencyCode: 'AUD',
   description: 'Grocery shopping',
   category: 'Groceries',
   fromAccount: 'Checking Account',
@@ -10,12 +14,13 @@ export const mockTransaction = {
   toNote: 'Payment for groceries',
 };
 
-export const mockTransactionList = [
+export const mockTransactionList: Transaction[] = [
   {
     id: '1',
     userId: 'user123',
     date: '15/05/2023',
-    amount: 75.5,
+    amount: 75,
+    currencyCode: 'AUD',
     description: 'Grocery shopping',
     category: 'Groceries',
     fromAccount: 'Checking Account',
@@ -27,7 +32,8 @@ export const mockTransactionList = [
     id: '2',
     userId: 'user124',
     date: '16/05/2023',
-    amount: 150.0,
+    amount: 150,
+    currencyCode: 'AUD',
     description: 'Electricity bill',
     category: 'Utilities',
     fromAccount: 'Savings Account',
@@ -39,7 +45,8 @@ export const mockTransactionList = [
     id: '3',
     userId: 'user125',
     date: '17/05/2023',
-    amount: 45.0,
+    amount: 45,
+    currencyCode: 'AUD',
     description: 'Restaurant dinner',
     category: 'Food & Dining',
     fromAccount: 'Credit Card',
@@ -51,7 +58,8 @@ export const mockTransactionList = [
     id: '4',
     userId: 'user126',
     date: '18/05/2023',
-    amount: 20.0,
+    amount: 20,
+    currencyCode: 'AUD',
     description: 'Public transportation',
     category: 'Transport',
     fromAccount: 'Checking Account',
@@ -63,7 +71,8 @@ export const mockTransactionList = [
     id: '5',
     userId: 'user127',
     date: '19/05/2023',
-    amount: 100.0,
+    amount: 100,
+    currencyCode: 'AUD',
     description: 'Internet bill',
     category: 'Utilities',
     fromAccount: 'Savings Account',
@@ -128,4 +137,40 @@ export const mockChartDataByMonth = [
     income: 1726,
     total: 2290,
   },
+];
+
+export const mockTransactionCategories = [
+  'Groceries',
+  'Utilities',
+  'Food & Dining',
+  'Transport',
+  'Internet',
+  'Entertainment',
+  'Health & Fitness',
+  'Personal Care',
+  'Education',
+  'Gifts & Donations',
+  'Investments',
+  'Insurance',
+  'Taxes',
+  'Business',
+  'Travel',
+  'Shopping',
+  'Home',
+  'Pets',
+  'Kids',
+  'Miscellaneous',
+];
+
+export const mockTransactionCurrencyCodes = [
+  'AUD',
+  'USD',
+  'EUR',
+  'GBP',
+  'JPY',
+  'CAD',
+  'CHF',
+  'CNY',
+  'SEK',
+  'NZD',
 ];

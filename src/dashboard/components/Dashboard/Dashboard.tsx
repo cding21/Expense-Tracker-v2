@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { mockChartDataByMonth, mockTransactionStats } from '@/mockTransaction';
 import CashFlowGrid from '../CashFlowGrid/CashFlowGrid';
-import MoneyChart from '../MoneyChart/MoneyChart';
+import MoneyLineChart from '../MoneyLineChart/MoneyLineChart';
 import classes from './Dashboard.module.css';
 
 export function Dashboard() {
@@ -29,7 +29,7 @@ export function Dashboard() {
                   Transaction Summary
                 </Text>
                 <Space h="lg" />
-                <MoneyChart data={mockChartDataByMonth} />
+                <MoneyLineChart data={mockChartDataByMonth} />
               </Group>
             </Paper>
           </Grid.Col>
@@ -40,7 +40,7 @@ export function Dashboard() {
                   Recent Transactions
                 </Text>
                 <Space h="lg" />
-                <MoneyChart data={mockChartDataByMonth} />
+                <MoneyLineChart data={mockChartDataByMonth} />
               </Group>
             </Paper>
           </Grid.Col>

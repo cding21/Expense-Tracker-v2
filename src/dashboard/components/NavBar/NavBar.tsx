@@ -26,7 +26,7 @@ import { SignOut } from '../SignOut/SignOut';
 
 const links = [
   { icon: IconBulb, label: 'Dashboard', href: '/' },
-  { icon: IconCheckbox, label: 'Expenses', notifications: 5, href: '/expenses' },
+  { icon: IconCheckbox, label: 'Transactions', notifications: 5, href: '/transactions' },
   { icon: IconUser, label: 'Contacts', href: '/contacts' },
 ];
 

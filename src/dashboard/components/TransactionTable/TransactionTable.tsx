@@ -7,7 +7,7 @@ import {
   type MRT_TableOptions,
   useMantineReactTable,
 } from 'mantine-react-table';
-import { ActionIcon, Button, Flex, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Button, Flex, Text, Tooltip } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconTrash } from '@tabler/icons-react';
 import {
@@ -81,6 +81,11 @@ const TransactionTable = () => {
       onConfirm: () => deleteTransaction(row.original.id),
     });
 
+    const [transactionAmountMax] = useMemo(() => {
+      const amounts = fetchedTransactions.map((transaction) => transaction.amount);
+      return [Math.max(...amounts)];
+    }, [fetchedTransactions]);
+
   const columns = useMemo<MRT_ColumnDef<Transaction>[]>(
     () => [
       {
@@ -90,14 +95,11 @@ const TransactionTable = () => {
         size: 80,
       },
       {
-        accessorFn: (row) => {
-          console.log(row.date);
-          return dayjs(row.date, 'DD/MM/YYYY');
-        },
+        accessorFn: (row) => dayjs(row.date,'DD/MM/YYYY'),
         header: 'Date',
         editVariant: 'text',
         filterVariant: 'date-range',
-        Cell: ({ cell }) => cell.getValue<Dayjs>()?.toDate().toLocaleString(),
+        Cell: ({ cell }) => cell.getValue<Dayjs>().format('DD/MM/YYYY'),
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: 'date',
           required: true,
@@ -119,9 +121,12 @@ const TransactionTable = () => {
       {
         accessorKey: 'amount',
         header: 'Amount',
-        filterVariant: 'range',
+        filterVariant: 'range-slider',
         mantineFilterRangeSliderProps: {
           color: 'indigo',
+          max: transactionAmountMax, //custom max (as opposed to faceted max)
+          min: 0,
+          step: 1,
           label: (value) =>
             value?.toLocaleString?.('en', {
               style: 'currency',
@@ -130,8 +135,13 @@ const TransactionTable = () => {
               maximumFractionDigits: 0,
             }),
         },
+        Cell: ({ cell }) =>
+          cell.getValue<number>().toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }),
         mantineEditTextInputProps: ({ cell, row }) => ({
-          type: 'text',
+          type: 'number',
           required: true,
           error: validationErrors?.[cell.id],
           //store edited user in state to be saved later
@@ -311,7 +321,7 @@ function useGetTransactions() {
     queryKey: ['Transactions'],
     queryFn: async () => {
       //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
+      await new Promise((resolve) => setTimeout(resolve, 500)); //fake api call
       return Promise.resolve(mockTransactionList);
     },
     refetchOnWindowFocus: false,

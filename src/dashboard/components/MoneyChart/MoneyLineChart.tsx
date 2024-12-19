@@ -9,7 +9,7 @@ export interface TransactionStatsProps {
   }[];
 }
 
-const MoneyChart: React.FC<TransactionStatsProps> = ({ data }) => {
+const MoneyLineChart: React.FC<TransactionStatsProps> = ({ data }) => {
   const stats = data.map((stat) => {
     return {
       date: stat.date,
@@ -36,4 +36,4 @@ const MoneyChart: React.FC<TransactionStatsProps> = ({ data }) => {
   );
 };
 
-export default MoneyChart;
+export default MoneyLineChart;
