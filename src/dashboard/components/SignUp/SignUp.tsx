@@ -12,10 +12,10 @@ import {
   Anchor,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import classes from './SignUp.module.css';
-import { checkUsername, signUp } from '@/helper/auth';
+import { signUp } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
