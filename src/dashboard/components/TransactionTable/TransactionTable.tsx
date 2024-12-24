@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   MantineReactTable,
   // createRow,
@@ -7,17 +7,33 @@ import {
   type MRT_TableOptions,
   useMantineReactTable,
 } from 'mantine-react-table';
-import { ActionIcon, Box, Button, Flex, Text, Tooltip } from '@mantine/core';
-import { modals } from '@mantine/modals';
-import { IconTrash } from '@tabler/icons-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  mockTransactionCategories,
-  mockTransactionCurrencyCodes,
-  mockTransactionList,
-} from '@/mockTransaction';
+  Accordion,
+  AccordionItem,
+  ActionIcon,
+  Blockquote,
+  Button,
+  Code,
+  Divider,
+  FileButton,
+  Flex,
+  Group,
+  Paper,
+  Text,
+  Tooltip,
+} from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { IconInfoCircle, IconTrash } from '@tabler/icons-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { mockTransactionCategories, mockTransactionCurrencyCodes } from '@/mockTransaction';
 import { Transaction } from '@/models/transaction.model';
-import dayjs, { Dayjs } from 'dayjs';
+import {
+  createTransaction,
+  deleteTransaction,
+  getTransactions,
+  updateTransaction,
+} from '@/helper/transaction';
 
 const TransactionTable = () => {
   const [validationErrors, setValidationErrors] = useState<Record<string, string | undefined>>({});
@@ -25,8 +41,7 @@ const TransactionTable = () => {
   const [editedTransactions, setEditedTransactions] = useState<Record<string, Transaction>>({});
 
   //call CREATE hook
-  const { mutateAsync: createTransaction, isPending: isCreatingTransaction } =
-    useCreateTransaction();
+  const { mutateAsync: createTrans, isPending: isCreatingTransaction } = useCreateTransaction();
   //call READ hook
   const {
     data: fetchedTransactions = [],
@@ -35,11 +50,9 @@ const TransactionTable = () => {
     isLoading: isLoadingTransactions,
   } = useGetTransactions();
   //call UPDATE hook
-  const { mutateAsync: updateTransactions, isPending: isUpdatingTransaction } =
-    useUpdateTransactions();
+  const { mutateAsync: updateTrans, isPending: isUpdatingTransaction } = useUpdateTransactions();
   //call DELETE hook
-  const { mutateAsync: deleteTransaction, isPending: isDeletingTransaction } =
-    useDeleteTrasanction();
+  const { mutateAsync: deleteTrans, isPending: isDeletingTransaction } = useDeleteTrasanction();
 
   //CREATE action
   const handleCreateTransaction: MRT_TableOptions<Transaction>['onCreatingRowSave'] = async ({
@@ -52,30 +65,118 @@ const TransactionTable = () => {
       return;
     }
     setValidationErrors({});
-    await createTransaction(values);
+    await createTrans(values);
     exitCreatingMode();
+  };
+
+  const [file, setFile] = useState<File | null>(null);
+  const resetRef = useRef<() => void>(null);
+
+  const clearFile = () => {
+    setFile(null);
+    resetRef.current?.();
+  };
+
+  const openCsvUploadModal = () => {
+    modals.openConfirmModal({
+      title: 'Upload Transactions',
+      children: (
+        <>
+          <Blockquote>
+            <Text>
+              Upload your transactions as a CSV file. The file should contain the following columns:
+            </Text>
+            <Divider my="md" />
+            <Flex direction="column" gap="xs">
+              <Text>
+                <Code>Date</Code> - The date of the transaction in the format{' '}
+                <Code>DD/MM/YYYY</Code>
+              </Text>
+              <Text>
+                <Code>Amount</Code> - The amount of the transaction in USD
+              </Text>
+              <Text>
+                <Code>Currency Code</Code> - The currency code of the transaction
+              </Text>
+              <Text>
+                <Code>Description</Code> - A description of the transaction
+              </Text>
+              <Text>
+                <Code>Category</Code> - The category of the transaction
+              </Text>
+            </Flex>
+            <Divider my="md" />
+            <Text>
+              <IconInfoCircle size={20} /> Note: The headers of the CSV file shouldbe removed before
+              uploading.
+            </Text>
+          </Blockquote>
+          <Group justify="center" my="md">
+            <FileButton onChange={setFile} accept=".csv">
+              {(props) => <Button {...props}>Upload file</Button>}
+            </FileButton>
+            <Button disabled={!file} color="red" onClick={clearFile}>
+              Reset
+            </Button>
+          </Group>
+          {file && (
+            <Text size="sm" ta="center" mt="sm">
+              Picked file: {file.name}
+            </Text>
+          )}
+        </>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => {
+        //TODO: Implement csv upload
+      },
+    });
   };
 
   //UPDATE action
   const handleSaveTransactions = async () => {
     if (Object.values(validationErrors).some((error) => !!error)) return;
-    await updateTransactions(Object.values(editedTransactions));
+    await updateTrans(Object.values(editedTransactions));
     setEditedTransactions({});
   };
 
   //DELETE action
   const openDeleteConfirmModal = (row: MRT_Row<Transaction>) =>
     modals.openConfirmModal({
-      title: 'Are you sure you want to delete this transaction?',
+      title: '',
       children: (
         <Text>
-          Are you sure you want to delete {row.original.description} {row.original.amount}? This
-          action cannot be undone.
+          Are you sure you want to delete the following transaction?
+          <Accordion>
+            <AccordionItem key={row.id} title="Transaction Details" value="closed">
+              <Accordion.Control icon="💸">{`${row.original.description} - $${row.original.amount}`}</Accordion.Control>
+              <Accordion.Panel>
+                <Paper radius="md">
+                  <Text>
+                    <Code>Transaction ID:</Code> {row.original.id}
+                  </Text>
+                  <Text>
+                    <Code>Date:</Code> {row.original.date}
+                  </Text>
+                  <Text>
+                    <Code>Category:</Code> {row.original.category}
+                  </Text>
+                  <Text>
+                    <Code>Currency:</Code> {row.original.currencyCode}
+                  </Text>
+                  <Text>
+                    <Code>Description:</Code> {row.original.description}
+                  </Text>
+                </Paper>
+              </Accordion.Panel>
+            </AccordionItem>
+          </Accordion>
+          This action cannot be undone.
         </Text>
       ),
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
-      onConfirm: () => deleteTransaction(row.original.id),
+      onConfirm: () => deleteTrans(row.original.id),
     });
 
   const [transactionAmountMax] = useMemo(() => {
@@ -87,25 +188,27 @@ const TransactionTable = () => {
     () => [
       {
         accessorKey: 'id',
-        header: 'Id',
+        header: 'Transaction ID',
         enableEditing: false,
         size: 80,
+        initialHidden: true,
       },
       {
-        accessorFn: (row) => dayjs(row.date, 'DD/MM/YYYY'),
+        accessorKey: 'date',
         header: 'Date',
         editVariant: 'text',
         filterVariant: 'date-range',
-        Cell: ({ cell }) => cell.getValue<Dayjs>().format('DD/MM/YYYY'),
         mantineEditTextInputProps: ({ cell, row }) => ({
-          type: 'date',
+          type: 'text',
           required: true,
           error: validationErrors?.[cell.id],
           //store edited user in state to be saved later
           onBlur: (event) => {
-            const validationError = !validateRequired(event.currentTarget.value)
-              ? 'Required'
-              : undefined;
+            const validationError = !validateDate(event.currentTarget.value)
+              ? 'Invalid Date'
+              : !validateRequired(event.currentTarget.value)
+                ? 'Required'
+                : undefined;
             setValidationErrors({
               ...validationErrors,
               [cell.id]: validationError,
@@ -156,7 +259,10 @@ const TransactionTable = () => {
               ...validationErrors,
               [cell.id]: validationError,
             });
-            setEditedTransactions({ ...editedTransactions, [row.id]: row.original });
+            setEditedTransactions({
+              ...editedTransactions,
+              [row.id]: { ...row.original, amount: Number(event.currentTarget.value) },
+            });
           },
         }),
       },
@@ -191,7 +297,10 @@ const TransactionTable = () => {
               ...validationErrors,
               [cell.id]: validationError,
             });
-            setEditedTransactions({ ...editedTransactions, [row.id]: row.original });
+            setEditedTransactions({
+              ...editedTransactions,
+              [row.id]: { ...row.original, description: event.currentTarget.value },
+            });
           },
         }),
       },
@@ -213,7 +322,7 @@ const TransactionTable = () => {
     [editedTransactions, validationErrors]
   );
 
-  const table = useMantineReactTable({
+  const t = useMantineReactTable({
     columns,
     data: fetchedTransactions,
     createDisplayMode: 'row', // ('modal', and 'custom' are also available)
@@ -266,19 +375,30 @@ const TransactionTable = () => {
       </Flex>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button
-        onClick={() => {
-          table.setCreatingRow(true); //simplest way to open the create row modal with no default values
-          //or you can pass in a row object to set default values with the `createRow` helper function
-          // table.setCreatingRow(
-          //   createRow(table, {
-          //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-          //   }),
-          // );
-        }}
-      >
-        Create New Transaction
-      </Button>
+      <Flex mih={50} gap="xs" justify="flex-start" align="center" direction="row" wrap="wrap">
+        <Button
+          onClick={() => {
+            table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+            //or you can pass in a row object to set default values with the `createRow` helper function
+            // table.setCreatingRow(
+            //   createRow(table, {
+            //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
+            //   }),
+            // );
+          }}
+          color="violet"
+        >
+          Create New Transaction
+        </Button>
+        <Button
+          onClick={() => {
+            // TODO: Implement upload transactions via csv file
+            openCsvUploadModal();
+          }}
+        >
+          Upload New Transactions (.csv)
+        </Button>
+      </Flex>
     ),
     state: {
       isLoading: isLoadingTransactions,
@@ -288,7 +408,7 @@ const TransactionTable = () => {
     },
   });
 
-  return <MantineReactTable table={table} />;
+  return <MantineReactTable table={t} />;
 };
 
 //CREATE hook (post new user to api)
@@ -297,8 +417,7 @@ function useCreateTransaction() {
   return useMutation({
     mutationFn: async (trans: Transaction) => {
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      createTransaction(trans);
     },
     //client side optimistic update
     onMutate: (newTransInfo: Transaction) => {
@@ -314,7 +433,7 @@ function useCreateTransaction() {
           ] as Transaction[]
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['Transactions'] }), //refetch Transactions after mutation, disabled for demo
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['Transactions'] }), //refetch Transactions after mutation, disabled for demo
   });
 }
 
@@ -322,11 +441,7 @@ function useCreateTransaction() {
 function useGetTransactions() {
   return useQuery<Transaction[]>({
     queryKey: ['Transactions'],
-    queryFn: async () => {
-      //send api request here
-      await new Promise((resolve) => setTimeout(resolve, 500)); //fake api call
-      return Promise.resolve(mockTransactionList);
-    },
+    queryFn: async () => getTransactions(),
     refetchOnWindowFocus: false,
   });
 }
@@ -337,19 +452,18 @@ function useUpdateTransactions() {
   return useMutation({
     mutationFn: async (transactions: Transaction[]) => {
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      transactions.map(async (t) => updateTransaction(t));
     },
     //client side optimistic update
     onMutate: (newTransactions: Transaction[]) => {
       queryClient.setQueryData(['Transactions'], (prevTransactions: any) =>
         prevTransactions?.map((trans: Transaction) => {
           const newTrans = newTransactions.find((u) => u.id === trans.id);
-          return newTrans ? newTrans : trans;
+          return newTrans || trans;
         })
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['Transactions'] }), //refetch Transactions after mutation, disabled for demo
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['Transactions'] }), //refetch Transactions after mutation, disabled for demo
   });
 }
 
@@ -359,8 +473,7 @@ function useDeleteTrasanction() {
   return useMutation({
     mutationFn: async (transactionId: string) => {
       //send api update request here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-      return Promise.resolve();
+      deleteTransaction(transactionId);
     },
     //client side optimistic update
     onMutate: (transactionId: string) => {
@@ -368,22 +481,15 @@ function useDeleteTrasanction() {
         prevTransactions?.filter((transaction: Transaction) => transaction.id !== transactionId)
       );
     },
-    // onSettled: () => queryClient.invalidateQueries({ queryKey: ['transactions'] }), //refetch Transactions after mutation, disabled for demo
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['transactions'] }), //refetch Transactions after mutation, disabled for demo
   });
 }
 
 export default TransactionTable;
 
 const validateRequired = (value: string) => !!value?.length;
-const validateNumber = (value: number) => !isNaN(Number(value));
-const validateEmail = (email: string) =>
-  !!email.length &&
-  email
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-
+const validateDate = (value: string) => dayjs(value, 'dd/mm/yyyy').isValid();
+const validateNumber = (value: number) => Number.isNaN(value);
 function validateTransaction(transaction: Transaction) {
   return {
     date: !validateRequired(transaction.date) ? 'Date is Required' : '',

@@ -5,6 +5,7 @@ export function validateUsername(value: string) {
   } else if (!/^[a-zA-Z0-9_]*$/.test(value)) {
     return 'Name must not contain any special characters';
   }
+
   return null;
 }
 
@@ -22,5 +23,6 @@ export function validatePassword(value: string) {
   } else if (!/[!@#$%^&*]/.test(value)) {
     return 'Password must contain at least one special character';
   }
+
   return null;
 }

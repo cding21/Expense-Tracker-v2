@@ -10,6 +10,7 @@ import { MantineProvider, ColorSchemeScript, AppShell, Burger, Grid, rem } from 
 import { useDisclosure } from '@mantine/hooks';
 import { Notifications } from '@mantine/notifications';
 import { IconBrandMantine } from '@tabler/icons-react';
+import { ModalsProvider } from '@mantine/modals';
 import { theme } from '../../theme';
 import Providers from './providers';
 import { NavBar } from '@/components/NavBar/NavBar';
@@ -34,42 +35,44 @@ export default function RootLayout({ children }: { children: any }) {
       <body>
         <Providers>
           <MantineProvider theme={theme}>
-            <Notifications />
-            <AppShell
-              header={{ height: 60 }}
-              navbar={{
-                width: 300,
-                breakpoint: 'sm',
-                collapsed: { mobile: !opened },
-              }}
-              padding="md"
-            >
-              <AppShell.Header>
-                <Grid>
-                  <Grid.Col
-                    span={4}
-                    style={{ display: 'flex', justifyContent: 'left', alignItems: 'center' }}
-                  >
-                    <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-                  </Grid.Col>
-                  <Grid.Col
-                    span={4}
-                    style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                  >
-                    <IconBrandMantine
-                      style={{ width: rem(60), height: rem(60) }}
-                      stroke={1.5}
-                      color="var(--mantine-color-blue-filled)"
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={4}></Grid.Col>
-                </Grid>
-              </AppShell.Header>
-              <AppShell.Navbar>
-                <NavBar />
-              </AppShell.Navbar>
-              <AppShell.Main>{children}</AppShell.Main>
-            </AppShell>
+            <ModalsProvider>
+              <Notifications />
+              <AppShell
+                header={{ height: 60 }}
+                navbar={{
+                  width: 300,
+                  breakpoint: 'sm',
+                  collapsed: { mobile: !opened },
+                }}
+                padding="md"
+              >
+                <AppShell.Header>
+                  <Grid>
+                    <Grid.Col
+                      span={4}
+                      style={{ display: 'flex', justifyContent: 'left', alignItems: 'center' }}
+                    >
+                      <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+                    </Grid.Col>
+                    <Grid.Col
+                      span={4}
+                      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                    >
+                      <IconBrandMantine
+                        style={{ width: rem(60), height: rem(60) }}
+                        stroke={1.5}
+                        color="var(--mantine-color-blue-filled)"
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={4}></Grid.Col>
+                  </Grid>
+                </AppShell.Header>
+                <AppShell.Navbar>
+                  <NavBar />
+                </AppShell.Navbar>
+                <AppShell.Main>{children}</AppShell.Main>
+              </AppShell>
+            </ModalsProvider>
           </MantineProvider>
         </Providers>
       </body>

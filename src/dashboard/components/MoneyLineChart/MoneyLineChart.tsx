@@ -10,14 +10,12 @@ export interface TransactionStatsProps {
 }
 
 const MoneyLineChart: React.FC<TransactionStatsProps> = ({ data }) => {
-  const stats = data.map((stat) => {
-    return {
-      date: stat.date,
-      expenses: stat.expenses,
-      income: stat.income,
-      total: stat.total,
-    };
-  });
+  const stats = data.map((stat) => ({
+    date: stat.date,
+    expenses: stat.expenses,
+    income: stat.income,
+    total: stat.total,
+  }));
   return (
     <LineChart
       h={400}

@@ -40,7 +40,7 @@ export async function signUp(signUpData: UserLogin) {
   // Check if the login was successful
   if (response.status === 200) {
     const resp = await response.text();
-    redirect('/sign-in');
+    return redirect('/sign-in');
   } else {
     const resp = await response.text();
     throw new Error(resp);

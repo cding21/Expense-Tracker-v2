@@ -10,7 +10,6 @@ import {
   Container,
   Button,
   Anchor,
-  Loader,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -19,7 +18,6 @@ import classes from './SignUp.module.css';
 import { checkUsername, signUp } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
-import { IconCircleCheck } from '@tabler/icons-react';
 
 export function SignUp() {
   let usernameQuery = '';
@@ -29,7 +27,14 @@ export function SignUp() {
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => validateUsername(value),
+      username: (value) => {
+        usernameQuery = value;
+        query.refetch();
+        while (query.isLoading) {
+          // Do nothing
+        }
+        return validateUsername(value) || query.isError ? 'Username already exists' : null;
+      },
       password: (value) => validatePassword(value),
       confirmPassword: (value, values) =>
         value !== values.password ? 'Passwords do not match' : validatePassword(value),
@@ -60,6 +65,9 @@ export function SignUp() {
         case 'Password is not strong enough':
           msg = 'Password is not strong enough';
           break;
+        case 'NEXT_REDIRECT':
+          // Ignore this error
+          return;
         default:
           break;
       }
@@ -93,7 +101,6 @@ export function SignUp() {
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form
           onSubmit={form.onSubmit((values) => {
-            query.refetch();
             mutation.mutate({ username: values.username, password: values.password });
           })}
           autoComplete="off"
@@ -106,20 +113,6 @@ export function SignUp() {
             autoComplete="new-username"
             key={form.key('username')}
             {...form.getInputProps('username')}
-            // TODO: Issue with setting value of username in form
-            // onChange={(e) => {
-            //   usernameQuery = e.currentTarget.value;
-            //   query.refetch();
-            // }}
-            // onSubmit={(e) => {form.setFieldValue('username', e.currentTarget.value);}}
-            error={query.isError ? 'Username is not available' : null}
-            rightSection={
-              query.isLoading ? (
-                <Loader size={15} />
-              ) : query.isSuccess ? (
-                <IconCircleCheck color="green" />
-              ) : null
-            }
           />
           <PasswordInput
             name="password"
