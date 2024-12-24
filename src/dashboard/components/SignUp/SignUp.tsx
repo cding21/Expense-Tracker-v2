@@ -20,32 +20,17 @@ import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignUp() {
-  let usernameQuery = '';
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '', confirmPassword: '' },
 
     // functions will be used to validate values at corresponding key
     validate: {
-      username: (value) => {
-        usernameQuery = value;
-        query.refetch();
-        while (query.isLoading) {
-          // Do nothing
-        }
-        return validateUsername(value) || query.isError ? 'Username already exists' : null;
-      },
+      username: (value) => validateUsername(value),
       password: (value) => validatePassword(value),
       confirmPassword: (value, values) =>
         value !== values.password ? 'Passwords do not match' : validatePassword(value),
     },
-  });
-
-  const query = useQuery({
-    queryKey: ['username'],
-    queryFn: () => checkUsername(usernameQuery),
-    enabled: false,
-    retry: false,
   });
 
   const mutation = useMutation({
@@ -65,9 +50,9 @@ export function SignUp() {
         case 'Password is not strong enough':
           msg = 'Password is not strong enough';
           break;
-        case 'NEXT_REDIRECT':
-          // Ignore this error
-          return;
+        // case 'NEXT_REDIRECT':
+        //   // Ignore this error
+        //   return;
         default:
           break;
       }

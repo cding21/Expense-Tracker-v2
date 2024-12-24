@@ -37,6 +37,6 @@ describe('SignOut', () => {
 
     // Assert
     // eslint-disable-next-line testing-library/await-async-utils
-    waitFor(() => expect(cookies().delete).toHaveBeenCalledWith('token'));
+    waitFor(async () => expect((await cookies()).delete).toHaveBeenCalledWith('token'));
   });
 });

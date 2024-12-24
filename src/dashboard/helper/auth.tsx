@@ -40,7 +40,7 @@ export async function signUp(signUpData: UserLogin) {
   // Check if the login was successful
   if (response.status === 200) {
     const resp = await response.text();
-    return redirect('/sign-in');
+    redirect('/sign-in');
   } else {
     const resp = await response.text();
     throw new Error(resp);
@@ -61,7 +61,7 @@ export async function checkUsername(username: string) {
   if (response.status === 200) {
     return true;
   } else {
-    throw new Error('Username already exists');
+    throw new Error('Username is not available');
   }
 }
 

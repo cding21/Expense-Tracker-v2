@@ -78,7 +78,8 @@ describe('SignUp', () => {
     const msg = 'Username is not available';
 
     // Mock the signUp function
-    mockCheckUsername.mockReturnValueOnce(Promise.reject(new Error(msg)));
+    mockCheckUsername.mockReturnValueOnce(true);
+    mockSignUp.mockReturnValueOnce(Promise.reject(new Error(msg)));
 
     // Arrange
     render(
@@ -92,17 +93,21 @@ describe('SignUp', () => {
 
     // Fill in the form fields
     const usernameInput = screen.getByPlaceholderText('Your username');
+    const passwordInput = screen.getByPlaceholderText('Your password');
+    const confirmPasswordInput = screen.getByPlaceholderText('Your confirm password');
     const submitButton = screen.getByText('Sign up');
 
     // Act
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(passwordInput, { target: { value: 'AVerySecurePassword!234' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'AVerySecurePassword!234' } });
     fireEvent.click(submitButton);
 
     // Wait for the error message to be displayed
-    await screen.findByText(msg);
+    await screen.findByText(`Sign-up failed: ${msg}`);
 
     // Assert
-    expect(screen.getByText(msg)).toBeDefined();
+    expect(screen.getByText(`Sign-up failed: ${msg}`)).toBeDefined();
   });
 
   it('displays an error message if sign-up fails', async () => {
