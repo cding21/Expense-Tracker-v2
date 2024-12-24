@@ -1,6 +1,6 @@
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import Providers from '@/app/providers';
+import Providers from '@/app/(feature_pages)/providers';
 import { SignIn } from './SignIn';
 import { fireEvent, render, screen, waitFor } from '@/test-utils';
 import { theme } from '@/theme';

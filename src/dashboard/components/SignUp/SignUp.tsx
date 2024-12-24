@@ -10,19 +10,16 @@ import {
   Container,
   Button,
   Anchor,
-  Loader,
 } from '@mantine/core';
-import { IconCircleCheck } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import classes from './SignUp.module.css';
-import { checkUsername, signUp } from '@/helper/auth';
+import { signUp } from '@/helper/auth';
 import { UserLogin } from '@/models/user.model';
 import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignUp() {
-  let usernameQuery = '';
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '', confirmPassword: '' },
@@ -34,13 +31,6 @@ export function SignUp() {
       confirmPassword: (value, values) =>
         value !== values.password ? 'Passwords do not match' : validatePassword(value),
     },
-  });
-
-  const query = useQuery({
-    queryKey: ['username'],
-    queryFn: () => checkUsername(usernameQuery),
-    enabled: false,
-    retry: false,
   });
 
   const mutation = useMutation({
@@ -60,6 +50,9 @@ export function SignUp() {
         case 'Password is not strong enough':
           msg = 'Password is not strong enough';
           break;
+        // case 'NEXT_REDIRECT':
+        //   // Ignore this error
+        //   return;
         default:
           break;
       }
@@ -105,19 +98,6 @@ export function SignUp() {
             autoComplete="new-username"
             key={form.key('username')}
             {...form.getInputProps('username')}
-            onChange={(e) => {
-              form.setFieldValue('username', e.currentTarget.value);
-              usernameQuery = e.currentTarget.value;
-              query.refetch();
-            }}
-            error={query.isError ? 'Username is not available' : null}
-            rightSection={
-              query.isLoading ? (
-                <Loader size={15} />
-              ) : query.isSuccess ? (
-                <IconCircleCheck color="green" />
-              ) : null
-            }
           />
           <PasswordInput
             name="password"
