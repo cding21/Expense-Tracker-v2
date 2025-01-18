@@ -11,3 +11,11 @@ export type Transaction = {
   toAccount: string;
   toNote: string;
 };
+
+export type TransactionStats = {
+  id: string;
+  title: string;
+  diff: number;
+  icon: string;
+  value: number;
+};
