@@ -18,6 +18,7 @@ class TransactionTest {
                 "AUD", // Default currency code to "AUD
                 "description",
                 "category",
+                emptyList(),
                 "fromAccount",
                 "",
                 "toAccount",
@@ -33,6 +34,7 @@ class TransactionTest {
                     "currencyCode" to "AUD",
                     "description" to "description",
                     "category" to "category",
+                    "tags" to emptyList<String>(),
                     "fromAccount" to "fromAccount",
                     "fromNote" to "",
                     "toAccount" to "toAccount",
@@ -57,6 +59,7 @@ class TransactionTest {
                     "currencyCode" to "AUD",
                     "description" to "description",
                     "category" to "category",
+                    "tags" to emptyList<String>(),
                     "fromAccount" to "fromAccount",
                     "fromNote" to "",
                     "toAccount" to "toAccount",
@@ -72,6 +75,7 @@ class TransactionTest {
                 "AUD", // Default currency code to "AUD
                 "description",
                 "category",
+                emptyList(),
                 "fromAccount",
                 "",
                 "toAccount",
@@ -96,6 +100,7 @@ class TransactionTest {
                 "AUD", // Default currency code to "AUD
                 "description",
                 "category",
+                emptyList(),
                 "fromAccount",
                 "",
                 "toAccount",
@@ -111,6 +116,7 @@ class TransactionTest {
         assertEquals(expectedTransaction.currencyCode, actualTransaction.currencyCode)
         assertEquals(expectedTransaction.description, actualTransaction.description)
         assertEquals(expectedTransaction.category, actualTransaction.category)
+        assertEquals(expectedTransaction.tags, actualTransaction.tags)
         assertEquals(expectedTransaction.fromAccount, actualTransaction.fromAccount)
         assertEquals(expectedTransaction.fromNote, actualTransaction.fromNote)
         assertEquals(expectedTransaction.toAccount, actualTransaction.toAccount)
