@@ -19,6 +19,7 @@ data class Transaction(
     val currencyCode: String,
     val description: String,
     val category: String,
+    val tags: List<String>,
     val fromAccount: String?,
     val fromNote: String?,
     val toAccount: String?,
@@ -46,9 +47,10 @@ data class Transaction(
                 userId,
                 LocalDate.parse(values[0], DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                 values[1].toDouble(),
-                "AUD", // Default currency code to "AUD
+                "AUD", // Default currency code to AUD
                 values[2],
                 values[3],
+                emptyList(),
                 values[4],
                 values[5],
                 values[6],

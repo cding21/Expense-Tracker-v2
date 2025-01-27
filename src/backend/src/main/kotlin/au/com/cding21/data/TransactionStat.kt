@@ -1,5 +1,8 @@
 package au.com.cding21.data
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TransactionStat(
     val id: String,
     val title: String,

@@ -39,6 +39,7 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
                 transactionReq.currencyCode,
                 transactionReq.description,
                 transactionReq.category,
+                transactionReq.tags,
                 transactionReq.fromAccount,
                 transactionReq.fromNote,
                 transactionReq.toAccount,
@@ -120,8 +121,9 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
         val transactions = transactionService.getTransactionByUserId(userId)
 
         val sortedTransactions = HashMap<Int, MutableList<Transaction>>()
+
         // Group transactions by year and then by month
-        transactions.groupByTo(sortedTransactions) { it.date.year }.mapValues {
+        val data = transactions.groupByTo(sortedTransactions) { it.date.year }.mapValues {
                 (_, transactions) ->
             val t = HashMap<Month, MutableList<Transaction>>()
             transactions.groupByTo(t) { it.date.month }
@@ -132,20 +134,21 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
 
         // Calculate the sum of income in for this month
         val currentMonth = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).month
-        val currentMonthTransactions = sortedTransactions[currentMonth.value]
-        val lastMonthTransactions = sortedTransactions[currentMonth.value - 1]
+        val currentYear = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
+        val currentMonthTransactions = data[currentYear]?.get(currentMonth)
+        val lastMonthTransactions = data[currentYear]?.get(currentMonth.minus(1))
 
         val currentMonthIncome = currentMonthTransactions?.filter { it.amount > 0 }?.sumOf { it.amount }
         val lastMonthIncome = lastMonthTransactions?.filter { it.amount > 0 }?.sumOf { it.amount }
-        val diffPercentageIncome = ((currentMonthIncome ?: 0.0) - (lastMonthIncome ?: 0.0)) / (lastMonthIncome ?: 0.0) * 100
+        val diffPercentageIncome = ((currentMonthIncome ?: 0.0) - (lastMonthIncome ?: 0.0)) / (lastMonthIncome ?: 1.0) * 100
 
         val currentMonthExpenses = currentMonthTransactions?.filter { it.amount < 0 }?.sumOf { it.amount }
         val lastMonthExpenses = lastMonthTransactions?.filter { it.amount < 0 }?.sumOf { it.amount }
-        val diffPercentageExpenses = ((currentMonthExpenses ?: 0.0) - (lastMonthExpenses ?: 0.0)) / (lastMonthExpenses ?: 0.0) * 100
+        val diffPercentageExpenses = ((currentMonthExpenses ?: 0.0) - (lastMonthExpenses ?: 0.0)) / (lastMonthExpenses ?: 1.0) * 100
 
         val currentMonthNet = currentMonthIncome?.plus(currentMonthExpenses ?: 0.0)
         val lastMonthNet = lastMonthIncome?.plus(lastMonthExpenses ?: 0.0)
-        val diffPercentageNet = ((currentMonthNet ?: 0.0) - (lastMonthNet ?: 0.0)) / (lastMonthNet ?: 0.0) * 100
+        val diffPercentageNet = ((currentMonthNet ?: 0.0) - (lastMonthNet ?: 0.0)) / (lastMonthNet ?: 1.0) * 100
 
         call.respond(
             listOf(
@@ -171,6 +174,7 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
                 transactionReq.currencyCode,
                 transactionReq.description,
                 transactionReq.category,
+                transactionReq.tags,
                 transactionReq.fromAccount,
                 transactionReq.fromNote,
                 transactionReq.toAccount,
