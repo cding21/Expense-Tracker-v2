@@ -229,6 +229,9 @@ const TransactionTable = () => {
         filterVariant: 'range-slider',
         mantineFilterRangeSliderProps: {
           color: 'indigo',
+          max: transactionAmountMax, //custom max (as opposed to faceted max)
+          min: 0,
+          step: 1,
           label: (value) =>
             value?.toLocaleString?.('en-US', {
               style: 'currency',
