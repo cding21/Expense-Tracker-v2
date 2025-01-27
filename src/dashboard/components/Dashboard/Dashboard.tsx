@@ -1,12 +1,21 @@
 'use client';
 
 import React from 'react';
-import { Text, Container, Divider, Grid, Space, Group, Paper, LoadingOverlay, Box } from '@mantine/core';
-import { mockChartDataByMonth, mockTransactionStats } from '@/mockTransaction';
+import {
+  Text,
+  Container,
+  Divider,
+  Grid,
+  Space,
+  Group,
+  Paper,
+  LoadingOverlay,
+} from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { mockChartDataByMonth } from '@/mockTransaction';
 import CashFlowGrid from '../CashFlowGrid/CashFlowGrid';
 import MoneyLineChart from '../MoneyLineChart/MoneyLineChart';
 import classes from './Dashboard.module.css';
-import { useQuery } from '@tanstack/react-query';
 import { getTransactionSummary } from '@/helper/stats';
 
 export function Dashboard() {
@@ -36,26 +45,24 @@ export function Dashboard() {
 
   const {
     data: fetchedTransactionSummary = tmpData,
-    isError: isLoadingTransactionsError,
     isFetching: isFetchingTransactions,
     isLoading: isLoadingTransactions,
   } = useQuery({
     queryKey: ['Transactions'],
     queryFn: async () => getTransactionSummary(),
     refetchOnWindowFocus: false,
-  })
-
+  });
 
   return (
     <Container size={1200}>
       <div style={{ position: 'relative' }}>
         <LoadingOverlay
-            visible={isFetchingTransactions}
-            zIndex={1000}
-            overlayProps={{ radius: 'sm', blur: 2 }}
+          visible={isLoadingTransactions || isFetchingTransactions}
+          zIndex={1000}
+          overlayProps={{ radius: 'sm', blur: 2 }}
         />
         <CashFlowGrid data={fetchedTransactionSummary} />
-      </ div>
+      </div>
       <Divider mb={50} />
       <div>
         <Grid justify="center" align="stretch" grow gutter="lg">

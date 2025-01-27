@@ -4,7 +4,6 @@ import {
   createRow,
   type MRT_ColumnDef,
   type MRT_Row,
-  MRT_TableInstance,
   type MRT_TableOptions,
   useMantineReactTable,
 } from 'mantine-react-table';
@@ -67,7 +66,6 @@ const TransactionTable = () => {
       return;
     }
     setValidationErrors({});
-    console.log(values);
     await createTrans(values);
     exitCreatingMode();
   };
@@ -207,8 +205,8 @@ const TransactionTable = () => {
           //store edited user in state to be saved later
           onBlur: (event) => {
             const validationError = !validateRequired(event.currentTarget.value)
-                ? 'Required'
-                : undefined;
+              ? 'Required'
+              : undefined;
             setValidationErrors({
               ...validationErrors,
               [cell.id]: validationError,
@@ -245,8 +243,7 @@ const TransactionTable = () => {
               backgroundColor:
                 cell.getValue<number>() > 500
                   ? theme.colors.red[9]
-                  : cell.getValue<number>() <= 500 &&
-                      cell.getValue<number>() > 100
+                  : cell.getValue<number>() <= 500 && cell.getValue<number>() > 100
                     ? theme.colors.yellow[9]
                     : theme.colors.green[9],
               borderRadius: '4px',
@@ -280,7 +277,7 @@ const TransactionTable = () => {
             setEditedTransactions({
               ...editedTransactions,
               [row.id]: { ...row.original, amount: Number(event.currentTarget.value) },
-            });         
+            });
           },
         }),
       },
@@ -444,8 +441,8 @@ const TransactionTable = () => {
           color="blue"
           onClick={handleSaveTransactions}
           disabled={
-        Object.keys(editedTransactions).length === 0 ||
-        Object.values(validationErrors).some((error) => !!error)
+            Object.keys(editedTransactions).length === 0 ||
+            Object.values(validationErrors).some((error) => !!error)
           }
           loading={isUpdatingTransaction}
         >
@@ -454,9 +451,14 @@ const TransactionTable = () => {
         {Object.values(validationErrors).some((error) => !!error) && (
           <Text c="red">Fix errors before submitting</Text>
         )}
-        {Object.values(validationErrors).map((error, index) => error && (
-          <Text key={index} c="red">{error}</Text>
-        ))}
+        {Object.values(validationErrors).map(
+          (error, index) =>
+            error && (
+              <Text key={index} c="red">
+                {error}
+              </Text>
+            )
+        )}
       </Flex>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
@@ -470,7 +472,7 @@ const TransactionTable = () => {
                 id: '',
                 userId: '',
                 date: dayjs().format('DD/MM/YYYY'),
-                amount: 0.00,
+                amount: 0.0,
                 currencyCode: 'AUD',
                 description: '',
                 category: '',
@@ -479,7 +481,7 @@ const TransactionTable = () => {
                 fromNote: '',
                 toAccount: '',
                 toNote: '',
-              }),
+              })
             );
           }}
           color="violet"
@@ -592,7 +594,7 @@ function useDeleteTrasanction() {
 export default TransactionTable;
 
 const validateRequired = (value: string) => !!value?.length;
-const validateDate = (value: string) => dayjs(value, 'dd/mm/yyyy').isValid();
+// const validateDate = (value: string) => dayjs(value, 'dd/mm/yyyy').isValid();
 const validateNumber = (value: number) => !Number.isNaN(value);
 function validateTransaction(transaction: Transaction) {
   return {
