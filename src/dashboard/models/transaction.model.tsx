@@ -6,8 +6,17 @@ export type Transaction = {
   currencyCode: string;
   description: string;
   category: string;
+  tags: string[];
   fromAccount: string;
   fromNote: string;
   toAccount: string;
   toNote: string;
+};
+
+export type TransactionStats = {
+  id: string;
+  title: string;
+  diff: number;
+  icon: string;
+  value: number;
 };

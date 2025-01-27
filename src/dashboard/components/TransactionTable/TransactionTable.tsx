@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import {
   MantineReactTable,
-  // createRow,
+  createRow,
   type MRT_ColumnDef,
   type MRT_Row,
   type MRT_TableOptions,
@@ -12,6 +12,7 @@ import {
   AccordionItem,
   ActionIcon,
   Blockquote,
+  Box,
   Button,
   Code,
   Divider,
@@ -191,7 +192,6 @@ const TransactionTable = () => {
         header: 'Transaction ID',
         enableEditing: false,
         size: 80,
-        initialHidden: true,
       },
       {
         accessorKey: 'date',
@@ -204,11 +204,9 @@ const TransactionTable = () => {
           error: validationErrors?.[cell.id],
           //store edited user in state to be saved later
           onBlur: (event) => {
-            const validationError = !validateDate(event.currentTarget.value)
-              ? 'Invalid Date'
-              : !validateRequired(event.currentTarget.value)
-                ? 'Required'
-                : undefined;
+            const validationError = !validateRequired(event.currentTarget.value)
+              ? 'Required'
+              : undefined;
             setValidationErrors({
               ...validationErrors,
               [cell.id]: validationError,
@@ -227,6 +225,7 @@ const TransactionTable = () => {
       {
         accessorKey: 'amount',
         header: 'Amount',
+        size: 150,
         filterVariant: 'range-slider',
         mantineFilterRangeSliderProps: {
           color: 'indigo',
@@ -234,18 +233,37 @@ const TransactionTable = () => {
           min: 0,
           step: 1,
           label: (value) =>
-            value?.toLocaleString?.('en', {
+            value?.toLocaleString?.('en-US', {
               style: 'currency',
-              currency: 'AUD',
+              currency: 'USD',
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             }),
         },
-        Cell: ({ cell }) =>
-          cell.getValue<number>().toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-          }),
+        Cell: ({ cell }) => (
+          <Box
+            style={(theme) => ({
+              backgroundColor:
+                cell.getValue<number>() > 500
+                  ? theme.colors.red[9]
+                  : cell.getValue<number>() <= 500 && cell.getValue<number>() > 100
+                    ? theme.colors.yellow[9]
+                    : theme.colors.green[9],
+              borderRadius: '4px',
+              color: '#fff',
+              maxWidth: '9ch',
+              padding: '4px',
+            })}
+          >
+            {cell.getValue<number>()?.toLocaleString?.('en-AU', {
+              style: 'currency',
+              currency: 'AUD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
+          </Box>
+        ),
+
         mantineEditTextInputProps: ({ cell, row }) => ({
           type: 'number',
           required: true,
@@ -272,6 +290,7 @@ const TransactionTable = () => {
         editVariant: 'select',
         filterVariant: 'multi-select',
         mantineEditSelectProps: ({ row }) => ({
+          required: true,
           data: mockTransactionCurrencyCodes,
           //store edited user in state to be saved later
           onChange: (value: any) =>
@@ -309,6 +328,7 @@ const TransactionTable = () => {
         header: 'Category',
         editVariant: 'select',
         mantineEditSelectProps: ({ row }) => ({
+          required: true,
           data: mockTransactionCategories,
           //store edited user in state to be saved later
           onChange: (value: any) =>
@@ -318,6 +338,68 @@ const TransactionTable = () => {
             }),
         }),
       },
+      {
+        accessorKey: 'tags',
+        header: 'Tags',
+        enableEditing: false,
+        size: 150,
+      },
+      {
+        accessorKey: 'fromAccount',
+        header: 'From Account',
+        mantineEditTextInputProps: ({ row }) => ({
+          type: 'text',
+          //store edited user in state to be saved later
+          onBlur: (event) => {
+            setEditedTransactions({
+              ...editedTransactions,
+              [row.id]: { ...row.original, description: event.currentTarget.value },
+            });
+          },
+        }),
+      },
+      {
+        accessorKey: 'fromNote',
+        header: 'Note',
+        mantineEditTextInputProps: ({ row }) => ({
+          type: 'text',
+          //store edited user in state to be saved later
+          onBlur: (event) => {
+            setEditedTransactions({
+              ...editedTransactions,
+              [row.id]: { ...row.original, description: event.currentTarget.value },
+            });
+          },
+        }),
+      },
+      {
+        accessorKey: 'toAccount',
+        header: 'To Account',
+        mantineEditTextInputProps: ({ row }) => ({
+          type: 'text',
+          //store edited user in state to be saved later
+          onBlur: (event) => {
+            setEditedTransactions({
+              ...editedTransactions,
+              [row.id]: { ...row.original, description: event.currentTarget.value },
+            });
+          },
+        }),
+      },
+      {
+        accessorKey: 'toNote',
+        header: 'Note',
+        mantineEditTextInputProps: ({ row }) => ({
+          type: 'text',
+          //store edited user in state to be saved later
+          onBlur: (event) => {
+            setEditedTransactions({
+              ...editedTransactions,
+              [row.id]: { ...row.original, description: event.currentTarget.value },
+            });
+          },
+        }),
+      },
     ],
     [editedTransactions, validationErrors]
   );
@@ -325,7 +407,7 @@ const TransactionTable = () => {
   const t = useMantineReactTable({
     columns,
     data: fetchedTransactions,
-    createDisplayMode: 'row', // ('modal', and 'custom' are also available)
+    createDisplayMode: 'modal', // ('modal', and 'custom' are also available)
     editDisplayMode: 'cell', // ('modal', 'row', 'table', and 'custom' are also available)
     enableColumnFilterModes: true,
     enableEditing: true,
@@ -372,19 +454,38 @@ const TransactionTable = () => {
         {Object.values(validationErrors).some((error) => !!error) && (
           <Text c="red">Fix errors before submitting</Text>
         )}
+        {Object.values(validationErrors).map(
+          (error, index) =>
+            error && (
+              <Text key={index} c="red">
+                {error}
+              </Text>
+            )
+        )}
       </Flex>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Flex mih={50} gap="xs" justify="flex-start" align="center" direction="row" wrap="wrap">
         <Button
-          onClick={() => {
-            table.setCreatingRow(true); //simplest way to open the create row modal with no default values
+          onClick={async () => {
+            // table.setCreatingRow(true); //simplest way to open the create row modal with no default values
             //or you can pass in a row object to set default values with the `createRow` helper function
-            // table.setCreatingRow(
-            //   createRow(table, {
-            //     //optionally pass in default values for the new row, useful for nested data or other complex scenarios
-            //   }),
-            // );
+            table.setCreatingRow(
+              createRow(table, {
+                id: '',
+                userId: '',
+                date: dayjs().format('DD/MM/YYYY'),
+                amount: 0.0,
+                currencyCode: 'AUD',
+                description: '',
+                category: '',
+                tags: [],
+                fromAccount: '',
+                fromNote: '',
+                toAccount: '',
+                toNote: '',
+              })
+            );
           }}
           color="violet"
         >
@@ -400,6 +501,14 @@ const TransactionTable = () => {
         </Button>
       </Flex>
     ),
+    initialState: {
+      columnVisibility: {
+        fromAccount: false,
+        fromNote: false,
+        toAccount: false,
+        toNote: false,
+      },
+    },
     state: {
       isLoading: isLoadingTransactions,
       isSaving: isCreatingTransaction || isUpdatingTransaction || isDeletingTransaction,
@@ -488,8 +597,8 @@ function useDeleteTrasanction() {
 export default TransactionTable;
 
 const validateRequired = (value: string) => !!value?.length;
-const validateDate = (value: string) => dayjs(value, 'dd/mm/yyyy').isValid();
-const validateNumber = (value: number) => Number.isNaN(value);
+// const validateDate = (value: string) => dayjs(value, 'dd/mm/yyyy').isValid();
+const validateNumber = (value: number) => !Number.isNaN(value);
 function validateTransaction(transaction: Transaction) {
   return {
     date: !validateRequired(transaction.date) ? 'Date is Required' : '',

@@ -2,6 +2,7 @@ package au.com.cding21.routes
 
 import au.com.cding21.data.SortBy
 import au.com.cding21.data.Transaction
+import au.com.cding21.data.TransactionStat
 import au.com.cding21.data.WeekPeriod
 import au.com.cding21.data.requests.TransactionRequest
 import au.com.cding21.services.impl.MongoTransactionServiceImpl
@@ -15,7 +16,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
 import kotlinx.datetime.*
+import kotlinx.datetime.TimeZone
 import org.bson.types.ObjectId
+import org.litote.kmongo.currentDate
+import java.text.SimpleDateFormat
 import java.time.temporal.WeekFields
 import java.util.*
 
@@ -35,6 +39,7 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
                 transactionReq.currencyCode,
                 transactionReq.description,
                 transactionReq.category,
+                transactionReq.tags,
                 transactionReq.fromAccount,
                 transactionReq.fromNote,
                 transactionReq.toAccount,
@@ -107,6 +112,52 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
             call.respond(transaction)
         } ?: call.respond(HttpStatusCode.NotFound)
     }
+    // Read transaction summary
+    get("/transactions/summary") {
+        val principal = call.principal<JWTPrincipal>()
+
+        val userId = principal!!.payload.getClaim("userId").asString()
+
+        val transactions = transactionService.getTransactionByUserId(userId)
+
+        val sortedTransactions = HashMap<Int, MutableList<Transaction>>()
+
+        // Group transactions by year and then by month
+        val data = transactions.groupByTo(sortedTransactions) { it.date.year }.mapValues {
+                (_, transactions) ->
+            val t = HashMap<Month, MutableList<Transaction>>()
+            transactions.groupByTo(t) { it.date.month }
+        }
+
+        //TODO: Could change this to only track expenses up until a certain day for similiar comparisons between
+        // months
+
+        // Calculate the sum of income in for this month
+        val currentMonth = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).month
+        val currentYear = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
+        val currentMonthTransactions = data[currentYear]?.get(currentMonth)
+        val lastMonthTransactions = data[currentYear]?.get(currentMonth.minus(1))
+
+        val currentMonthIncome = currentMonthTransactions?.filter { it.amount > 0 }?.sumOf { it.amount }
+        val lastMonthIncome = lastMonthTransactions?.filter { it.amount > 0 }?.sumOf { it.amount }
+        val diffPercentageIncome = ((currentMonthIncome ?: 0.0) - (lastMonthIncome ?: 0.0)) / (lastMonthIncome ?: 1.0) * 100
+
+        val currentMonthExpenses = currentMonthTransactions?.filter { it.amount < 0 }?.sumOf { it.amount }
+        val lastMonthExpenses = lastMonthTransactions?.filter { it.amount < 0 }?.sumOf { it.amount }
+        val diffPercentageExpenses = ((currentMonthExpenses ?: 0.0) - (lastMonthExpenses ?: 0.0)) / (lastMonthExpenses ?: 1.0) * 100
+
+        val currentMonthNet = currentMonthIncome?.plus(currentMonthExpenses ?: 0.0)
+        val lastMonthNet = lastMonthIncome?.plus(lastMonthExpenses ?: 0.0)
+        val diffPercentageNet = ((currentMonthNet ?: 0.0) - (lastMonthNet ?: 0.0)) / (lastMonthNet ?: 1.0) * 100
+
+        call.respond(
+            listOf(
+                TransactionStat("0", "Money In", diffPercentageIncome, "pigMoney", currentMonthIncome ?: 0.0),
+                TransactionStat("1", "Money Out", diffPercentageExpenses, "cash", currentMonthExpenses ?: 0.0),
+                TransactionStat("2", "Net Change", diffPercentageNet, "report", currentMonthNet ?: 0.0 )
+            )
+        )
+    }
     // Update transaction
     put("/transactions/{id}") {
         val principal = call.principal<JWTPrincipal>()
@@ -123,6 +174,7 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
                 transactionReq.currencyCode,
                 transactionReq.description,
                 transactionReq.category,
+                transactionReq.tags,
                 transactionReq.fromAccount,
                 transactionReq.fromNote,
                 transactionReq.toAccount,

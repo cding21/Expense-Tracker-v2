@@ -6,6 +6,19 @@ import { cookies } from 'next/headers';
 export async function createTransaction(transaction: Transaction) {
   // Retrieve the token from the cookies
   const token = (await cookies()).get('token');
+  // Morph the transaction object to match the API
+  const transactionPayload = {
+    date: transaction.date,
+    amount: transaction.amount,
+    currencyCode: transaction.currencyCode,
+    description: transaction.description,
+    category: transaction.category,
+    tags: transaction.tags,
+    fromAccount: transaction.fromAccount,
+    fromNote: transaction.fromNote,
+    toAccount: transaction.toAccount,
+    toNote: transaction.toNote,
+  };
 
   // Make an API request to check if the username is available
   const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v0';
@@ -15,14 +28,14 @@ export async function createTransaction(transaction: Transaction) {
       Authorization: `Bearer ${token!.value}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(transaction),
+    body: JSON.stringify(transactionPayload),
   });
 
   // Check if the creation was successful
   if (response.status === 201) {
     return true;
   } else {
-    throw new Error('An error occurred');
+    throw new Error('An error occurred, reason: ' + response.statusText);
   }
 }
 
@@ -44,7 +57,7 @@ export async function getTransactions(): Promise<Transaction[]> {
   if (response.status === 200) {
     return response.json();
   } else {
-    throw new Error('An error occurred');
+    throw new Error('An error occurred, reason: ' + response.json);
   }
 }
 
@@ -66,7 +79,7 @@ export async function getTransaction(id: string): Promise<Transaction> {
   if (response.status === 200) {
     return response.json();
   } else {
-    throw new Error('An error occurred');
+    throw new Error('An error occurred, reason: ' + response.json);
   }
 }
 
@@ -81,6 +94,7 @@ export async function updateTransaction(transaction: Transaction) {
     currencyCode: transaction.currencyCode,
     description: transaction.description,
     category: transaction.category,
+    tags: transaction.tags,
     fromAccount: transaction.fromAccount,
     fromNote: transaction.fromNote,
     toAccount: transaction.toAccount,
@@ -102,7 +116,7 @@ export async function updateTransaction(transaction: Transaction) {
   if (response.status === 200) {
     return true;
   } else {
-    throw new Error('An error occurred');
+    throw new Error('An error occurred, reason: ' + response.json);
   }
 }
 
@@ -124,6 +138,6 @@ export async function deleteTransaction(id: string) {
   if (response.status === 200) {
     return true;
   } else {
-    throw new Error('An error occurred');
+    throw new Error('An error occurred, reason: ' + response.json);
   }
 }

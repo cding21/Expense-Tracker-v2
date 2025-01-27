@@ -12,6 +12,7 @@ data class TransactionRequest(
     val currencyCode: String,
     val description: String,
     val category: String,
+    val tags: List<String>,
     val fromAccount: String,
     val fromNote: String,
     val toAccount: String,
