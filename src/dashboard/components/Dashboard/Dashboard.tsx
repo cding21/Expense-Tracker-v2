@@ -1,16 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Text,
-  Container,
-  Divider,
-  Grid,
-  Space,
-  Group,
-  Paper,
-  LoadingOverlay,
-} from '@mantine/core';
+import { Text, Container, Divider, Grid, Space, Group, Paper, LoadingOverlay } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { mockChartDataByMonth } from '@/mockTransaction';
 import CashFlowGrid from '../CashFlowGrid/CashFlowGrid';
