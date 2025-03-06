@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class TransactionStat(
     val id: String,
     val title: String,
-    val diff:  Double,
+    val diff: Double,
     val icon: String,
-    val value: Double
+    val value: Double,
 )

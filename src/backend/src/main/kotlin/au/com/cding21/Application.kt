@@ -5,12 +5,14 @@ import au.com.cding21.routes.configureRouting
 import au.com.cding21.security.token.TokenConfig
 import au.com.cding21.util.connectToMongoDB
 import io.ktor.server.application.*
+import io.ktor.server.websocket.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
 fun Application.module() {
+    install(WebSockets)
     val db = connectToMongoDB()
 
     val tokenConfig =
