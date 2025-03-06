@@ -110,17 +110,16 @@ fun Route.authRoutes(
     }
 }
 
-
 fun validatePassword(pw: String): Boolean {
     return pw.isNotEmpty() &&
-            pw.length >= 8 &&
-            pw.matches(Regex(".*[a-z].*")) &&
-            pw.matches(Regex(".*[A-Z].*")) &&
-            pw.matches(Regex(".*[0-9].*")) &&
-            pw.matches(Regex(".*[!@#\$%^&*()_-].*"))
+        pw.length >= 8 &&
+        pw.matches(Regex(".*[a-z].*")) &&
+        pw.matches(Regex(".*[A-Z].*")) &&
+        pw.matches(Regex(".*[0-9].*")) &&
+        pw.matches(Regex(".*[!@#\$%^&*()_-].*"))
 }
 
 fun validateUsername(user: String): Boolean {
     return user.isNotEmpty() &&
-            user.length >= 4
+        user.length >= 4
 }
