@@ -19,18 +19,11 @@ import { notifications } from '@mantine/notifications';
 import classes from './SignIn.module.css';
 import { login } from '@/auth';
 import { UserLogin } from '@/models/user.model';
-import { validatePassword, validateUsername } from '@/helper/validation';
 
 export function SignIn() {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { username: '', password: '' },
-
-    // functions will be used to validate values at corresponding key
-    validate: {
-      username: (value) => value.length > 0?"": "Username is required",
-      password: (value) => value.length > 0? "": "Password is required",
-    },
   });
 
   const mutation = useMutation({

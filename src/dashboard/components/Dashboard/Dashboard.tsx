@@ -1,26 +1,47 @@
 'use client';
 
 import React from 'react';
-import { Title, Text, Container } from '@mantine/core';
+import { Title, Text, Container, Stack, Group, AppShell, Burger } from '@mantine/core';
 import classes from './Dashboard.module.css';
 import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
 import TransactionList from '../TransactionList/TransactionList';
 import { mockTransactionList, mockTransactionStats } from '@/mockTransaction';
-import { SignOut } from '../SignOut/SignOut';
 import CashFlowGrid from '../CashFlowGrid/CashFlowGrid';
+import { NavBar } from '../NavBar/NavBar';
+import { useDisclosure } from '@mantine/hooks';
+import { navbar } from '@nextui-org/react';
 
 export function Dashboard() {
+  const [opened, { toggle }] = useDisclosure();
+  
   return (
-    <Container size={800} my={40}>
-      <Title ta="center" className={classes.title}>
-        Dashboard
-      </Title>
-      <Text ta="center">Welcome to your dashboard</Text>
-      <Text ta="center">More to come soon...</Text>
-      <CashFlowGrid statistics={mockTransactionStats} />
-      <TransactionList transactions={mockTransactionList} />
-      <SignOut />
-      <ColorSchemeToggle />
-    </Container>
+    <AppShell
+      header={{ 
+        height: 30,
+        collapsed: navbar.,
+      }}
+      navbar={{
+        width: 80,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+    >  
+      <AppShell.Header>
+        <Burger
+          opened={opened}
+          onClick={toggle}
+          hiddenFrom="sm"
+          size="sm"
+        />
+      </AppShell.Header>
+      <AppShell.Navbar>
+        <NavBar />
+      </AppShell.Navbar>
+      <AppShell.Main>
+        <CashFlowGrid statistics={mockTransactionStats} />
+        <TransactionList transactions={mockTransactionList} />
+      </AppShell.Main>
+    </AppShell>
   );
 }
