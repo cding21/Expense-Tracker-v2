@@ -19,7 +19,6 @@ import org.bson.types.ObjectId
 import java.time.temporal.WeekFields
 import java.util.*
 
-
 fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
     // Create transaction
     post("/transactions") {
@@ -49,10 +48,12 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
         val principal = call.principal<JWTPrincipal>()
         val userId = principal!!.payload.getClaim("userId").asString()
         val transactions = transactionService.getTransactionByUserId(userId)
-        val mode = call.request.queryParameters["sortBy"]?.let {
-            it1 -> enumValueOf<SortBy>(it1.toUpperCasePreservingASCIIRules())
-        }
-        when(mode) {
+        val mode =
+            call.request.queryParameters["sortBy"]?.let {
+                    it1 ->
+                enumValueOf<SortBy>(it1.toUpperCasePreservingASCIIRules())
+            }
+        when (mode) {
             SortBy.YEARLY -> {
                 val response = HashMap<Int, MutableList<Transaction>>()
                 // Group transactions by year
@@ -61,25 +62,29 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
             SortBy.MONTHLY -> {
                 val response = HashMap<Int, MutableList<Transaction>>()
                 // Group transactions by year and then by month
-                call.respond(transactions.groupByTo(response) { it.date.year }.mapValues {
-                    (_, transactions) ->
+                call.respond(
+                    transactions.groupByTo(response) { it.date.year }.mapValues {
+                            (_, transactions) ->
                         val t = HashMap<Month, MutableList<Transaction>>()
                         transactions.groupByTo(t) { it.date.month }
-                })
+                    },
+                )
             }
             SortBy.WEEKLY -> {
                 val response = HashMap<Int, MutableList<Transaction>>()
                 val weekFields = WeekFields.of(Locale.getDefault())
                 // Group transactions by year and then by month
-                call.respond(transactions.groupByTo(response) { it.date.year }.mapValues {
-                    (_, transactions) ->
+                call.respond(
+                    transactions.groupByTo(response) { it.date.year }.mapValues {
+                            (_, transactions) ->
                         val t = HashMap<WeekPeriod, MutableList<Transaction>>()
                         transactions.groupByTo(t) { transaction ->
                             val startOfWeek = transaction.date.with(weekFields.dayOfWeek(), 1).toKotlinLocalDate()
                             val endOfWeek = transaction.date.with(weekFields.dayOfWeek(), 7).toKotlinLocalDate()
                             WeekPeriod(startOfWeek, endOfWeek)
-                    }
-                })
+                        }
+                    },
+                )
             }
             SortBy.DAILY -> {
                 val response = HashMap<LocalDate, MutableList<Transaction>>()
@@ -177,5 +182,3 @@ fun Route.transactionRoutes(transactionService: MongoTransactionServiceImpl) {
         call.respond(transactions)
     }
 }
-
-

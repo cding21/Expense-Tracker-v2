@@ -1,17 +1,23 @@
 import '@mantine/core/styles.css';
+import '@mantine/core/styles.layer.css';
 import '@mantine/notifications/styles.css';
+import 'mantine-datatable/styles.layer.css';
 import React from 'react';
-import { MantineProvider, ColorSchemeScript } from '@mantine/core';
+import { MantineProvider, ColorSchemeScript, Modal } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { theme } from '../theme';
 import Providers from './providers';
+import { ModalsProvider } from '@mantine/modals';
+import { AppShell } from '@mantine/core';
+import { NavBar } from '@/components/NavBar/NavBar';
+import { useDisclosure } from '@mantine/hooks';
 
 export const metadata = {
   title: 'Budget Buddy Dashboard',
   description: 'Your best buddy for budgeting and expense management!',
 };
 
-export default function RootLayout({ children }: { children: any }) {
+export default function RootLayout({ children }: { children: any }) {  
   return (
     <html lang="en">
       <head>
@@ -25,8 +31,10 @@ export default function RootLayout({ children }: { children: any }) {
       <body>
         <Providers>
           <MantineProvider theme={theme}>
-            <Notifications />
-            {children}
+            <ModalsProvider>
+              <Notifications />
+              {children}
+            </ModalsProvider>
           </MantineProvider>
         </Providers>
       </body>
