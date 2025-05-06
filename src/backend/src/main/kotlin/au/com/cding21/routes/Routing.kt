@@ -37,8 +37,6 @@ fun Application.configureRouting(
 
     routing {
         route(System.getenv("API_VERSION") ?: "/api/v0") {
-            // Websocket routes
-            websocketRoutes()
             // Health check
             get("/health") {
                 call.respond(HttpStatusCode.OK)
